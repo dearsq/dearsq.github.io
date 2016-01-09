@@ -35,7 +35,7 @@
 <link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="Android," />
 
 
 
@@ -51,16 +51,26 @@
 
 
 
-<meta name="description" content="使用 Hexo 后的第一篇文档，使用 Markdown 语法编写。Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting o">
+<meta name="description" content="安卓软件层次分为四个层次。包括Applications，Application Framework，系统运行时库（包括程序库和安卓运行时库）和Linux Kernel层。
+ 应用程序层：所有的应用程序都是使用java语言编写的，通过调用应用程序框架层所提供的API来完成。
+ 应用程序框架层：为开发人员提供了可以完全访问核心应用程序所使用的API框架。
+ 活动管理器:管理应用程序生命周期并提供常用的">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hello Hexo">
-<meta property="og:url" content="http://iyounix.com/2016/01/04/hello-world/index.html">
+<meta property="og:title" content="Android 软件层次架构">
+<meta property="og:url" content="http://iyounix.com/2015/08/07/Android 软件层次架构/index.html">
 <meta property="og:site_name" content="Younix">
-<meta property="og:description" content="使用 Hexo 后的第一篇文档，使用 Markdown 语法编写。Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting o">
-<meta property="og:updated_time" content="2016-01-04T06:32:42.395Z">
+<meta property="og:description" content="安卓软件层次分为四个层次。包括Applications，Application Framework，系统运行时库（包括程序库和安卓运行时库）和Linux Kernel层。
+ 应用程序层：所有的应用程序都是使用java语言编写的，通过调用应用程序框架层所提供的API来完成。
+ 应用程序框架层：为开发人员提供了可以完全访问核心应用程序所使用的API框架。
+ 活动管理器:管理应用程序生命周期并提供常用的">
+<meta property="og:image" content="http://ww2.sinaimg.cn/large/ba061518gw1eutqfpwg71j20g40bkta2.jpg">
+<meta property="og:updated_time" content="2016-01-09T11:14:18.336Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hello Hexo">
-<meta name="twitter:description" content="使用 Hexo 后的第一篇文档，使用 Markdown 语法编写。Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting o">
+<meta name="twitter:title" content="Android 软件层次架构">
+<meta name="twitter:description" content="安卓软件层次分为四个层次。包括Applications，Application Framework，系统运行时库（包括程序库和安卓运行时库）和Linux Kernel层。
+ 应用程序层：所有的应用程序都是使用java语言编写的，通过调用应用程序框架层所提供的API来完成。
+ 应用程序框架层：为开发人员提供了可以完全访问核心应用程序所使用的API框架。
+ 活动管理器:管理应用程序生命周期并提供常用的">
 
 
 
@@ -72,7 +82,7 @@
   };
 </script>
 
-  <title> Hello Hexo | Younix </title>
+  <title> Android 软件层次架构 | Younix </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -202,7 +212,7 @@
             
             
               
-                Hello Hexo
+                Android 软件层次架构
               
             
           </h1>
@@ -211,8 +221,8 @@
         <div class="post-meta">
           <span class="post-time">
             发表于
-            <time itemprop="dateCreated" datetime="2016-01-04T14:32:42+08:00" content="2016-01-04">
-              2016-01-04
+            <time itemprop="dateCreated" datetime="2015-08-07T22:00:00+08:00" content="2015-08-07">
+              2015-08-07
             </time>
           </span>
 
@@ -222,8 +232,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2016/01/04/hello-world/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/01/04/hello-world/" itemprop="commentsCount"></span>
+                <a href="/2015/08/07/Android 软件层次架构/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/08/07/Android 软件层次架构/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -242,36 +252,55 @@
       
 
       
-        <span itemprop="articleBody"><h2 id="u4F7F_u7528_Hexo__u540E_u7684_u7B2C_u4E00_u7BC7_u6587_u6863_uFF0C_u4F7F_u7528_Markdown__u8BED_u6CD5_u7F16_u5199_u3002"><a href="#u4F7F_u7528_Hexo__u540E_u7684_u7B2C_u4E00_u7BC7_u6587_u6863_uFF0C_u4F7F_u7528_Markdown__u8BED_u6CD5_u7F16_u5199_u3002" class="headerlink" title="使用 Hexo 后的第一篇文档，使用 Markdown 语法编写。"></a>使用 Hexo 后的第一篇文档，使用 <a href="http://www.appinn.com/markdown/" target="_blank" rel="external">Markdown</a> 语法编写。</h2><p>Welcome to <a href="http://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="http://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="http://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
-<h2 id="Quick_Start"><a href="#Quick_Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create_a_new_post"><a href="#Create_a_new_post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
-<h3 id="Run_server"><a href="#Run_server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
-<h3 id="Generate_static_files"><a href="#Generate_static_files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
-<h3 id="Deploy_to_remote_sites"><a href="#Deploy_to_remote_sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
+        <span itemprop="articleBody"><p><img src="http://ww2.sinaimg.cn/large/ba061518gw1eutqfpwg71j20g40bkta2.jpg" alt="Android" title="Android 层次架构"></p>
+<p>安卓软件层次分为四个层次。包括Applications，Application Framework，系统运行时库（包括程序库和安卓运行时库）和Linux Kernel层。</p>
+<p> <strong>应用程序层</strong>：所有的应用程序都是使用java语言编写的，通过调用应用程序框架层所提供的API来完成。</p>
+<p> <strong>应用程序框架层</strong>：为开发人员提供了可以完全访问核心应用程序所使用的API框架。</p>
+<p> <strong>活动管理器</strong>:管理应用程序生命周期并提供常用的导航回退功能。比如：开启应用程序需要的资源和退出应用程序时需要的释放资源。</p>
+<p> <strong>窗口管理器</strong>：管理所有开启的窗口程序。</p>
+<p> <strong>内容提供器</strong>：使应用程序可以访问另一个应用程序的数据（如联系人数据库），或者共享它们的数据。</p>
+<p> <strong>视图系统</strong>：可以用来构建应用程序，它包括列表list、网格grid、文本框TextView、按钮button、图形绘制等，以及可嵌入的web浏览器</p>
+<p> <strong>通知管理器</strong>：使应用程序可以再状态栏中显示自定义的提示信息。</p>
+<p> <strong>包管理器</strong>：管理所有安装在Android系统中的应用程序。比如：信息查看和卸载程序等。</p>
+<p> <strong>资源管理器</strong>：提供各种资源供应程序使用。比如：字符资源、图像资源、音频资源。    </p>
+<p> <strong>硬件服务</strong>：电话拨打和接听等相关功能、管理地图服务的相关功能、有关蓝牙服务的相关功能、WIFI服务相关功能、USB服务相关功能、传感器服务相关功能。</p>
+<p> <strong>系统运行时库</strong>：系统运行库层包括程序库和Android运行库两部分。</p>
+<p> <strong>程序库</strong>：Android包含一些C/C++库，这些库能被Android系统中的不同组件使用，它们通过应用程序框架为开发者提供服务，核心库的功能介绍：</p>
+<p> <strong>SurfaceManager</strong>：对显示子系统进行管理，并且为多个应用程序提供2D和3D图层的无缝融合。<br>Media<br> <strong>Framework</strong>：基于PacketVideo的OpenCORE，该库支持多种格式的音频和视频的回放和录制，同时支持静态图像文件。编码格式包括：MPEG4、H.264、MP3、AAC、AMR、JPG、PNG。</p>
+<p> <strong>SQLite</strong>：对于所有应用程序可用、功能强劲的轻型关系型数据库引擎</p>
+<p> <strong>OpenglES</strong>:OpenglES支持OpenGL ES1.x和OpenGL ES 2.0该库可以使用硬件3D加速或者使用高度优化的3D软加速</p>
+<p> <strong>FreeType</strong>：位图、矢量和字体显示</p>
+<p> <strong>Webkit</strong>：最新的Web浏览器引擎，支持Android浏览器和一个可嵌入的Web服务器。</p>
+<p> <strong>SSL</strong>：安全通信相关技术处理，为网络通信提供安全及数据完整性的一种安全协议。</p>
+<p> <strong>Libe</strong>：Android并没有采用glibc作为C库，而是采用了Google自己开发的Bionic Lib。它从BSD继承了标准的C系统函数库，是专门为基于嵌入式Linux设备定制的。</p>
+<p> <strong>Android</strong> <strong>Runtime</strong> <strong>Lib</strong>： Android运行时库又分为核心库和Dalvik虚拟机两部分。核心库提供了Java语言核心库的大多数功能，这里主要通过JNI的方式向应用程序框架层提供调用底层程序库的接口。Dalvik虚拟机是为了能同时高效地运行多个VMs而实现的。（Dalvik是Android中使用的Java虚拟机，每个Android应用程序都在自己的进程中运行，都拥有一个独立的Dalvik虚拟机实例。Dalvik被设计成一个可以同时高效运行多个虚拟机实例的虚拟系统。）执行后缀名为.dex的Dalvik可执行文件，该格式的文件针对小内存使用做出了优化。同时虚拟机是基于寄存器的，所有的类都是有Java编译器编译，然后通过SDK中的“dx”工具转化为.dex格式由虚拟机执行。Dalvik虚拟机依赖于Linux内核的一些功能，比如线程机制和底层内存管理机制。</p>
 </span>
       
     </div>
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag">#Android</a>
+          
+        </div>
+      
 
       
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2015/10/26/英雄如你少年如我不负这移动盛世/" rel="next" title="英雄如你，少年如我，不负这移动盛世">
-                <i class="fa fa-chevron-left"></i> 英雄如你，少年如我，不负这移动盛世
+              <a href="/2015/08/01/基本功/" rel="next" title="基本功">
+                <i class="fa fa-chevron-left"></i> 基本功
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2016/01/04/MarkDown语法学习/" rel="prev" title="MarkDown语法学习">
-                MarkDown语法学习 <i class="fa fa-chevron-right"></i>
+              <a href="/2015/08/22/深圳深圳/" rel="prev" title="深圳深圳">
+                深圳深圳 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -299,8 +328,8 @@
         
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2016/01/04/hello-world/"
-           data-title="Hello Hexo" data-url="http://iyounix.com/2016/01/04/hello-world/">
+      <div class="ds-thread" data-thread-key="2015/08/07/Android 软件层次架构/"
+           data-title="Android 软件层次架构" data-url="http://iyounix.com/2015/08/07/Android 软件层次架构/">
       </div>
     
   </div>
@@ -416,7 +445,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#u4F7F_u7528_Hexo__u540E_u7684_u7B2C_u4E00_u7BC7_u6587_u6863_uFF0C_u4F7F_u7528_Markdown__u8BED_u6CD5_u7F16_u5199_u3002"><span class="nav-number">1.</span> <span class="nav-text">使用 Hexo 后的第一篇文档，使用 Markdown 语法编写。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Quick_Start"><span class="nav-number">2.</span> <span class="nav-text">Quick Start</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Create_a_new_post"><span class="nav-number">2.1.</span> <span class="nav-text">Create a new post</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Run_server"><span class="nav-number">2.2.</span> <span class="nav-text">Run server</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Generate_static_files"><span class="nav-number">2.3.</span> <span class="nav-text">Generate static files</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Deploy_to_remote_sites"><span class="nav-number">2.4.</span> <span class="nav-text">Deploy to remote sites</span></a></li></ol></li></ol></div>
+              <p class="post-toc-empty">此文章未包含目录</p>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator">
