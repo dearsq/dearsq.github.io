@@ -1,0 +1,714 @@
+<!doctype html>
+<html class="theme-next   use-motion ">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  <link href="//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="InnerPath Lecture," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
+
+
+
+
+
+
+<meta name="description" content="这段时间负责 Mipi 屏的移植，平台是在 RK3288 上。搜索资料的时候进入了 Firefly(基于3288的一块开发板)的技术支持群。与其他公司的各种 RD 大牛交流，收获颇丰。但也颇有感慨。最强烈的感受就是，FAE 和 RD 的差别。
+我们公司 FAE 的尴尬定位因为现在所在的公司定位是代理商，所以我们 FAE 的职责自然就是支持客户。虽然很无奈，但是我们的工作职责就是将客户的问题经过筛选">
+<meta property="og:type" content="article">
+<meta property="og:title" content="谈谈 RD 和 FAE">
+<meta property="og:url" content="http://iyounix.com/2016/08/28/16-08-28谈谈RD和FAE/index.html">
+<meta property="og:site_name" content="Younix">
+<meta property="og:description" content="这段时间负责 Mipi 屏的移植，平台是在 RK3288 上。搜索资料的时候进入了 Firefly(基于3288的一块开发板)的技术支持群。与其他公司的各种 RD 大牛交流，收获颇丰。但也颇有感慨。最强烈的感受就是，FAE 和 RD 的差别。
+我们公司 FAE 的尴尬定位因为现在所在的公司定位是代理商，所以我们 FAE 的职责自然就是支持客户。虽然很无奈，但是我们的工作职责就是将客户的问题经过筛选">
+<meta property="og:updated_time" content="2016-09-26T04:17:07.328Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="谈谈 RD 和 FAE">
+<meta name="twitter:description" content="这段时间负责 Mipi 屏的移植，平台是在 RK3288 上。搜索资料的时候进入了 Firefly(基于3288的一块开发板)的技术支持群。与其他公司的各种 RD 大牛交流，收获颇丰。但也颇有感慨。最强烈的感受就是，FAE 和 RD 的差别。
+我们公司 FAE 的尴尬定位因为现在所在的公司定位是代理商，所以我们 FAE 的职责自然就是支持客户。虽然很无奈，但是我们的工作职责就是将客户的问题经过筛选">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: '',
+    sidebar: 'post',
+    motion: true
+  };
+</script>
+
+  <title> 谈谈 RD 和 FAE | Younix </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?a245be2d7374fd19f15ad0c56c712b0f";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Younix</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">只想好好敲代码</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu ">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                谈谈 RD 和 FAE
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2016-08-28T22:00:00+08:00" content="2016-08-28">
+              2016-08-28
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/08/28/16-08-28谈谈RD和FAE/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/08/28/16-08-28谈谈RD和FAE/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p>这段时间负责 Mipi 屏的移植，平台是在 RK3288 上。搜索资料的时候进入了 Firefly(基于3288的一块开发板)的技术支持群。与其他公司的各种 RD 大牛交流，收获颇丰。但也颇有感慨。<br>最强烈的感受就是，FAE 和 RD 的差别。</p>
+<h2 id="u6211_u4EEC_u516C_u53F8_FAE__u7684_u5C34_u5C2C_u5B9A_u4F4D"><a href="#u6211_u4EEC_u516C_u53F8_FAE__u7684_u5C34_u5C2C_u5B9A_u4F4D" class="headerlink" title="我们公司 FAE 的尴尬定位"></a>我们公司 FAE 的尴尬定位</h2><p>因为现在所在的公司定位是代理商，所以我们 FAE 的职责自然就是支持客户。虽然很无奈，但是我们的工作职责就是将客户的问题经过筛选反馈给原厂。简单的让我们 FAE 处理，难的交由原厂，说白了就是一个筛子。<br>另外可能和其他代理商不同，我们的 FAE 还需要做 CASE，就是独立的去完成方案，然后交由同仁去推广给客户。<br><strong>但是 FAE 是 行业鄙视链的最末端。</strong><br>这段时间会常常向其他公司的 RD 们请教问题（他们不知道我是 FAE），最常出现的一段对话是</p>
+<blockquote>
+<p>我：前辈，请问…<br>前辈：去问这颗料的 FAE 啊…</p>
+</blockquote>
+<p>印象特别深的还记得有一次，我碰到了一个问题，算是比较有技术含量，当时在群里面引起了一阵讨论。有一个前辈无意问道我是做什么的，我便说我是 FAE，他们许多人便很疑惑 FAE 为什么还需要负责移植工作，为什么还能够有能力来进行移植工作。虽然非常尽力而委婉，但鄙视轻视之情还是溢于言表。</p>
+<p>于是这几天我仔细分析思考了一下他们 RD 和 我们 FAE 的区别，得出了以下几点。</p>
+<h2 id="u89E3_u51B3_u95EE_u9898_u7684_u601D_u8DEF"><a href="#u89E3_u51B3_u95EE_u9898_u7684_u601D_u8DEF" class="headerlink" title="解决问题的思路"></a>解决问题的思路</h2><p>这一点是最大的差距。这快一年的时间，我主要负责过两个平台，先是展讯平台，后是 RK 平台，两者都有各自的 BugReport 系统，展讯的叫做 ClearQuest（CQ),RK 的则是 Redmine ，刚进公司便学习了这些平台的使用方法。<br>连师兄也教我说，<strong>遇到问题有三个步骤</strong></p>
+<ol>
+<li>去 CQ/Redmine 上面查原来是否有人碰到过类似问题; </li>
+<li>问周围的同事有没有人碰到过</li>
+<li>在网上搜索答案<br>然后我自己又把第三点扩充了一下<br>3.1 Google<br>3.2 StackOverFlow<br>3.3 Github</li>
+</ol>
+<p>不得不承认，这些步骤确实对我的思维有很大的影响，而且坦诚的说，我认为这些影响弊大于利。</p>
+<h3 id="u5229"><a href="#u5229" class="headerlink" title="利"></a>利</h3><p><strong>快速解决问题</strong>，这一点是工作与学习的差别。不像学习的时候自己去慢慢琢磨原理，工作的时候主管们第一要求就是需要很快的解决问题（因为很多时候都是客户正赶着量产），所以需要有快速解决问题的能力。解决问题不在乎你是怎么去解决的，你可以抄 Github ，可以求助行业内的其他前辈，可以去各种 BugReport 平台搜索答案，<strong>方法无关紧要，结果就是一切</strong>。<br><strong>所以利在于，可以很快的为公司创造价值。</strong></p>
+<h3 id="u5F0A"><a href="#u5F0A" class="headerlink" title="弊"></a>弊</h3><p>这就导致我现在每每碰到一个问题，首先都是想要去借助外力来解决问题。<br>比如要移植一款某个 Sensor，我首先想得就是去 Github 上面找源码，最好能找到相同或者相似平台的，找到后轻轻松松移植，一了百了，但是实际上有很多技术细节容易被忽略掉。<br>就像是曾经移植一款 GyroscopeSensor 的时候，到处都找不到代码（我们早就不代理这颗料了，但是因为是给我练手的，所以还是得做出来），于是尝试自己写代码。最开始很艰辛，但是花了一周，仿照平台上的 加速度计 Sensor 完成了这个 Gyroscope  Sensor 代码的编写，跟踪到了整个 input 设备加载流程的代码细节中，还是很有成就感的。<br>那么，这个快速解决问题的方法所带来的<strong>弊在于，相当容易忽略掉技术细节</strong>。做完了就结束了，没有碰到问题，就不会带来进步。</p>
+<h2 id="u641C_u96C6_u4FE1_u606F_u548C_u5B66_u4E60_u77E5_u8BC6_u7684_u80FD_u529B"><a href="#u641C_u96C6_u4FE1_u606F_u548C_u5B66_u4E60_u77E5_u8BC6_u7684_u80FD_u529B" class="headerlink" title="搜集信息和学习知识的能力"></a>搜集信息和学习知识的能力</h2><p><strong>搜集信息和学习知识能力，这一点我觉得因人而异。不能一概而论。</strong><br>确实接触到的 RD 前辈们很多都相当厉害，不过我觉得同样有很多的 RD 的学习能力甚至不如我们强。有的 RD 遇到问题就来找我们，即使是些很简单的东西，Google 就能出来，StackOverFlow 上面全都有。<br>这一点因人而异也不细表了。</p>
+<h2 id="u5916_u754C_u538B_u529B"><a href="#u5916_u754C_u538B_u529B" class="headerlink" title="外界压力"></a>外界压力</h2><p>这一点毋庸置疑， RD 的压力比我们要大得多，这也是我相当羡慕的一点。<br>并不是我有这种受虐倾向，只是我觉得个人的主观能动性是有限的，如果大环境都是向前冲的，我们自然也会向前冲的更有激情。而 FAE 所在的公司这种 “ 工程师氛围 “，实在太稀薄了。<br>因为公司工作压力不大，所以时常下班后，大家半个小时一个小时之内便陆陆续续的回家了。<br>我并不是说加班就意味着 ”工程师氛围“，而是说现在公司这种氛围不是我所期待的，很容易让人就磨平了斗志，进步速度自然而然的变慢很多。最可怕的是你以为自己是兔子，大家是乌龟，但是你不知道还有豹子、羚羊的存在，你不知道在奔跑的不止有动物，还有汽车、火箭，还有光。<br>暂时解决这个问题的办法就是<strong>抱团</strong>，和热爱技术的小伙伴抱团一起去前进是暂时的策略。</p>
+<p>了解到的一些真正的 RD 的生活，他们每天都有相当明确的任务，必须要实现某个功能，不能完成就加班。<br>虽然有人说这样肯定累坏啦，但是我觉得在这种外界的高压下去前进，进步也一定是神速的。而且刚毕业就不想劳累，想去思考安逸，那你还想等到什么时候去奋斗呢？</p>
+<h2 id="u4F18_u52BF_u4E0E_u52A3_u52BF"><a href="#u4F18_u52BF_u4E0E_u52A3_u52BF" class="headerlink" title="优势与劣势"></a>优势与劣势</h2><p>最后，整体的来看，因为压力的原因，FAE 积累技术的速度比 RD 要慢许多。<br>但是这并不是无法弥补的。<br>作为一个 FAE，首先要有很多 RD 一样独立思考问题的能力。即使是去求助 Github，也应该<strong>尽可能地了解技术实现的细节</strong>。<br>其次，作为 FAE 的优势在于自由时间比 RD 多，所以我们需要做的就是<strong>把这些自由时间高效地利用起来</strong>，达到提高自己的目的。</p>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/InnerPath-Lecture/" rel="tag">#InnerPath Lecture</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/07/17/16-07-17Q2总结春花夏拾/" rel="next" title="春花夏拾">
+                <i class="fa fa-chevron-left"></i> 春花夏拾
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/09/25/16-09-25秋日已来，硕果寥寥/" rel="prev" title="秋日已来，硕果寥寥">
+                秋日已来，硕果寥寥 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+        </div>
+
+        
+
+
+        
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/08/28/16-08-28谈谈RD和FAE/"
+           data-title="谈谈 RD 和 FAE" data-url="http://iyounix.com/2016/08/28/16-08-28谈谈RD和FAE/">
+      </div>
+    
+  </div>
+
+
+      </div>
+
+      
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/images/avatar.jpg" alt="Younix" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">Younix</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description"></p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">20</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            
+              <span class="site-state-item-count">0</span>
+              <span class="site-state-item-name">分类</span>
+              
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">6</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/dearsq/" target="_blank">
+                  
+                    <i class="fa fa-globe"></i> github
+                  
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://weibo.com/younix" target="_blank">
+                  
+                    <i class="fa fa-globe"></i> weibo
+                  
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/zhang-yang-95-16" target="_blank">
+                  
+                    <i class="fa fa-globe"></i> zhihu
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#u6211_u4EEC_u516C_u53F8_FAE__u7684_u5C34_u5C2C_u5B9A_u4F4D"><span class="nav-number">1.</span> <span class="nav-text">我们公司 FAE 的尴尬定位</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#u89E3_u51B3_u95EE_u9898_u7684_u601D_u8DEF"><span class="nav-number">2.</span> <span class="nav-text">解决问题的思路</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#u5229"><span class="nav-number">2.1.</span> <span class="nav-text">利</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#u5F0A"><span class="nav-number">2.2.</span> <span class="nav-text">弊</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#u641C_u96C6_u4FE1_u606F_u548C_u5B66_u4E60_u77E5_u8BC6_u7684_u80FD_u529B"><span class="nav-number">3.</span> <span class="nav-text">搜集信息和学习知识的能力</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#u5916_u754C_u538B_u529B"><span class="nav-number">4.</span> <span class="nav-text">外界压力</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#u4F18_u52BF_u4E0E_u52A3_u52BF"><span class="nav-number">5.</span> <span class="nav-text">优势与劣势</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+      
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="icon-next-heart fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Younix</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT
+  </a>
+</div>
+
+
+
+      </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"dearsq"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+     
+
+
+    
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.2"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.2"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+<script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+<script type="text/javascript" src="/js/motion.js?v=0.4.5.2" id="motion.global"></script>
+
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    motionMiddleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+      if (CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+
+  
+  
+
+  
+  
+
+</body>
+</html>

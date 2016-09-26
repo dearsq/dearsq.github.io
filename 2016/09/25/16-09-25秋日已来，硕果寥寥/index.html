@@ -1,0 +1,811 @@
+<!doctype html>
+<html class="theme-next   use-motion ">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  <link href="//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="InnerPath Lecture," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
+
+
+
+
+
+
+<meta name="description" content="又是三月有余，倘若不是逼着自己现在驻足回头去看一看，估计还未发现时间如此不饶人。几月未曾提笔，总以为会语塞，但是一旦开始写起来，却又有无数话语想要倾吐。按捺住脑中萦绕的各种思绪，抽出一根叫做收获的，来看看这三个月究竟有哪些得失吧。
+技术积累七月份主要在研究 SPI 设备，负责一款 SPI GSensor 的移植。七月末整理归纳了一下 NFC 的移植流程。算是为部门 NFC 技术做了一点积累。八月初">
+<meta property="og:type" content="article">
+<meta property="og:title" content="秋日已来，硕果寥寥">
+<meta property="og:url" content="http://iyounix.com/2016/09/25/16-09-25秋日已来，硕果寥寥/index.html">
+<meta property="og:site_name" content="Younix">
+<meta property="og:description" content="又是三月有余，倘若不是逼着自己现在驻足回头去看一看，估计还未发现时间如此不饶人。几月未曾提笔，总以为会语塞，但是一旦开始写起来，却又有无数话语想要倾吐。按捺住脑中萦绕的各种思绪，抽出一根叫做收获的，来看看这三个月究竟有哪些得失吧。
+技术积累七月份主要在研究 SPI 设备，负责一款 SPI GSensor 的移植。七月末整理归纳了一下 NFC 的移植流程。算是为部门 NFC 技术做了一点积累。八月初">
+<meta property="og:updated_time" content="2016-09-26T04:04:06.316Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="秋日已来，硕果寥寥">
+<meta name="twitter:description" content="又是三月有余，倘若不是逼着自己现在驻足回头去看一看，估计还未发现时间如此不饶人。几月未曾提笔，总以为会语塞，但是一旦开始写起来，却又有无数话语想要倾吐。按捺住脑中萦绕的各种思绪，抽出一根叫做收获的，来看看这三个月究竟有哪些得失吧。
+技术积累七月份主要在研究 SPI 设备，负责一款 SPI GSensor 的移植。七月末整理归纳了一下 NFC 的移植流程。算是为部门 NFC 技术做了一点积累。八月初">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: '',
+    sidebar: 'post',
+    motion: true
+  };
+</script>
+
+  <title> 秋日已来，硕果寥寥 | Younix </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?a245be2d7374fd19f15ad0c56c712b0f";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Younix</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">只想好好敲代码</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu ">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                秋日已来，硕果寥寥
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2016-09-25T23:55:00+08:00" content="2016-09-25">
+              2016-09-25
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/09/25/16-09-25秋日已来，硕果寥寥/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/09/25/16-09-25秋日已来，硕果寥寥/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p>又是三月有余，倘若不是逼着自己现在驻足回头去看一看，估计还未发现时间如此不饶人。<br>几月未曾提笔，总以为会语塞，但是一旦开始写起来，却又有无数话语想要倾吐。按捺住脑中萦绕的各种思绪，抽出一根叫做<strong>收获</strong>的，来看看这三个月究竟有哪些得失吧。</p>
+<h2 id="u6280_u672F_u79EF_u7D2F"><a href="#u6280_u672F_u79EF_u7D2F" class="headerlink" title="技术积累"></a>技术积累</h2><p>七月份主要在研究 SPI 设备，负责一款 SPI GSensor 的移植。<br>七月末整理归纳了一下 NFC 的移植流程。算是为部门 NFC 技术做了一点积累。<br>八月初玩了一下 Linux 中的互斥机制。<br>八月中下旬负责移植一款 Mipi LCD 到 RK3288 的板子上。<strong>颇有收获。</strong><br>九月份负责 VR 客户的技术支持，解了一些不痛不痒的问题。主要是 Framwork 层与 Application 层的问题，着实不太感兴趣。而且对 Android 上的的着实不太了解，问题解的也比较头大。</p>
+<p>这段时间负责的案子有 展讯SC7731 的平台，还有几颗料未移植完，转部门后就将方案转移给 Lanny 姐了。<br>后来负责的案子是 RK3288 平台的，玩了下 BT，Wifi 的简单配置，移植了一个 Mipi 屏，移植了一个 Camera。<br>其中 Mipi LCD 算是最有收获的。</p>
+<hr>
+<h2 id="u56DE_u987E_u4E0E_u603B_u7ED3"><a href="#u56DE_u987E_u4E0E_u603B_u7ED3" class="headerlink" title="回顾与总结"></a>回顾与总结</h2><p>回头看看当时年初规划的这座大山，看看 Q1 修改制定的路线，看看 Q2 完成的进度。<br>又低头看看现在究竟走到了哪级台阶。<br>再抬头看看离这座小山的山顶，和年初时完全被笼罩在云雾之中的山顶而言，现在似乎能看到云雾中若隐若现的那山顶的轮廓了。</p>
+<ol>
+<li>Linux驱动的几个模块要熟知。今年要完成以下几个模块的学习<ul>
+<li><del><strong>LCM（MIPI接口设备）</strong></del></li>
+<li><del>TP（I2C）</del></li>
+<li><del><strong>GSensor（SPI接口）</strong></del></li>
+<li><del>MSensor（I2C接口）</del></li>
+<li><del>GyroscopeSensor（I2C接口）</del></li>
+<li>P/L Sensor</li>
+<li><del><strong>Camera</strong></del></li>
+</ul>
+</li>
+</ol>
+<blockquote>
+<p>SPI 和 Camera 的两条线确实打得相当之虚啊，因为只是简单的配置问题移植，并没有深入到太多的代码细节去追究。后面还需要在实战中去继续磨练。</p>
+</blockquote>
+<ol>
+<li><p>熟悉Linux内核中的常用知识点：</p>
+<ul>
+<li><del><strong>并发控制（中断屏蔽、原子操作、自旋锁、信号量、互斥体）</strong></del></li>
+<li>阻塞与非阻塞I/O（等待队列）、轮询操作</li>
+<li>中断与时钟</li>
+<li><del>I2C/SPI 两类设备的驱动模型</del></li>
+</ul>
+</li>
+<li><p>十二本小说硬指标。</p>
+<ul>
+<li><del>黑客与画家</del></li>
+<li><del>偷影子的人</del></li>
+<li><del>这么慢，那么美</del></li>
+<li><del>白夜行</del></li>
+<li><del><strong>岛上书店</strong></del></li>
+<li><del><strong>当我跑步时，我在说些什么</strong></del>    </li>
+<li>神们自己</li>
+<li>天才在左，疯子在右</li>
+<li>蔡康永的说话之道</li>
+<li><del><strong>特立独行的猫,不要让未来的你,讨厌现在的自己</strong></del></li>
+<li><del>格局逆袭</del></li>
+<li>Stroy of Your Whole Life</li>
+</ul>
+</li>
+</ol>
+<ol>
+<li><p>锻炼。指标为 Keep 上面的任务争取每天完成。</p>
+</li>
+<li><p>博客要继续坚持最少两周一更。这个养成习惯就好了。另外一些专业性知识也会有条理的梳理在 CSDN 上，更多的是供以后自己查阅吧。</p>
+</li>
+<li><p><strong>CSDN 博客每月至少完成四篇有质量的文章。</strong> </p>
+</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>日期</th>
+<th>个人站点</th>
+<th>CSDN</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2016年09月</td>
+<td>1</td>
+<td>8</td>
+</tr>
+<tr>
+<td>2016年08月</td>
+<td>1</td>
+<td>5</td>
+</tr>
+<tr>
+<td>2016年07月</td>
+<td>1</td>
+<td>7</td>
+</tr>
+<tr>
+<td>2016年06月</td>
+<td>0</td>
+<td>6</td>
+</tr>
+<tr>
+<td>2016年05月</td>
+<td>0</td>
+<td>12</td>
+</tr>
+<tr>
+<td>2016年04月</td>
+<td>0</td>
+<td>11</td>
+</tr>
+<tr>
+<td>2016年03月</td>
+<td>3</td>
+<td>3</td>
+</tr>
+<tr>
+<td>2016年02月</td>
+<td>2</td>
+<td>2</td>
+</tr>
+<tr>
+<td>2016年01月</td>
+<td>4</td>
+<td>3</td>
+</tr>
+</tbody>
+</table>
+<p>添加了第六点，目的在于需要通过<strong>系统整理知识体系</strong>来更好的在完成工作任务的过程中 高效的学习。</p>
+<p>以上六点为接下来大半年的大致计划，一些零碎的选做任务：</p>
+<ul>
+<li>开始了解理财投资相关的知识</li>
+<li><del>学游泳</del></li>
+</ul>
+<blockquote>
+<p>游泳这个算是颇为自豪的，从四月份的旱鸭子，到现在可以游 1.5 km 了。前两个月每周两次，后面每周一次，坚持的力量不可小觑。</p>
+</blockquote>
+<hr>
+<p>好吧。<br>那么，继续加油吧，做更好的自己。</p>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/InnerPath-Lecture/" rel="tag">#InnerPath Lecture</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/08/28/16-08-28谈谈RD和FAE/" rel="next" title="谈谈 RD 和 FAE">
+                <i class="fa fa-chevron-left"></i> 谈谈 RD 和 FAE
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+        </div>
+
+        
+
+
+        
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/09/25/16-09-25秋日已来，硕果寥寥/"
+           data-title="秋日已来，硕果寥寥" data-url="http://iyounix.com/2016/09/25/16-09-25秋日已来，硕果寥寥/">
+      </div>
+    
+  </div>
+
+
+      </div>
+
+      
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/images/avatar.jpg" alt="Younix" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">Younix</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description"></p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">20</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            
+              <span class="site-state-item-count">0</span>
+              <span class="site-state-item-name">分类</span>
+              
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">6</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/dearsq/" target="_blank">
+                  
+                    <i class="fa fa-globe"></i> github
+                  
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://weibo.com/younix" target="_blank">
+                  
+                    <i class="fa fa-globe"></i> weibo
+                  
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/zhang-yang-95-16" target="_blank">
+                  
+                    <i class="fa fa-globe"></i> zhihu
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#u6280_u672F_u79EF_u7D2F"><span class="nav-number">1.</span> <span class="nav-text">技术积累</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#u56DE_u987E_u4E0E_u603B_u7ED3"><span class="nav-number">2.</span> <span class="nav-text">回顾与总结</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+      
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="icon-next-heart fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Younix</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT
+  </a>
+</div>
+
+
+
+      </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"dearsq"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+     
+
+
+    
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.2"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.2"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+<script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+<script type="text/javascript" src="/js/motion.js?v=0.4.5.2" id="motion.global"></script>
+
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    motionMiddleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+      if (CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+
+  
+  
+
+  
+  
+
+</body>
+</html>
