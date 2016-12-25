@@ -1,8 +1,14 @@
 <!doctype html>
-<html class="theme-next   use-motion ">
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
 <head>
   <meta charset="UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
 
 
@@ -21,18 +27,45 @@
 
 
 
-  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
 
 
 
 
-  <link href="//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
 
 
 
-<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
 
-<link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
   <meta name="keywords" content="Hexo, NexT" />
@@ -44,7 +77,7 @@
 
 
 
-  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
 
 
 
@@ -63,28 +96,41 @@
 
 
 
-<script type="text/javascript" id="hexo.configuration">
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
   var CONFIG = {
-    scheme: '',
-    sidebar: 'always',
-    motion: true
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
   };
 </script>
+
+
+
+  <link rel="canonical" href="http://iyounix.com/page/2/"/>
+
+
+
+
 
   <title> Younix </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
 
-  <!--[if lte IE 8]>
-  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
-    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
-      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
-           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
-           style='margin-left:auto;margin-right:auto;display: block;'/>
-    </a>
-  </div>
-<![endif]-->
   
 
 
@@ -93,7 +139,7 @@
     var _hmt = _hmt || [];
     (function() {
       var hm = document.createElement("script");
-      hm.src = "//hm.baidu.com/hm.js?a245be2d7374fd19f15ad0c56c712b0f";
+      hm.src = "https://hm.baidu.com/hm.js?a245be2d7374fd19f15ad0c56c712b0f";
       var s = document.getElementsByTagName("script")[0];
       s.parentNode.insertBefore(hm, s);
     })();
@@ -102,9 +148,18 @@
 
 
 
-  <div class="container one-column 
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left 
    page-home 
-">
+ ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -118,7 +173,9 @@
       <span class="logo-line-after"><i></i></span>
     </a>
   </div>
-  <p class="site-subtitle">只想好好敲代码</p>
+    
+      <p class="site-subtitle">我的心愿是 世界和平</p>
+    
 </div>
 
 <div class="site-nav-toggle">
@@ -133,13 +190,13 @@
   
 
   
-    <ul id="menu" class="menu ">
+    <ul id="menu" class="menu">
       
         
         <li class="menu-item menu-item-home">
           <a href="/" rel="section">
             
-              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
             
             首页
           </a>
@@ -149,7 +206,7 @@
         <li class="menu-item menu-item-about">
           <a href="/about" rel="section">
             
-              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
             
             关于
           </a>
@@ -159,7 +216,7 @@
         <li class="menu-item menu-item-archives">
           <a href="/archives" rel="section">
             
-              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
             
             归档
           </a>
@@ -169,7 +226,7 @@
         <li class="menu-item menu-item-tags">
           <a href="/tags" rel="section">
             
-              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
             
             标签
           </a>
@@ -177,31 +234,26 @@
       
 
       
-      
     </ul>
   
 
   
 </nav>
 
+
+
  </div>
     </header>
 
     <main id="main" class="main">
       <div class="main-inner">
-        <div id="content" class="content">
-          
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
   <section id="posts" class="posts-expand">
-
-    
-
-    
-    
-
     
       
 
-  
   
 
   
@@ -209,6 +261,20 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://iyounix.com/2016/02/24/16-02-24瑞芯微出差记/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Younix">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/avatar.jpg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Younix">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Younix" src="">
+    </span>
+  </span>
 
     
       <header class="post-header">
@@ -230,10 +296,21 @@
 
         <div class="post-meta">
           <span class="post-time">
-            发表于
-            <time itemprop="dateCreated" datetime="2016-02-24T22:00:00+08:00" content="2016-02-24">
-              2016-02-24
-            </time>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Дата создания записи" itemprop="dateCreated datePublished" datetime="2016-02-24T22:00:00+08:00">
+                2016-02-24
+              </time>
+            
+
+            
+
+            
           </span>
 
           
@@ -241,12 +318,22 @@
           
             
               <span class="post-comments-count">
-                &nbsp; | &nbsp;
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
                 <a href="/2016/02/24/16-02-24瑞芯微出差记/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/02/24/16-02-24瑞芯微出差记/" itemprop="commentsCount"></span>
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/02/24/16-02-24瑞芯微出差记/" itemprop="commentCount"></span>
                 </a>
               </span>
             
+          
+
+          
+
+          
+          
+
           
 
           
@@ -256,16 +343,15 @@
     
 
 
-    <div class="post-body">
+    <div class="post-body" itemprop="articleBody">
 
       
       
 
       
         
-          <span itemprop="articleBody">
-            
-              <p>//话说这是第一次出差，确实应该值得一记，但开始动笔的时候却又不知道该从何处下手。那还是按照一贯的做法想到什么写什么，最后再稍稍整理好了。<br>第一次出差，颇有些感受，技术方面会在 CSDN 上更新，在这里就只谈感受吧。</p>
+          
+            <p>//话说这是第一次出差，确实应该值得一记，但开始动笔的时候却又不知道该从何处下手。那还是按照一贯的做法想到什么写什么，最后再稍稍整理好了。<br>第一次出差，颇有些感受，技术方面会在 CSDN 上更新，在这里就只谈感受吧。</p>
 <h2 id="u4E00_u6B3E_u4EA7_u54C1_u7684_u8BDE_u751F"><a href="#u4E00_u6B3E_u4EA7_u54C1_u7684_u8BDE_u751F" class="headerlink" title="一款产品的诞生"></a>一款产品的诞生</h2><p>这三个月算是第一次较为完整了参与了一款电子产品的研发，颇有些感受。想要从两个角度来说。</p>
 <h3 id="u6309_u5206_u5DE5"><a href="#u6309_u5206_u5DE5" class="headerlink" title="按分工"></a>按分工</h3><p>一款电子产品包含很多部分模块 ，尤其是高度模块化分工合作的现在，一款产品的诞生只需要负责各个部分的公司各司其职，通力合作就好了。<br>拿这次做的这款儿童手表举例。</p>
 <p>品牌客户（终端客户）  A  |    设计师  项目经理</p>
@@ -287,11 +373,19 @@
 <p>再就是PP/MP 试产和量产了。</p>
 <h2 id="u603B_u7ED3"><a href="#u603B_u7ED3" class="headerlink" title="总结"></a>总结</h2><p>突然发现一开始写就停不下来了。其他想说的也还有很多，比如原厂的工程师们的个人特点、终端客户们的个人特点，还有工作环境等等这些之间都有着很微妙的联系，非常有意思。不过也不大想赘述了。总的来说，这次出差让我对项目完成的一个流程有了大致的了解。那么继续在磨砺中收获和成长吧。明天也要好好努力哟！</p>
 
-            
-          </span>
+          
         
       
     </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
 
     <footer class="post-footer">
       
@@ -310,13 +404,26 @@
       
 
   
-  
 
   
   
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://iyounix.com/2016/01/30/16-01-30十二分之一/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Younix">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/avatar.jpg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Younix">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Younix" src="">
+    </span>
+  </span>
 
     
       <header class="post-header">
@@ -338,10 +445,21 @@
 
         <div class="post-meta">
           <span class="post-time">
-            发表于
-            <time itemprop="dateCreated" datetime="2016-01-30T22:00:00+08:00" content="2016-01-30">
-              2016-01-30
-            </time>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Дата создания записи" itemprop="dateCreated datePublished" datetime="2016-01-30T22:00:00+08:00">
+                2016-01-30
+              </time>
+            
+
+            
+
+            
           </span>
 
           
@@ -349,12 +467,22 @@
           
             
               <span class="post-comments-count">
-                &nbsp; | &nbsp;
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
                 <a href="/2016/01/30/16-01-30十二分之一/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/01/30/16-01-30十二分之一/" itemprop="commentsCount"></span>
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/01/30/16-01-30十二分之一/" itemprop="commentCount"></span>
                 </a>
               </span>
             
+          
+
+          
+
+          
+          
+
           
 
           
@@ -364,16 +492,15 @@
     
 
 
-    <div class="post-body">
+    <div class="post-body" itemprop="articleBody">
 
       
       
 
       
         
-          <span itemprop="articleBody">
-            
-              <p>不得不感叹一句时间这玩意真的是越跑越快啊。一转眼2016年就走了十二分之一了。而且可能感叹着感叹着，这辈子也就这样过去了。抱歉又开始胡思乱想了。其实这一篇博文纯粹是为了应付年初许下的诺言，每两周必须要写点什么才行。所以就放开点胡乱的想吧，想到什么就唠嗑什么。</p>
+          
+            <p>不得不感叹一句时间这玩意真的是越跑越快啊。一转眼2016年就走了十二分之一了。而且可能感叹着感叹着，这辈子也就这样过去了。抱歉又开始胡思乱想了。其实这一篇博文纯粹是为了应付年初许下的诺言，每两周必须要写点什么才行。所以就放开点胡乱的想吧，想到什么就唠嗑什么。</p>
 <h2 id="u4E0D_u613F_u610F_u505A_u7684_u4E8B"><a href="#u4E0D_u613F_u610F_u505A_u7684_u4E8B" class="headerlink" title="不愿意做的事"></a>不愿意做的事</h2><p>这个写东西不就是一个不愿意做的事么，于是从这个地方开始想。仔细一想来公司了不愿意做的事情还真不少。</p>
 <p>最开始是十一月份有个客户需要 Android Watch 的 APP ，大家都是搞驱动的谁弄过这个啊，于是赶鸭子上架非让我来搞，最初也是因为有点兴趣便承了下来。但是，谁知道这一搞就过去了一个多月。项目远比我想象的复杂的多，连 JAVA 都没有系统地学过，现在突然让人做 Android ，难度当然是有的，但是确实也收获了不少，其中最值得分享的一点是一种和学校学习完全不同的学习方法。这个放在下一节来说。</p>
 <p>然后是公司2016年公司的校招计划，可能是转正答辩把自己的本性暴露的更多了一点，被 Candy 抓住了要帮忙准备2016年校招的事情。写文案不说，三月还得跟着 HR 们一起去跑学校。说实话，最初的真的是很厌恶这种感觉，自私的说，我只想好好的把技术知识积累好，不想过多的分心到其他的事情上，所以做事的时候非常抵触。但是老板的任务又不得不完成啊，所以 deadline 的前一天晚上才开始准备完成任务。还记得当时自己坐在沙发上，抱着电脑，就那样直直地盯着空白的 word 文档，以为自己在想着文案策划，但实际上满脑袋充斥的都是抵触之情。到一点的时候，开始动笔了，怎么写，抄别人的呗，花了两个小时搜集资料，又花了一个小时草草码字总算应付了事。一写完就睡着了。第二天六点多从沙发上冻醒了，洗了个热水澡便去公司修改措辞。一整天晕晕呼呼自己工作的事情效率也变得格外之低。晚上和室友一起回家的时候，我狠狠地抱怨了一顿。但是室友的建议好似醍醐灌顶。他说，<strong>“躲不了就上”</strong>，对，就是这么简单，但是自己却一直没有看透。</p>
@@ -387,11 +514,19 @@
 <p>不过不管怎样，所能做的也唯有继续坚持，相信坚持的力量，期待厚积薄发。</p>
 <p>加油，2016！</p>
 
-            
-          </span>
+          
         
       
     </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
 
     <footer class="post-footer">
       
@@ -410,13 +545,26 @@
       
 
   
-  
 
   
   
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://iyounix.com/2016/01/15/16-01-15书评《黑客与画家》/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Younix">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/avatar.jpg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Younix">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Younix" src="">
+    </span>
+  </span>
 
     
       <header class="post-header">
@@ -438,10 +586,21 @@
 
         <div class="post-meta">
           <span class="post-time">
-            发表于
-            <time itemprop="dateCreated" datetime="2016-01-15T22:00:00+08:00" content="2016-01-15">
-              2016-01-15
-            </time>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Дата создания записи" itemprop="dateCreated datePublished" datetime="2016-01-15T22:00:00+08:00">
+                2016-01-15
+              </time>
+            
+
+            
+
+            
           </span>
 
           
@@ -449,12 +608,22 @@
           
             
               <span class="post-comments-count">
-                &nbsp; | &nbsp;
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
                 <a href="/2016/01/15/16-01-15书评《黑客与画家》/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/01/15/16-01-15书评《黑客与画家》/" itemprop="commentsCount"></span>
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/01/15/16-01-15书评《黑客与画家》/" itemprop="commentCount"></span>
                 </a>
               </span>
             
+          
+
+          
+
+          
+          
+
           
 
           
@@ -464,16 +633,15 @@
     
 
 
-    <div class="post-body">
+    <div class="post-body" itemprop="articleBody">
 
       
       
 
       
         
-          <span itemprop="articleBody">
-            
-              <p>最初是在买其他的书的时候看到了这本书的名字，着实被吸引了一把，但是也只是去大致瞥了一眼，没有细看。第二次是 Buddy 师兄无意中提到了这本书，于是产生了些许兴趣，便买了回来，但第一章都未看完便随它躺在桌上静静的吃灰了。第三次是和基友聊天，聊到了阮一峰这个人，这个经济学博士在前端方面被大家所称赞，于是好奇去搜了下他的博客，不禁十分佩服，又突然发现这本书的译者正是阮一峰，于是爱屋及乌，这才开始沉下心来看这本书。</p>
+          
+            <p>最初是在买其他的书的时候看到了这本书的名字，着实被吸引了一把，但是也只是去大致瞥了一眼，没有细看。第二次是 Buddy 师兄无意中提到了这本书，于是产生了些许兴趣，便买了回来，但第一章都未看完便随它躺在桌上静静的吃灰了。第三次是和基友聊天，聊到了阮一峰这个人，这个经济学博士在前端方面被大家所称赞，于是好奇去搜了下他的博客，不禁十分佩服，又突然发现这本书的译者正是阮一峰，于是爱屋及乌，这才开始沉下心来看这本书。</p>
 <h2 id="u6897_u6982"><a href="#u6897_u6982" class="headerlink" title="梗概"></a>梗概</h2><p>全书大概讲了三个方面的内容。<br>第一部分讲的是黑客们是如何成长的，他们看待世界的观点是怎样的。<br>第二部分解释了黑客们怎样做出成果，这些成果是如何对世界造成影响的。<br>第三部分解释了黑客的工具（编程语言）和工作方法，了解这些可以更好的了解黑客文化。</p>
 <h2 id="u968F_u60F3"><a href="#u968F_u60F3" class="headerlink" title="随想"></a>随想</h2><h3 id="u7B2C_u4E00_u90E8_u5206"><a href="#u7B2C_u4E00_u90E8_u5206" class="headerlink" title="第一部分"></a>第一部分</h3><p>很多观点都不赞同。因为作者 Paul Graham 年轻的时候就开始编程，在哈佛大学计算机系，真的是世界上第一批程序员，但是读博士读到一半的时候又对艺术产生兴趣，拿到博士学位后去学习绘画，希望成为画家。所以他不算是一名黑客，但是我感觉他所说的黑客全部是以自己为蓝本描述的。而可能因为他自己小时候有些“nerd”和内向的性格，所以以偏概全的认为大部分黑客都是书呆子并且不善言语。<br>但是有一句话很有意思，“黑客与画家最像”，当时自己对这两者之间的关系的看法和作者的稍有不同。曾经陶红兵跟我们讲过，历史上最伟大的艺术家无一例外都是疯子，我觉得一个超级黑客和一个伟大的艺术家内心都有一种疯狂。Paul 应该是由自身的体会说他们的共同之处在于创造，他们都是在努力着试图去创造出优秀的作品。同时他们都有一种无奈，那就是他们的想法可能是社会无法欣赏甚至容忍的。他在刚开始进行艺术工作的时候常常入不敷出，收入低且不稳定，经常以给别人编程来补贴家用。他提出一种做法就是“Day Job”，首先以一分白天工作养家糊口，其次发展自己的爱好。读到这里的时候我真切的感受到了Paul 本人的影子，觉得这个确实非常的现实。其实不止是黑客，谁又不是这样呢。像自己不知不觉毕业已经有半年，现在回头看自己最初的想法真的是很天真。当时自己有些很单纯的想法比如希望能够成为嵌入式方面的大牛，但是工作后才发现，嵌入式行业太广泛，成为全才绝对不可能，就算是现在选择的手机这一块，要对从上到下每个模块都深入了解也需要不少光景。而且最简单的希望安安心心从Android的Linux底层驱动又发现很多事情不可能如你所愿的顺利。总会有各种杂事使你分心。领导的命令不能不服从，这个时候你是服务者，公司是你的顾客，他们是上帝。如果恰若你的公司给你安排的工作正好是你乐于发展的方向，那简直就是天大的好事了。</p>
 <h3 id="u7B2C_u4E8C_u90E8_u5206"><a href="#u7B2C_u4E8C_u90E8_u5206" class="headerlink" title="第二部分"></a>第二部分</h3><p>这一部分讲的是黑客们或者说是软件工程师们为社会创造的巨大财富，互联网软件。在看这一部分的时候我简直被 Paul 的远见所折服，“我们生活中的一切，都将成为计算机”，所以他和朋友一起做出了一款搭建网店的软件。在公司做大后他将创立的公司 Viaweb 卖给了 Yahoo，工作半年后因为不适应大公司的工作环境离职了。并开始教哈佛学生如何成立创业公司。从那个时候开始他慢慢开始将扶持别人创业当作自己的事业，他成为了一名天使投资人。<br>同时他提出的一套创业公式也很有意思：<br>1.搭建原型<br>2.上线运营<br>3.收集反馈<br>4.调整产品<br>5.成长壮大<br>他主张用户就是王道，快速的上线运营能够了解到用户真正需要什么。从而进行产品的完善和公司定位的调整。和前段时候写的那篇博客里面 90 后的创业人孙宇晨的观点几乎一模一样“快速迭代、勇于试错、调整产品、螺旋上升”。真的现在创业越来越简单了，你只需要一个好的点子，唯一的门槛就是勇气。</p>
@@ -481,11 +649,19 @@
 <h2 id="u603B_u7ED3"><a href="#u603B_u7ED3" class="headerlink" title="总结"></a>总结</h2><p>总的来说，这本书本身的内容并没有给我太多的颠覆的感觉，换一句话说就是里面呈现的新的思维太少，更多的都是作者在当时著书时的预测和判断。现在看来虽然有些预言无比正确，但是这也只能提高我对 Paul 的敬佩。关键在于如何去拥有他这种预测的能力。<br>我暂时只看到了两点。<br>首先，毋庸置疑是技术的积累。Paul首先是哈佛大学计算机系的博士生，所以已经具备了扎实的能力，这种能力在他初创公司开始做产品的时候毫无疑问是非常重要的。<br>其次是实践的重要性。最后他能成为一个预见性非常厉害的天使投资人就是因为他创过业，对创业的每个环节都十分清楚，因此他才能够权衡一个项目开始实施的时候可能遇到的问题。<br>最后，开始进行创业项目的指导和投资后这方面的经验如雪球一般越滚越多。硅谷创业之父的头衔也当仁不让了。</p>
 <p>分析的这两点都算是显而易见的，其实他的成功一定还和更多更深次的原因有关。不过有的观点是接触到了之后才能够联想到的，因为能力有限暂时也未挖掘出来。况且做好这两点也非一朝一夕，暂时以第一点为目标踏踏实实积累好硬实力。走得越远，视野可能也越广阔吧。</p>
 
-            
-          </span>
+          
         
       
     </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
 
     <footer class="post-footer">
       
@@ -504,13 +680,26 @@
       
 
   
-  
 
   
   
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://iyounix.com/2016/01/04/16-01-04MarkDown语法学习/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Younix">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/avatar.jpg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Younix">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Younix" src="">
+    </span>
+  </span>
 
     
       <header class="post-header">
@@ -532,10 +721,21 @@
 
         <div class="post-meta">
           <span class="post-time">
-            发表于
-            <time itemprop="dateCreated" datetime="2016-01-04T21:37:05+08:00" content="2016-01-04">
-              2016-01-04
-            </time>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Дата создания записи" itemprop="dateCreated datePublished" datetime="2016-01-04T21:37:05+08:00">
+                2016-01-04
+              </time>
+            
+
+            
+
+            
           </span>
 
           
@@ -543,12 +743,22 @@
           
             
               <span class="post-comments-count">
-                &nbsp; | &nbsp;
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
                 <a href="/2016/01/04/16-01-04MarkDown语法学习/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/01/04/16-01-04MarkDown语法学习/" itemprop="commentsCount"></span>
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/01/04/16-01-04MarkDown语法学习/" itemprop="commentCount"></span>
                 </a>
               </span>
             
+          
+
+          
+
+          
+          
+
           
 
           
@@ -558,16 +768,15 @@
     
 
 
-    <div class="post-body">
+    <div class="post-body" itemprop="articleBody">
 
       
       
 
       
         
-          <span itemprop="articleBody">
-            
-              <p>更详细的 Markdown 语法参考 <a href="http://www.appinn.com/markdown/basic.html" target="_blank" rel="external">http://www.appinn.com/markdown/basic.html</a></p>
+          
+            <p>更详细的 Markdown 语法参考 <a href="http://www.appinn.com/markdown/basic.html" target="_blank" rel="external">http://www.appinn.com/markdown/basic.html</a></p>
 <h1 id="u4E00_u3001What_is_Markdown"><a href="#u4E00_u3001What_is_Markdown" class="headerlink" title="一、What is Markdown"></a>一、What is Markdown</h1><p>Markdown 是一种用来写作的轻量级「标记语言」。我们采用标记语法，来代替常见的排版格式。并且可以导出为多种格式。</p>
 <h1 id="u4E8C_u3001Markdown_u2019s_grammar"><a href="#u4E8C_u3001Markdown_u2019s_grammar" class="headerlink" title="二、Markdown’s grammar"></a>二、Markdown’s grammar</h1><h2 id="u6807_u9898"><a href="#u6807_u9898" class="headerlink" title="标题"></a>标题</h2><p>如果一段文字被定义为标题，只需要在这段文字前面加 # 号即可。</p>
 <figure class="highlight vala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="preprocessor"># 一级标题</span></span><br><span class="line"><span class="preprocessor">## 二级标题</span></span><br><span class="line"><span class="preprocessor">### 三级标题</span></span><br></pre></td></tr></table></figure>
@@ -599,11 +808,19 @@
 <h2 id="u5206_u5272_u7EBF"><a href="#u5206_u5272_u7EBF" class="headerlink" title="分割线"></a>分割线</h2><p>分割线只需要三个 * 来实现<br>如</p>
 <hr>
 
-            
-          </span>
+          
         
       
     </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
 
     <footer class="post-footer">
       
@@ -622,13 +839,26 @@
       
 
   
-  
 
   
   
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://iyounix.com/2016/01/03/16-01-03写在2015的尾巴与2016的开头/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Younix">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/avatar.jpg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Younix">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Younix" src="">
+    </span>
+  </span>
 
     
       <header class="post-header">
@@ -650,10 +880,21 @@
 
         <div class="post-meta">
           <span class="post-time">
-            发表于
-            <time itemprop="dateCreated" datetime="2016-01-03T22:00:00+08:00" content="2016-01-03">
-              2016-01-03
-            </time>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Дата создания записи" itemprop="dateCreated datePublished" datetime="2016-01-03T22:00:00+08:00">
+                2016-01-03
+              </time>
+            
+
+            
+
+            
           </span>
 
           
@@ -661,12 +902,22 @@
           
             
               <span class="post-comments-count">
-                &nbsp; | &nbsp;
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
                 <a href="/2016/01/03/16-01-03写在2015的尾巴与2016的开头/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/01/03/16-01-03写在2015的尾巴与2016的开头/" itemprop="commentsCount"></span>
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/01/03/16-01-03写在2015的尾巴与2016的开头/" itemprop="commentCount"></span>
                 </a>
               </span>
             
+          
+
+          
+
+          
+          
+
           
 
           
@@ -676,16 +927,15 @@
     
 
 
-    <div class="post-body">
+    <div class="post-body" itemprop="articleBody">
 
       
       
 
       
         
-          <span itemprop="articleBody">
-            
-              <p>元旦假日。第一天，小扫除好好整理了下长草了的房间，和同事打了一场酣畅淋漓的羽毛球，陪同学看了许诺已久的电影；第二天，去年嚷了半年的愿望终于实现了，在床上整整躺一天，把2015年一年没睡够的觉算是全补上了；第三天，来到公司，做下一个Q的学习计划，突然发现有些时日没有更新博客，便借此时做下2015年的归纳总结和2016年的展望吧。</p>
+          
+            <p>元旦假日。第一天，小扫除好好整理了下长草了的房间，和同事打了一场酣畅淋漓的羽毛球，陪同学看了许诺已久的电影；第二天，去年嚷了半年的愿望终于实现了，在床上整整躺一天，把2015年一年没睡够的觉算是全补上了；第三天，来到公司，做下一个Q的学习计划，突然发现有些时日没有更新博客，便借此时做下2015年的归纳总结和2016年的展望吧。</p>
 <p>2015年，上半年好像忙忙碌碌，下半年也好像忙忙碌碌，也不知道忙碌着什么，然后，一年就这样过去了。上半年一开始好好准备毕业论文和答辩，拿到offer后，西藏行了一遭，也不知道什么时候建了这个website，其他有印象的事儿似乎也掰不出几个。七月入职，一晃半年，Linux驱动功夫稍稍见长，对内核驱动框架了解深了一点，也开始接触JAVA和Android，但是也更迷茫，不知道走上层还是下层。2016年，按照QPI计划要开始学习NFC，期间也穿插着Android APP的编写。还是感觉有些不踏实，底层基础还没有打牢，JAVA也还没啃完就要去啃Android，应该要把重点更明确一下才好。</p>
 <p>那么就稍稍做下2016年的规划吧。</p>
 <ol>
@@ -699,11 +949,19 @@
 </ol>
 <p>似乎不多，但每个任务都是需要坚持才能达到的。踏实一点，戒骄戒躁，厚积薄发，2016 加油。</p>
 
-            
-          </span>
+          
         
       
     </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
 
     <footer class="post-footer">
       
@@ -722,13 +980,26 @@
       
 
   
-  
 
   
   
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://iyounix.com/2015/10/26/15-10-26英雄如你少年如我不负这移动盛世/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Younix">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/avatar.jpg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Younix">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Younix" src="">
+    </span>
+  </span>
 
     
       <header class="post-header">
@@ -750,10 +1021,21 @@
 
         <div class="post-meta">
           <span class="post-time">
-            发表于
-            <time itemprop="dateCreated" datetime="2015-10-26T22:00:00+08:00" content="2015-10-26">
-              2015-10-26
-            </time>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Дата создания записи" itemprop="dateCreated datePublished" datetime="2015-10-26T22:00:00+08:00">
+                2015-10-26
+              </time>
+            
+
+            
+
+            
           </span>
 
           
@@ -761,12 +1043,22 @@
           
             
               <span class="post-comments-count">
-                &nbsp; | &nbsp;
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
                 <a href="/2015/10/26/15-10-26英雄如你少年如我不负这移动盛世/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/10/26/15-10-26英雄如你少年如我不负这移动盛世/" itemprop="commentsCount"></span>
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/10/26/15-10-26英雄如你少年如我不负这移动盛世/" itemprop="commentCount"></span>
                 </a>
               </span>
             
+          
+
+          
+
+          
+          
+
           
 
           
@@ -776,16 +1068,15 @@
     
 
 
-    <div class="post-body">
+    <div class="post-body" itemprop="articleBody">
 
       
       
 
       
         
-          <span itemprop="articleBody">
-            
-              <p>周五在Lanny姐的号召下和Jeremy与星星哥一同参加了”第四届全球安卓开发者大会”，感触良多，利用周末，细细整理，逐一道来。</p>
+          
+            <p>周五在Lanny姐的号召下和Jeremy与星星哥一同参加了”第四届全球安卓开发者大会”，感触良多，利用周末，细细整理，逐一道来。</p>
 <h2 id="u4E00_u3001_u4E92_u8054_u7F51_u91D1_u878D_u4E0E_u6295_u8D44"><a href="#u4E00_u3001_u4E92_u8054_u7F51_u91D1_u878D_u4E0E_u6295_u8D44" class="headerlink" title="一、互联网金融与投资"></a>一、互联网金融与投资</h2><p>在最开始是新浪网副总裁邓庆旭所做的一个推广，推广他们的一款理财产品，大致是讲的运用大数据的思路来分析舆论走向确定投资方向，大会的最后是高层论坛，IDG的副总裁与锐波创始人孙宇晨等人聊互联网金融与传统金融的区别。想将这两块放在一起，先谈谈对互联网金融这方面的理解与感触。<br>首先感慨一下大数据的威力，大数据与云是几年前就炒得很火的两个字眼了。虽然颇知其威力，但是却没有想到当他被运用到投资这一块的时候效果如此震撼。新浪利用它的子业务，新浪微博新浪财经等作为资源，实现了一套分析舆论走向的系统。利用这套系统的算法计算出了舆论的走向，最后的效果是可以帮助投资师更有效的来进行投资。而且邓给出了一个数据是它们所分析的这个舆论走向与相对应股市的震荡曲线相似度极其之高。新浪将所有复杂的资讯解读、图形解读、数据解读全部用可视化的方式凝结在了几款APP上。结合后来所讲的互联网金融与传统金融的区别，不得不感慨<strong>投资越来越容易了</strong>。想起昨天（24日）央行降息的举措，房价不断高涨的现状，似乎可以推断出以后房价稳定甚至下跌的必然性。<br>稍微梳理一下逻辑链条。中国人现在有钱人中越来越人的理财投资意识逐渐升高，但是意识提高知识却仍然有所局限，所以导致了很多手持大笔资金的人来购房囤地。但是随着人们投资意识和知识贮备的提升，大家会趋于尝试与采用更多其他的投资方式，另外央行的不断降息也会刺激大家把钱从银行拿出来进行各种投资方式的尝试。加上老龄化社会现象的加剧（对房产的需求量减少），我大胆的推测在央行年利率降到和国外一样接近于零的时候，房价应该会趋于稳定波动（一线城市）。二三线城市可能会下降。就如同今天的日本一样。</p>
 <h2 id="u4E8C_u3001_u7535_u5546_u8F6C_u578B_u76EE_u6807_uFF1A_u793E_u7FA4_u5546_u4E1A"><a href="#u4E8C_u3001_u7535_u5546_u8F6C_u578B_u76EE_u6807_uFF1A_u793E_u7FA4_u5546_u4E1A" class="headerlink" title="二、电商转型目标：社群商业"></a>二、电商转型目标：社群商业</h2><p>京东副总裁路骋分享了这个话题。现在的PC互联网（传统互联网）中，像京东、阿里。唯品会这些，不管是自采模式、平台模式或是特卖的方式都是中心化流量分配，是电子商务的1.0形态，而2.0 是基于移动端的去中心化的模式。他提到的一个很有意思的概念让我印象很深。“<strong>羊毛出在猪身上，狗来买单</strong>”。因为我们知道传统的工业逻辑证明了为了减少生产成本最好标准化、单一化，通过规模化的生产来实现边际成本的降低。但是我们突然又发现，典型如小米的企业做着手机做着做着突然又开始做空气净化器，又做智能家居。而且因为有手机拉拢聚合的一批用户粘性很高的消费者，所以一卖就断货。这是就是羊毛出在猪身上，先用羊毛将大家吸引过来，然后通过范围经济在用户身上进行作用。在商业逻辑方面，原来是抢占入口，现在是抢占时间。消费行为方面，原来企业价值都是单向传递，我的企业价值有明确的定位，让你来接受我，认可我。但是现在更多的是双向的或者倾向于用户主导的，如小米的参与感，用户参与产品迭代中来。<br>而社群经济就是这样，基于此和一群有共同兴趣、认知、价值观的用户抱成团，发生群蜂效应，在一起互动、交流、协作、感染，对产品品牌本身产生反哺的价值关系，这种建立在产品与粉丝群体之间的情感信任和价值反哺，共同作用形成自运转、自循环的范围经济系统就是社群经济。类似逻辑思维和微博上万能的大熊组织的社团。他们塑造自己的形象，卖产品都是很快售罄，现在有很多人都在向这个方向转型。从原来的内容+广告，到现在的内容+用户+关系。路骋提到各大互联网公司别用什么连接人，他说有人讲 百度 是用信息链连接人，天猫 或者 淘宝 阿里 是用商铺连接人，京东 是用货连接人，小米 是用设备在连接人，腾讯 是在用人在连接人。得人（用户）着得天下。</p>
 <h2 id="u4E09_u3001VR/_u88F8_u773C3D_u5E26_u6765_u7684_u53D8_u9769_u4E0E_u673A_u4F1A"><a href="#u4E09_u3001VR/_u88F8_u773C3D_u5E26_u6765_u7684_u53D8_u9769_u4E0E_u673A_u4F1A" class="headerlink" title="三、VR/裸眼3D带来的变革与机会"></a>三、VR/裸眼3D带来的变革与机会</h2><h2 id="u56DB_u3001_u65E0_u4EBA_u673A/_u98DE_u884C_u5668_u7684_u666E_u53CA_u5316"><a href="#u56DB_u3001_u65E0_u4EBA_u673A/_u98DE_u884C_u5668_u7684_u666E_u53CA_u5316" class="headerlink" title="四、无人机/飞行器的普及化"></a>四、无人机/飞行器的普及化</h2><h2 id="u4E94_u300190_u540E_u662F_u4E00_u79CD_u4EF7_u503C_u89C2"><a href="#u4E94_u300190_u540E_u662F_u4E00_u79CD_u4EF7_u503C_u89C2" class="headerlink" title="五、90后是一种价值观"></a>五、90后是一种价值观</h2><p>这个很想着重谈一下，从这个话题到演讲者到演讲内容，我都觉得很有意思。</p>
@@ -796,11 +1087,19 @@
 <hr>
 <p>其实还有很多说的，不过限于周末有限的时间暂时不表，恰好也可以等一些脑海中的一些想法好好地沉淀一下。参加这次大会就好像是孩童第一次进玩具店，一切的观点就好像各种琳琅满目的玩具，每个都想摸一下，揣怀里带走。越来越喜欢深圳这个地方，总是不乏有这种大牛们将思维苹果抛出的活动，也多谢了Lanny姐带我们出来捡苹果。总而言之，山底的风景就已让人叹为观止，哪能让人不想攀到山巅去览一览众山之貌！</p>
 
-            
-          </span>
+          
         
       
     </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
 
     <footer class="post-footer">
       
@@ -819,13 +1118,26 @@
       
 
   
-  
 
   
   
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://iyounix.com/2015/09/20/15-09-20巴迪闲侃/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Younix">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/avatar.jpg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Younix">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Younix" src="">
+    </span>
+  </span>
 
     
       <header class="post-header">
@@ -847,10 +1159,21 @@
 
         <div class="post-meta">
           <span class="post-time">
-            发表于
-            <time itemprop="dateCreated" datetime="2015-09-20T22:00:00+08:00" content="2015-09-20">
-              2015-09-20
-            </time>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Дата создания записи" itemprop="dateCreated datePublished" datetime="2015-09-20T22:00:00+08:00">
+                2015-09-20
+              </time>
+            
+
+            
+
+            
           </span>
 
           
@@ -858,12 +1181,22 @@
           
             
               <span class="post-comments-count">
-                &nbsp; | &nbsp;
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
                 <a href="/2015/09/20/15-09-20巴迪闲侃/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/09/20/15-09-20巴迪闲侃/" itemprop="commentsCount"></span>
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/09/20/15-09-20巴迪闲侃/" itemprop="commentCount"></span>
                 </a>
               </span>
             
+          
+
+          
+
+          
+          
+
           
 
           
@@ -873,16 +1206,15 @@
     
 
 
-    <div class="post-body">
+    <div class="post-body" itemprop="articleBody">
 
       
       
 
       
         
-          <span itemprop="articleBody">
-            
-              <p>昨天是傻V呀的生日，和小伙伴们欢快的玩耍了一天。抱着high了一天后必须要好好学习的念头背好书包来公司蹭蹭空调。恰好碰到Buddy哥在给傻V做一些心路面包，于是偷偷的凑了过去学着揉了几坨面。感触有一些，不明白的地方有两些。也许最后自己理解的配方和Buddy传授的已然不同，但还是决定趁着自己的热面包新鲜出炉的时候拍两张照片。姑俟异日观。</p>
+          
+            <p>昨天是傻V呀的生日，和小伙伴们欢快的玩耍了一天。抱着high了一天后必须要好好学习的念头背好书包来公司蹭蹭空调。恰好碰到Buddy哥在给傻V做一些心路面包，于是偷偷的凑了过去学着揉了几坨面。感触有一些，不明白的地方有两些。也许最后自己理解的配方和Buddy传授的已然不同，但还是决定趁着自己的热面包新鲜出炉的时候拍两张照片。姑俟异日观。</p>
 <h2 id="1-_u4EA4_u914D_u4EA4_u7684_u4EBA_uFF0C_u505A_u7231_u505A_u7684_u4E8B"><a href="#1-_u4EA4_u914D_u4EA4_u7684_u4EBA_uFF0C_u505A_u7231_u505A_u7684_u4E8B" class="headerlink" title="1.交配交的人，做爱做的事"></a>1.交配交的人，做爱做的事</h2><p>Buddy哥在讲关于交友和职业选择的时候我偷偷的插入了他和傻V的闲侃。题目为这一部分的中心思想。他俩都蛮相信缘分和风水这个的，Buddy哥祭出了他的soulmate，实在好生羡慕。听的时候脑海中闪过了许多人，我的感触就是，其实，我们每个人就好像是不同形状的积木，我们在人生的不同阶段会遇到很多不同的积木，有的十分的契合，那么很幸运，我们现在是无话不谈互相very easy to catch point的soulmate，但是我们因为各种原因不得不在另一阶段分开，在不同的地方遇见不同的积木，这些积木与周围的环境都会慢慢的改变我们的形状，当我们再次相遇，我们尝试在一起的时候会突然发现彼此已经不再契合了。会伤感，会遗憾，但是请不要埋怨。这并不是意味着我们不再是朋友了，虽然我们在不同的路上走着，以后的交集也可能会越来越少，但是我们要知道自己现在的形状的一部分也是由彼此塑造的，我们心底依旧埋藏有彼此的回忆。这就够了。</p>
 <p>再者是做事，大到择业，小到QPI，要记住的是不要给自己退路。人们在遇到困难的时候，都会潜意识的去寻找逃避的方法，但是切莫去强化这种想法，一旦你觉得这种想法是可行的，你会对你现在处理得事情越来越不专注，总想从背后的这个缺口逃脱出去。最终的结果当然是无法完成任务。比如刚入职的时候我在纠结了很长时间关于ATME和RD的选择问题，Lanny姐和Evils哥都善意的告诉我他们觉得我的性格可能不适合做RD，我花了不少时间去思考对于我个人而言孰优孰劣，但纠结仅仅是浪费大量的精力。公司的平台很大，现在的定位并不是板上钉丁的事情，人生的平台更大，马云还卖过花呢。最后我明确了自己的方向。一定要成为一个不仅是合格，更是优秀的RD后，在具有了一个更宽广的眼界后再来思考这个问题，也许会有更加明智的答案。</p>
 <h2 id="2-_u91CF_u53D8_u5F15_u8D77_u8D28_u53D8_uFF0C_u539A_u79EF_u7EC8_u4F1A_u8584_u53D1"><a href="#2-_u91CF_u53D8_u5F15_u8D77_u8D28_u53D8_uFF0C_u539A_u79EF_u7EC8_u4F1A_u8584_u53D1" class="headerlink" title="2.量变引起质变，厚积终会薄发"></a>2.量变引起质变，厚积终会薄发</h2><p>Buddy哥说他原来喜欢每周六喝一瓶大雪碧，喝完后就直接丢在阳台，喝着喝着有一周再去阳台丢雪碧瓶的时候猛地发现了不知不觉自己已经喝了这么多雪碧了。学习和做事更是这样，buddy哥告诉我们可以每三个月进行一个回顾和制定下阶段计划。这个时间是经验时间。恰好我们公司给我们制定QPI也是三个月一定。可以在保证质量的完成公司任务的基础上增加提升自我个人能力的计划。具体的计划具体分析，甚至请Buddy哥或是其他师兄给一些参考意见我觉得也是极好的。保证每天提升一点点，也许几年后回头一看，会突然发现，“啧，我还是挺牛逼的嘛”。</p>
@@ -890,11 +1222,19 @@
 <hr>
 <p>言罢，吃大餐</p>
 
-            
-          </span>
+          
         
       
     </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
 
     <footer class="post-footer">
       
@@ -913,13 +1253,26 @@
       
 
   
-  
 
   
   
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://iyounix.com/2015/08/22/15-08-22深圳深圳/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Younix">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/avatar.jpg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Younix">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Younix" src="">
+    </span>
+  </span>
 
     
       <header class="post-header">
@@ -941,10 +1294,21 @@
 
         <div class="post-meta">
           <span class="post-time">
-            发表于
-            <time itemprop="dateCreated" datetime="2015-08-22T22:00:00+08:00" content="2015-08-22">
-              2015-08-22
-            </time>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Дата создания записи" itemprop="dateCreated datePublished" datetime="2015-08-22T22:00:00+08:00">
+                2015-08-22
+              </time>
+            
+
+            
+
+            
           </span>
 
           
@@ -952,12 +1316,22 @@
           
             
               <span class="post-comments-count">
-                &nbsp; | &nbsp;
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
                 <a href="/2015/08/22/15-08-22深圳深圳/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/08/22/15-08-22深圳深圳/" itemprop="commentsCount"></span>
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/08/22/15-08-22深圳深圳/" itemprop="commentCount"></span>
                 </a>
               </span>
             
+          
+
+          
+
+          
+          
+
           
 
           
@@ -967,16 +1341,15 @@
     
 
 
-    <div class="post-body">
+    <div class="post-body" itemprop="articleBody">
 
       
       
 
       
         
-          <span itemprop="articleBody">
-            
-              <p>不得不感慨深圳是个好地方，网上轻轻一搜就发现每个周末都有很多好活动，从免费电影到收费旅行，还有个人比较感兴趣的这类鸡汤or干货类讲座。利用这两天参加了些活动，还算有意思，先总结下这两天的收获。</p>
+          
+            <p>不得不感慨深圳是个好地方，网上轻轻一搜就发现每个周末都有很多好活动，从免费电影到收费旅行，还有个人比较感兴趣的这类鸡汤or干货类讲座。利用这两天参加了些活动，还算有意思，先总结下这两天的收获。</p>
 <h2 id="8-22__u667A_u80FD_u5BB6_u5C45_26amp_3B_u667A_u80FD_u786C_u4EF6_u535A_u89C8_u4F1A"><a href="#8-22__u667A_u80FD_u5BB6_u5C45_26amp_3B_u667A_u80FD_u786C_u4EF6_u535A_u89C8_u4F1A" class="headerlink" title="8.22 智能家居&amp;智能硬件博览会"></a>8.22 智能家居&amp;智能硬件博览会</h2><p>内行看门道，外行看热闹。显然我是后者。不过这并不影响我将这些浅薄的观点记下来的冲动。</p>
 <h3 id="1-_NFC"><a href="#1-_NFC" class="headerlink" title="1. NFC"></a>1. NFC</h3><p>放眼望去频率出现最高的字眼第一个是物联网，第二个就是NFC了。为什么这么多厂商都在做 NFC ？前段时间在共通性培训中了解到，中国的移动支付这块蛋糕很大，但是银行能力有限吃不了这块蛋糕，却也死死地盯着支付宝等支付平台通过限额啊等手段不让他们好好吃。尤其是NFC支付。据说各大平台都在和银行谈合作，但是后者始终没有松口。而这次 NFC 如此之多可见移动支付浪潮可能就要汹涌袭来。</p>
 <h3 id="2-_u667A_u80FD_u786C_u4EF6"><a href="#2-_u667A_u80FD_u786C_u4EF6" class="headerlink" title="2.智能硬件"></a>2.智能硬件</h3><p>这个涵盖的面实在是太广了，从可穿戴设备到智能电视、智能家居、智能汽车、医疗各个方面。产业链有Chip、OS、Sensor、LCD、Connectivity、Software等。但是总的来说给我的感觉就是太杂了，而且都感觉做不大，因为没有一个统一的平台。就拿智能家居这块的智能硬件来说，每个厂商都各做各的，要用一个产品的就必须下载一个APP，然后手机端无线控制这样的产品。第一，这种体验很不好，难道以后普及了智能家居后满手机的几十个APP来控制全家的电器？第二，个人认为这种形式根本算不上智能，这无外乎是将开关集成到了手机上，和传统的硬件开关没有本质差别，只是缩小了一点点体力成本，但是体验并没有质的飞跃。什么才是真正的智能家居，你完全不用去干预，你以为它不存在，但是没有它幸福感下降了一大截的家居我认为才能叫智能家居。就比智能空调，先不谈硬件实现，可以想象这样一幅场景。你回家前几分钟空调自动打开调节家里温度，一到家心旷神怡，当你离空调较近，你戴的手环感受到你体温较低，自动反馈数据给空调（更有可能是网关），然后空调（或者网关）控制温度到合适的度数。到了这一步，才能算是实现了智能家居。</p>
@@ -999,11 +1372,19 @@
 <li>方向比努力更重要！</li>
 </ol>
 
-            
-          </span>
+          
         
       
     </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
 
     <footer class="post-footer">
       
@@ -1022,13 +1403,26 @@
       
 
   
-  
 
   
   
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://iyounix.com/2015/08/07/15-08-07Android 软件层次架构/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Younix">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/avatar.jpg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Younix">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Younix" src="">
+    </span>
+  </span>
 
     
       <header class="post-header">
@@ -1050,10 +1444,21 @@
 
         <div class="post-meta">
           <span class="post-time">
-            发表于
-            <time itemprop="dateCreated" datetime="2015-08-07T22:00:00+08:00" content="2015-08-07">
-              2015-08-07
-            </time>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Дата создания записи" itemprop="dateCreated datePublished" datetime="2015-08-07T22:00:00+08:00">
+                2015-08-07
+              </time>
+            
+
+            
+
+            
           </span>
 
           
@@ -1061,12 +1466,22 @@
           
             
               <span class="post-comments-count">
-                &nbsp; | &nbsp;
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
                 <a href="/2015/08/07/15-08-07Android 软件层次架构/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/08/07/15-08-07Android 软件层次架构/" itemprop="commentsCount"></span>
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/08/07/15-08-07Android 软件层次架构/" itemprop="commentCount"></span>
                 </a>
               </span>
             
+          
+
+          
+
+          
+          
+
           
 
           
@@ -1076,16 +1491,15 @@
     
 
 
-    <div class="post-body">
+    <div class="post-body" itemprop="articleBody">
 
       
       
 
       
         
-          <span itemprop="articleBody">
-            
-              <p><img src="http://ww2.sinaimg.cn/large/ba061518gw1eutqfpwg71j20g40bkta2.jpg" alt="Android" title="Android 层次架构"></p>
+          
+            <p><img src="http://ww2.sinaimg.cn/large/ba061518gw1eutqfpwg71j20g40bkta2.jpg" alt="Android" title="Android 层次架构"></p>
 <p>安卓软件层次分为四个层次。包括Applications，Application Framework，系统运行时库（包括程序库和安卓运行时库）和Linux Kernel层。</p>
 <p> <strong>应用程序层</strong>：所有的应用程序都是使用java语言编写的，通过调用应用程序框架层所提供的API来完成。</p>
 <p> <strong>应用程序框架层</strong>：为开发人员提供了可以完全访问核心应用程序所使用的API框架。</p>
@@ -1108,11 +1522,19 @@
 <p> <strong>Libe</strong>：Android并没有采用glibc作为C库，而是采用了Google自己开发的Bionic Lib。它从BSD继承了标准的C系统函数库，是专门为基于嵌入式Linux设备定制的。</p>
 <p> <strong>Android</strong> <strong>Runtime</strong> <strong>Lib</strong>： Android运行时库又分为核心库和Dalvik虚拟机两部分。核心库提供了Java语言核心库的大多数功能，这里主要通过JNI的方式向应用程序框架层提供调用底层程序库的接口。Dalvik虚拟机是为了能同时高效地运行多个VMs而实现的。（Dalvik是Android中使用的Java虚拟机，每个Android应用程序都在自己的进程中运行，都拥有一个独立的Dalvik虚拟机实例。Dalvik被设计成一个可以同时高效运行多个虚拟机实例的虚拟系统。）执行后缀名为.dex的Dalvik可执行文件，该格式的文件针对小内存使用做出了优化。同时虚拟机是基于寄存器的，所有的类都是有Java编译器编译，然后通过SDK中的“dx”工具转化为.dex格式由虚拟机执行。Dalvik虚拟机依赖于Linux内核的一些功能，比如线程机制和底层内存管理机制。</p>
 
-            
-          </span>
+          
         
       
     </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
 
     <footer class="post-footer">
       
@@ -1131,13 +1553,26 @@
       
 
   
-  
 
   
   
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://iyounix.com/2015/08/01/15-08-01基本功/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Younix">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/avatar.jpg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Younix">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Younix" src="">
+    </span>
+  </span>
 
     
       <header class="post-header">
@@ -1159,10 +1594,21 @@
 
         <div class="post-meta">
           <span class="post-time">
-            发表于
-            <time itemprop="dateCreated" datetime="2015-08-01T22:00:00+08:00" content="2015-08-01">
-              2015-08-01
-            </time>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Дата создания записи" itemprop="dateCreated datePublished" datetime="2015-08-01T22:00:00+08:00">
+                2015-08-01
+              </time>
+            
+
+            
+
+            
           </span>
 
           
@@ -1170,12 +1616,22 @@
           
             
               <span class="post-comments-count">
-                &nbsp; | &nbsp;
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
                 <a href="/2015/08/01/15-08-01基本功/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/08/01/15-08-01基本功/" itemprop="commentsCount"></span>
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/08/01/15-08-01基本功/" itemprop="commentCount"></span>
                 </a>
               </span>
             
+          
+
+          
+
+          
+          
+
           
 
           
@@ -1185,16 +1641,15 @@
     
 
 
-    <div class="post-body">
+    <div class="post-body" itemprop="articleBody">
 
       
       
 
       
         
-          <span itemprop="articleBody">
-            
-              <p>Lawrence今天滔滔不绝的给我们讲了两个半小时的基本功。总的来说以下几点：</p>
+          
+            <p>Lawrence今天滔滔不绝的给我们讲了两个半小时的基本功。总的来说以下几点：</p>
 <p>一、相信。</p>
 <ol>
 <li>T I P E</li>
@@ -1217,11 +1672,19 @@
 <h1 id="u4E09_u3001_u5165_u52BF_u3001_u987A_u52BF_u3001_u521B_u52BF"><a href="#u4E09_u3001_u5165_u52BF_u3001_u987A_u52BF_u3001_u521B_u52BF" class="headerlink" title="三、入势、顺势、创势"></a>三、入势、顺势、创势</h1><p>Lawrence说，这三个的是循序渐进的。当你进入一个行业，你需要经历这三个阶段，当你进入一家公司你也要经历这三个阶段。我们现在就是在入势的阶段，不仅是入行业而且是入公司。关于这个话题他提出了很多观点。不想罗列，也不置可否。</p>
 <p>将这节课所有的观点和感受暂且都放在心中，虽然现在持有一种看法但是也许过段时间经历了一些事情后又会有新的想法，这谁说的准呢。最终，随着时间沉淀下来仍旧记忆犹新的东西才是最适合自己的。</p>
 
-            
-          </span>
+          
         
       
     </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
 
     <footer class="post-footer">
       
@@ -1237,7 +1700,6 @@
 
 
     
-
   </section>
 
   
@@ -1247,17 +1709,15 @@
 
 
 
+          </div>
+          
+
+
+          
+
         </div>
-
         
-
-
-        
-
-      </div>
-
-      
-        
+          
   
   <div class="sidebar-toggle">
     <div class="sidebar-toggle-line-wrap">
@@ -1274,33 +1734,35 @@
 
       
 
-      <section class="site-overview sidebar-panel  sidebar-panel-active ">
+      <section class="site-overview sidebar-panel sidebar-panel-active">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-          <img class="site-author-image" src="/images/avatar.jpg" alt="Younix" itemprop="image"/>
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Younix" />
           <p class="site-author-name" itemprop="name">Younix</p>
+          <p class="site-description motion-element" itemprop="description"></p>
         </div>
-        <p class="site-description motion-element" itemprop="description"></p>
         <nav class="site-state motion-element">
-          <div class="site-state-item site-state-posts">
-            <a href="/archives">
-              <span class="site-state-item-count">23</span>
-              <span class="site-state-item-name">日志</span>
-            </a>
-          </div>
-
-          <div class="site-state-item site-state-categories">
-            
-              <span class="site-state-item-count">0</span>
-              <span class="site-state-item-name">分类</span>
-              
-          </div>
-
-          <div class="site-state-item site-state-tags">
-            <a href="/tags">
-              <span class="site-state-item-count">5</span>
-              <span class="site-state-item-name">标签</span>
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-name">日志</span>
               </a>
-          </div>
+            </div>
+          
+
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
 
         </nav>
 
@@ -1310,26 +1772,29 @@
           
             
               <span class="links-of-author-item">
-                <a href="https://github.com/dearsq/" target="_blank">
+                <a href="https://github.com/dearsq/" target="_blank" title="github">
                   
-                    <i class="fa fa-globe"></i> github
+                    <i class="fa fa-fw fa-globe"></i>
                   
+                  github
                 </a>
               </span>
             
               <span class="links-of-author-item">
-                <a href="https://weibo.com/younix" target="_blank">
+                <a href="https://weibo.com/younix" target="_blank" title="weibo">
                   
-                    <i class="fa fa-globe"></i> weibo
+                    <i class="fa fa-fw fa-globe"></i>
                   
+                  weibo
                 </a>
               </span>
             
               <span class="links-of-author-item">
-                <a href="https://www.zhihu.com/people/younix" target="_blank">
+                <a href="https://www.zhihu.com/people/younix" target="_blank" title="zhihu">
                   
-                    <i class="fa fa-globe"></i> zhihu
+                    <i class="fa fa-fw fa-globe"></i>
                   
+                  zhihu
                 </a>
               </span>
             
@@ -1339,9 +1804,11 @@
         
         
 
-        <div class="links-of-author motion-element">
-          
-        </div>
+        
+        
+
+        
+
 
       </section>
 
@@ -1351,7 +1818,8 @@
   </aside>
 
 
-      
+        
+      </div>
     </main>
 
     <footer id="footer" class="footer">
@@ -1361,37 +1829,96 @@
   &copy; 
   <span itemprop="copyrightYear">2016</span>
   <span class="with-love">
-    <i class="icon-next-heart fa fa-heart"></i>
+    <i class="fa fa-heart"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">Younix</span>
 </div>
 
+
 <div class="powered-by">
-  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
 </div>
 
 <div class="theme-info">
   主题 -
   <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
-    NexT
+    NexT.Muse
   </a>
 </div>
 
 
+        
 
+        
       </div>
     </footer>
 
-    <div class="back-to-top"></div>
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
   </div>
 
-  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
 
   
   
 
   
-    
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
 
   
     
@@ -1409,37 +1936,34 @@
       || document.getElementsByTagName('body')[0]).appendChild(ds);
     })();
   </script>
+
+  
     
-     
-
-
     
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
   
 
-  
-  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
-  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.2"></script>
 
 
-  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.2"></script>
-  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
-<script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
-
-<script type="text/javascript" src="/js/motion.js?v=0.4.5.2" id="motion.global"></script>
 
 
-  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
-  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
 
-  
 
-  <script type="text/javascript" src="/js/bootstrap.js"></script>
+
+
 
   
   
 
   
+
   
+
+  
+
+  
+
 
 </body>
 </html>
