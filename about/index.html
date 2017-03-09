@@ -64,15 +64,15 @@
                     </li>
                     <li>
                         <label class="left-label">Linux</label>
-                        <progress value="50" max="100"></progress>
+                        <progress value="60" max="100"></progress>
                     </li>
                     <li>
                         <label class="left-label">Android 驱动</label>
-                        <progress value="50" max="100"></progress>
+                        <progress value="60" max="100"></progress>
                     </li>
                     <li>
                         <label class="left-label">Android 应用</label>
-                        <progress value="20" max="100"></progress>
+                        <progress value="30" max="100"></progress>
                     </li>
                 </ul>
             </div>
@@ -84,10 +84,7 @@
                         <label class="left-label">平台</label><span class="label-value">Sprd、RockChip</span></li>
                     </li>
                     <li>
-                        <label class="left-label">协议栈</label><span class="label-value">I2C、SPI、MipiDSI、MipiCSI</span></li>
-                    </li>
-                    <li>
-                        <label class="left-label">调试手段</label><span class="label-value">示波器、逻辑分析仪、gdb、minicom、adb</span></li>
+                        <label class="left-label">协议栈</label><span class="label-value">I2C、SPI、MipiDSI</span></li>
                     </li>
                    
                 </ul>
@@ -115,7 +112,7 @@
                 <ul class="experience-list">
                     <li>
                         <h3>江汉大学 - 光信息科学与技术（本科）2011-2015</h3>
-                        <h3>英语等级：六级</h3>                            
+                        <h3>英语等级：六级，       政治面貌：党员</h3>                            
                         
                     </li>
                 </ul>
@@ -126,7 +123,7 @@
                 <ul class="experience-list">
                     <li>
                         <h3>大联大商贸有限公司－Android嵌入式软件</h3>
-                        <p> 负责 Android 手机（6个月）、Android 平板（6个月）、VR一体机（4个月）驱动软件的移植，负责所做方案的客户支持。
+                        <p> 负责 Android 手机（展讯平台 6个月）、Android 平板（展讯平台 4个月）</br> VR一体机（RK平台 6个月）驱动软件的移植，负责所做方案的客户支持。
                         </p>
                     </li>
                     
@@ -136,14 +133,13 @@
                 <h2 class="info-header"><i class="iconfont icon-project"></i> <span class="info-title">个人项目</span></h2>
                 <hr>
                 <ul class="experience-list">
-                    <li>
-                        <h3>基于展讯 SC7715 平台的 Android 智能手机</h3>
+                	<li>
+                        <h3>基于 RK3399 平台的 VR 一体机</h3>
                         <p>
-                           软件环境：Android4.4<br/>
-                           硬件环境：SC7715、LCD、TP、G/M-Sensor、Gyroscope<br/>
-                           职责描述：完成了以上外围设备的移植，熟悉了 Android4.4 的平台架构。<br/>
-                           其中参考平台的 GSensor 代码完成 Gyroscope Sensor HAL 层代码的编写。
-                           完成字符设备闪光灯（LM3642）的驱动（C）、HAL（C++）、App（Java）代码的编写。实现了一款 APP 可以控制闪光灯模块的模式切换。<br/>
+                            软件环境：Android6.0<br/>
+                            硬件环境：RK3399、A+G-Sensor、双 MIPI OLED、USB3.0<br/>
+                            职责描述：完成了以上外设设备的移植，熟悉了 Android 6.0 的平台架构。<br/>
+                            开发困难：双 Mipi OLED 屏调试问题。深入了解了 Mipi 协议与 RK 平台 LCD 驱动加载流程。<br/>
                         </p>
                     </li>
                     <li>
@@ -152,23 +148,25 @@
                            软件环境：Android5.1<br/>
                            硬件环境：SC7731、LCD、TP、G-Sensor、M-Sensor、Gyroscope、Camera、P/L Sensor<br/>
                            职责描述：完成了以上外围设备的移植，熟悉了 Android5.1 的平台架构。<br/>
-                           负责了以上外围设备的移植，熟悉了 Android5.1 的平台架构。
-                           其中 G-Sensor(SPI) 参考的 RTOS 的代码完成了 Android 平台驱动的编写。<br/>
+                           开发困难：陀螺仪 Sensor 未提供代码，参考平台中 G-Sensor 的代码完成陀螺仪 Driver 层及 HAL 代码驱动的编写。<br/>
                         </p>
                     </li>
+
                     <li>
-                        <h3>基于 RK3399 平台的 VR 一体机</h3>
+                        <h3>基于展讯 SC7715 平台的 Android 智能手机</h3>
                         <p>
-                            软件环境：Android6.0<br/>
-                            硬件环境：RK3399、A/G-Sensor、Camera、Mipi、EDP转Mipi、USB3.0<br/>
-                            职责描述：完成了以上外设设备的移植，熟悉了 Android 6.0 的平台架构。
+                           软件环境：Android4.4<br/>
+                           硬件环境：SC7715、LCD、TP、G/M-Sensor、Gyroscope<br/>
+                           职责描述：完成了以上外围设备的移植，熟悉了 Android4.4 的平台架构。<br/>
+                           开发困难：完成字符设备闪光灯（LM3642）的 Driver 层、HAL 层、Application 层代码的编写。实现了一款 APP 可以控制闪光灯模块的模式切换和亮度调节。由顶层至底层地了解了 Android 系统中字符设备的加载与调用流程。<br/>
                         </p>
                     </li>
+
                     <li>
                         <h3>其他项目</h3>
                         <p>
-                            基于 RK3288 的 TV-BOX，调试了 Wifi/BT/FM、HDMI。</br>
-                            基于 RK3399 的 广告机，调试了 eDP、Mipi 的双屏异显。
+                            基于 RK3399 的会议对讲系统，调试了 eDP+Mipi 双屏异显，TP。</br>
+                            基于 RK3288 的 影音播放头盔，添加开机播放动画(mp4)功能。</br>
                         </p>
                     </li>
                 </ul>
@@ -178,16 +176,16 @@
                 <hr>
                 <ul class="experience-list">
                     <li>
-                        <h3>大联大世平集团2016年应用拓展给力奖</h3>
-                    </li>
-                    <li>
                         <h3>RockChip 1108/3399 Certification</h3>
                     </li>
                     <li>
                         <h3>SPRD Camera Certification</h3>
                     </li>
                     <li>
-                        <h3>大联大世平集团大学生计划优秀同仁奖（第二名）</h3>
+                        <h3>大联大世平集团2016年应用拓展给力奖</h3>
+                    </li>  
+                    <li>
+                        <h3>大联大世平集团2015届大学生计划优秀同仁奖（第二名）</h3>
                     </li>                 
             </div>
             <div class="aboutme info-unit right-paragraph">
