@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 
 
 
@@ -10,11 +10,22 @@
   <meta charset="UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
 
 
 
 <meta http-equiv="Cache-Control" content="no-transform" />
 <meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
 
 
 
@@ -65,7 +76,7 @@
 
 <link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
 
-<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
 
 
   <meta name="keywords" content="InnerPath," />
@@ -77,7 +88,7 @@
 
 
 
-  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
 
 
 
@@ -108,9 +119,11 @@ Team我好担心。因为我们这个Team太棒了，我觉得以后要分开的
   var CONFIG = {
     root: '/',
     scheme: 'Muse',
-    sidebar: {"position":"left","display":"post"},
+    version: '5.1.2',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
     fancybox: true,
-    motion: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
     duoshuo: {
       userId: '0',
       author: '博主'
@@ -133,12 +146,10 @@ Team我好担心。因为我们这个Team太棒了，我觉得以后要分开的
 
 
 
-  <title> 入职杂谈 | Younix </title>
-</head>
-
-<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
-
+  <title>入职杂谈 | Younix</title>
   
+
+
 
 
 
@@ -155,40 +166,42 @@ Team我好担心。因为我们这个Team太棒了，我觉得以后要分开的
 
 
 
+</head>
 
-
-
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
 
   
   
     
   
 
-  <div class="container one-collumn sidebar-position-left page-post-detail ">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-meta ">
-  
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
 
-  <div class="custom-logo-site-title">
-    <a href="/"  class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <span class="site-title">Younix</span>
-      <span class="logo-line-after"><i></i></span>
-    </a>
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Younix</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">我的心愿是 世界和平</p>
+      
   </div>
-    
-      <p class="site-subtitle">我的心愿是 世界和平</p>
-    
-</div>
 
-<div class="site-nav-toggle">
-  <button>
-    <span class="btn-bar"></span>
-    <span class="btn-bar"></span>
-    <span class="btn-bar"></span>
-  </button>
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
 </div>
 
 <nav class="site-nav">
@@ -211,39 +224,29 @@ Team我好担心。因为我们这个Team太棒了，我觉得以后要分开的
         <li class="menu-item menu-item-book">
           <a href="/book" rel="section">
             
-              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+              <i class="menu-item-icon fa fa-fw fa-book"></i> <br />
             
-            笔记
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-about">
-          <a href="/about" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
-            
-            关于
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-archives">
-          <a href="/archives" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
-            
-            归档
+            book
           </a>
         </li>
       
         
         <li class="menu-item menu-item-tags">
-          <a href="/tags" rel="section">
+          <a href="/tags/" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
             
             标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
           </a>
         </li>
       
@@ -275,35 +278,29 @@ Team我好担心。因为我们这个Team太棒了，我觉得以后要分开的
   
   
 
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="http://iyounix.com/2015/07/27/15-07-27入职杂谈/">
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://iyounix.com/2015/07/27/15-07-27入职杂谈/">
 
-  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <meta itemprop="name" content="Younix">
-    <meta itemprop="description" content="">
-    <meta itemprop="image" content="/images/avatar.jpg">
-  </span>
-
-  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-    <meta itemprop="name" content="Younix">
-    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
-      <img style="display:none;" itemprop="url image" alt="Younix" src="">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Younix">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
     </span>
-  </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Younix">
+    </span>
 
     
       <header class="post-header">
 
         
         
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                入职杂谈
-              
-            
-          </h1>
+          <h1 class="post-title" itemprop="name headline">入职杂谈</h1>
         
 
         <div class="post-meta">
@@ -315,7 +312,7 @@ Team我好担心。因为我们这个Team太棒了，我觉得以后要分开的
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="Дата создания записи" itemprop="dateCreated datePublished" datetime="2015-07-27T22:00:00+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2015-07-27T22:00:00+08:00">
                 2015-07-27
               </time>
             
@@ -342,8 +339,8 @@ Team我好担心。因为我们这个Team太棒了，我觉得以后要分开的
           
 
           
-
           
+
           
 
           
@@ -354,7 +351,9 @@ Team我好担心。因为我们这个Team太棒了，我觉得以后要分开的
       </header>
     
 
-
+    
+    
+    
     <div class="post-body" itemprop="articleBody">
 
       
@@ -371,21 +370,15 @@ Team我好担心。因为我们这个Team太棒了，我觉得以后要分开的
 
       
     </div>
+    
+    
+    
 
-    <div>
-      
-        
+    
 
-      
-    </div>
+    
 
-    <div>
-      
-        
-
-      
-    </div>
-
+    
 
     <footer class="post-footer">
       
@@ -394,6 +387,10 @@ Team我好担心。因为我们这个Team太棒了，我觉得以后要分开的
             <a href="/tags/InnerPath/" rel="tag"># InnerPath</a>
           
         </div>
+      
+
+      
+      
       
 
       
@@ -421,6 +418,10 @@ Team我好担心。因为我们这个Team太棒了，我觉得以后要分开的
       
       
     </footer>
+  </div>
+  
+  
+  
   </article>
 
 
@@ -458,6 +459,7 @@ Team我好担心。因为我们这个Team太棒了，我觉得以后要分开的
   </div>
 
   <aside id="sidebar" class="sidebar">
+    
     <div class="sidebar-inner">
 
       
@@ -475,17 +477,22 @@ Team我好担心。因为我们这个Team太棒了，我觉得以后要分开的
 
       <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-          <img class="site-author-image" itemprop="image"
-               src="/images/avatar.jpg"
-               alt="Younix" />
-          <p class="site-author-name" itemprop="name">Younix</p>
-          <p class="site-description motion-element" itemprop="description"></p>
+          
+            <img class="site-author-image" itemprop="image"
+              src="/images/avatar.jpg"
+              alt="Younix" />
+          
+            <p class="site-author-name" itemprop="name">Younix</p>
+            <p class="site-description motion-element" itemprop="description"></p>
         </div>
+
         <nav class="site-state motion-element">
-        
+
           
             <div class="site-state-item site-state-posts">
-              <a href="/archives">
+            
+              <a href="/archives/">
+            
                 <span class="site-state-item-count">23</span>
                 <span class="site-state-item-name">日志</span>
               </a>
@@ -495,8 +502,10 @@ Team我好担心。因为我们这个Team太棒了，我觉得以后要分开的
           
 
           
+            
+            
             <div class="site-state-item site-state-tags">
-              <a href="/tags">
+              <a href="/tags/index.html">
                 <span class="site-state-item-count">5</span>
                 <span class="site-state-item-name">标签</span>
               </a>
@@ -513,28 +522,19 @@ Team我好担心。因为我们这个Team太棒了，我觉得以后要分开的
               <span class="links-of-author-item">
                 <a href="https://github.com/dearsq/" target="_blank" title="github">
                   
-                    <i class="fa fa-fw fa-globe"></i>
-                  
-                  github
-                </a>
+                    <i class="fa fa-fw fa-globe"></i>github</a>
               </span>
             
               <span class="links-of-author-item">
                 <a href="https://weibo.com/younix" target="_blank" title="weibo">
                   
-                    <i class="fa fa-fw fa-globe"></i>
-                  
-                  weibo
-                </a>
+                    <i class="fa fa-fw fa-globe"></i>weibo</a>
               </span>
             
               <span class="links-of-author-item">
                 <a href="https://www.zhihu.com/people/younix" target="_blank" title="zhihu">
                   
-                    <i class="fa fa-fw fa-globe"></i>
-                  
-                  zhihu
-                </a>
+                    <i class="fa fa-fw fa-globe"></i>zhihu</a>
               </span>
             
           
@@ -569,6 +569,8 @@ Team我好担心。因为我们这个Team太棒了，我觉得以后要分开的
       <!--/noindex-->
       
 
+      
+
     </div>
   </aside>
 
@@ -587,30 +589,37 @@ Team我好担心。因为我们这个Team太棒了，我觉得以后要分开的
     <i class="fa fa-heart"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">Younix</span>
+
+  
 </div>
 
 
-<div class="powered-by">
-  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
-</div>
+  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
 
-<div class="theme-info">
-  主题 -
-  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
-    NexT.Muse
-  </a>
-</div>
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.2</div>
 
 
         
+
+
+
+
+
+
 
         
       </div>
     </footer>
 
-    <div class="back-to-top">
-      <i class="fa fa-arrow-up"></i>
-    </div>
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
   </div>
 
   
@@ -630,6 +639,15 @@ Team我好担心。因为我们这个Team太棒了，我觉得以后要分开的
 
 
   
+
+
+
+
+
+
+
+
+
 
 
 
@@ -655,25 +673,25 @@ Team我好担心。因为我们这个Team太棒了，我觉得以后要分开的
   
 
 
-  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
 
-  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
-
-
-
-  
-  
-
-  
-  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
-<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
 
 
 
   
+  
+
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
 
 
-  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+  
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
 
 
 
@@ -712,8 +730,17 @@ Team我好担心。因为我们这个Team太棒了，我觉得以后要分开的
 
 
 
+
+
+
+
+
+
   
-  
+
+
+
+
 
   
 
@@ -723,6 +750,9 @@ Team我好担心。因为我们这个Team太棒了，我觉得以后要分开的
 
   
 
+  
+
+  
 
 </body>
 </html>
