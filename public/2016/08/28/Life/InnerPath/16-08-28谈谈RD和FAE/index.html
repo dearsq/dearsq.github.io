@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="">
+    <!-- title -->
+
+
+
+
+<!-- keywords -->
+
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" >
+    <meta name="author" content="Younix">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="Younix">
+    
+    <meta name="keywords" content="Younix,hexo-theme,hexo-blog,黑羊爱学习,黑羊,dearsq">
+    
+    <meta name="description" content="">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <title>谈谈RD和FAE · Younix&#39;s Studio</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href= "/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="stylesheet" href= "/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href= "/assets/favicon.ico" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script" />
+    <link rel="preload" href="/scripts/main.js" as="script" />
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+        <!-- algolia -->
+        <script>
+            
+            var hits = JSON.parse('{"per_page":10}')
+            var labels = JSON.parse('{"input_placeholder":"Search for Posts","hits_empty":"We did not find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}')
+
+            var algolia = {
+                applicationID: '1MYSDXEEPM',
+                apiKey: '006bf3234a29ef116c82df0b1e558270',
+                indexName: 'YounixSearchKey',
+                hits: hits,
+                labels: labels
+            }
+        </script>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >Younix&#39;s Studio.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">谈谈RD和FAE</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>Younix's Studio.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="
+
+
+
+
+
+
+
+height:50vh;
+">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            谈谈RD和FAE
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "InnerPath">InnerPath</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">1.7k</span>阅读时长: <span class="post-count reading-time">5 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2016/08/28</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <p>这段时间负责 Mipi 屏的移植，平台是在 RK3288 上。搜索资料的时候进入了 Firefly(基于3288的一块开发板)的技术支持群。与其他公司的各种 RD 大牛交流，收获颇丰。但也颇有感慨。<br>最强烈的感受就是，FAE 和 RD 的差别。</p>
+<h2 id="我们公司-FAE-的尴尬定位"><a href="#我们公司-FAE-的尴尬定位" class="headerlink" title="我们公司 FAE 的尴尬定位"></a>我们公司 FAE 的尴尬定位</h2><p>因为现在所在的公司定位是代理商，所以我们 FAE 的职责自然就是支持客户。虽然很无奈，但是我们的工作职责就是将客户的问题经过筛选反馈给原厂。简单的让我们 FAE 处理，难的交由原厂，说白了就是一个筛子。<br>另外可能和其他代理商不同，我们的 FAE 还需要做 CASE，就是独立的去完成方案，然后交由同仁去推广给客户。<br><strong>但是 FAE 是 行业鄙视链的最末端。</strong><br>这段时间会常常向其他公司的 RD 们请教问题（他们不知道我是 FAE），最常出现的一段对话是</p>
+<blockquote>
+<p>我：前辈，请问…<br>前辈：去问这颗料的 FAE 啊…</p>
+</blockquote>
+<p>印象特别深的还记得有一次，我碰到了一个问题，算是比较有技术含量，当时在群里面引起了一阵讨论。有一个前辈无意问道我是做什么的，我便说我是 FAE，他们许多人便很疑惑 FAE 为什么还需要负责移植工作，为什么还能够有能力来进行移植工作。虽然非常尽力而委婉，但鄙视轻视之情还是溢于言表。</p>
+<p>于是这几天我仔细分析思考了一下他们 RD 和 我们 FAE 的区别，得出了以下几点。</p>
+<h2 id="解决问题的思路"><a href="#解决问题的思路" class="headerlink" title="解决问题的思路"></a>解决问题的思路</h2><p>这一点是最大的差距。这快一年的时间，我主要负责过两个平台，先是展讯平台，后是 RK 平台，两者都有各自的 BugReport 系统，展讯的叫做 ClearQuest（CQ),RK 的则是 Redmine ，刚进公司便学习了这些平台的使用方法。<br>连师兄也教我说，<strong>遇到问题有三个步骤</strong></p>
+<ol>
+<li>去 CQ/Redmine 上面查原来是否有人碰到过类似问题; </li>
+<li>问周围的同事有没有人碰到过</li>
+<li>在网上搜索答案<br>然后我自己又把第三点扩充了一下<br>3.1 Google<br>3.2 StackOverFlow<br>3.3 Github</li>
+</ol>
+<p>不得不承认，这些步骤确实对我的思维有很大的影响，而且坦诚的说，我认为这些影响弊大于利。</p>
+<h3 id="利"><a href="#利" class="headerlink" title="利"></a>利</h3><p><strong>快速解决问题</strong>，这一点是工作与学习的差别。不像学习的时候自己去慢慢琢磨原理，工作的时候主管们第一要求就是需要很快的解决问题（因为很多时候都是客户正赶着量产），所以需要有快速解决问题的能力。解决问题不在乎你是怎么去解决的，你可以抄 Github ，可以求助行业内的其他前辈，可以去各种 BugReport 平台搜索答案，<strong>方法无关紧要，结果就是一切</strong>。<br><strong>所以利在于，可以很快的为公司创造价值。</strong></p>
+<h3 id="弊"><a href="#弊" class="headerlink" title="弊"></a>弊</h3><p>这就导致我现在每每碰到一个问题，首先都是想要去借助外力来解决问题。<br>比如要移植一款某个 Sensor，我首先想得就是去 Github 上面找源码，最好能找到相同或者相似平台的，找到后轻轻松松移植，一了百了，但是实际上有很多技术细节容易被忽略掉。<br>就像是曾经移植一款 GyroscopeSensor 的时候，到处都找不到代码（我们早就不代理这颗料了，但是因为是给我练手的，所以还是得做出来），于是尝试自己写代码。最开始很艰辛，但是花了一周，仿照平台上的 加速度计 Sensor 完成了这个 Gyroscope  Sensor 代码的编写，跟踪到了整个 input 设备加载流程的代码细节中，还是很有成就感的。<br>那么，这个快速解决问题的方法所带来的<strong>弊在于，相当容易忽略掉技术细节</strong>。做完了就结束了，没有碰到问题，就不会带来进步。</p>
+<h2 id="搜集信息和学习知识的能力"><a href="#搜集信息和学习知识的能力" class="headerlink" title="搜集信息和学习知识的能力"></a>搜集信息和学习知识的能力</h2><p><strong>搜集信息和学习知识能力，这一点我觉得因人而异。不能一概而论。</strong><br>确实接触到的 RD 前辈们很多都相当厉害，不过我觉得同样有很多的 RD 的学习能力甚至不如我们强。有的 RD 遇到问题就来找我们，即使是些很简单的东西，Google 就能出来，StackOverFlow 上面全都有。<br>这一点因人而异也不细表了。</p>
+<h2 id="外界压力"><a href="#外界压力" class="headerlink" title="外界压力"></a>外界压力</h2><p>这一点毋庸置疑， RD 的压力比我们要大得多，这也是我相当羡慕的一点。<br>并不是我有这种受虐倾向，只是我觉得个人的主观能动性是有限的，如果大环境都是向前冲的，我们自然也会向前冲的更有激情。而 FAE 所在的公司这种 “ 工程师氛围 “，实在太稀薄了。<br>因为公司工作压力不大，所以时常下班后，大家半个小时一个小时之内便陆陆续续的回家了。<br>我并不是说加班就意味着 ”工程师氛围“，而是说现在公司这种氛围不是我所期待的，很容易让人就磨平了斗志，进步速度自然而然的变慢很多。最可怕的是你以为自己是兔子，大家是乌龟，但是你不知道还有豹子、羚羊的存在，你不知道在奔跑的不止有动物，还有汽车、火箭，还有光。<br>暂时解决这个问题的办法就是<strong>抱团</strong>，和热爱技术的小伙伴抱团一起去前进是暂时的策略。</p>
+<p>了解到的一些真正的 RD 的生活，他们每天都有相当明确的任务，必须要实现某个功能，不能完成就加班。<br>虽然有人说这样肯定累坏啦，但是我觉得在这种外界的高压下去前进，进步也一定是神速的。而且刚毕业就不想劳累，想去思考安逸，那你还想等到什么时候去奋斗呢？</p>
+<h2 id="优势与劣势"><a href="#优势与劣势" class="headerlink" title="优势与劣势"></a>优势与劣势</h2><p>最后，整体的来看，因为压力的原因，FAE 积累技术的速度比 RD 要慢许多。<br>但是这并不是无法弥补的。<br>作为一个 FAE，首先要有很多 RD 一样独立思考问题的能力。即使是去求助 Github，也应该<strong>尽可能地了解技术实现的细节</strong>。<br>其次，作为 FAE 的优势在于自由时间比 RD 多，所以我们需要做的就是<strong>把这些自由时间高效地利用起来</strong>，达到提高自己的目的。</p>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者：<a href="http://iyounix.com">Younix</a>
+            <p>原文链接：<a href="http://iyounix.com/2016/08/28/Life/InnerPath/16-08-28谈谈RD和FAE/">http://iyounix.com/2016/08/28/Life/InnerPath/16-08-28谈谈RD和FAE/</a>
+            <p>发表日期：<a href="http://iyounix.com/2016/08/28/Life/InnerPath/16-08-28谈谈RD和FAE/">August 28th 2016, 10:00:00 pm</a>
+            <p>更新日期：<a href="http://iyounix.com/2016/08/28/Life/InnerPath/16-08-28谈谈RD和FAE/">September 26th 2016, 2:13:27 pm</a>
+            <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/deed.zh">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href= "/2016/09/25/Life/InnerPath/16-09-252016Q3总结——秋日已来，硕果寥寥/" title= "2016Q3总结——秋日已来，硕果寥寥">
+                    <div class="nextTitle">2016Q3总结——秋日已来，硕果寥寥</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/2016/07/17/Life/InnerPath/16-07-172016Q2总结——春花夏拾/" title= "2016Q2总结——春花夏拾">
+                    <div class="prevTitle">2016Q2总结——春花夏拾</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
+    
+    
+    <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+    <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+    <div id="comment"></div>
+    <script>
+    new Valine({
+        el: '#comment' ,
+        notify:false, 
+        verify:false, 
+        appId: "il9qYeGCfA80xAqoGXBmDaU3-gzGzoHsz",
+        appKey: "OCMYJee8Ua8CVylQSQB75Kla",
+        placeholder: "既然看完了,那就评论一下吧",
+        path:window.location.pathname, 
+        avatar:'mm' 
+    });
+    </script>
+
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:foreveryounix@mail.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/dearsq" class="iconfont-archer github" target="_blank" title=github></a>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer wechat" title=wechat>
+                  
+                  <img class="profile-qr" src="/assets/example_qr.png" />
+                </span>
+            
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="https://weibo.com/younix" class="iconfont-archer weibo" target="_blank" title=weibo></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="/atom.xml" class="iconfont-archer rss" target="_blank" title=rss></a>
+            
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+    
+     
+    <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+    
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#我们公司-FAE-的尴尬定位"><span class="toc-number">1.</span> <span class="toc-text">我们公司 FAE 的尴尬定位</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#解决问题的思路"><span class="toc-number">2.</span> <span class="toc-text">解决问题的思路</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#利"><span class="toc-number">2.1.</span> <span class="toc-text">利</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#弊"><span class="toc-number">2.2.</span> <span class="toc-text">弊</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#搜集信息和学习知识的能力"><span class="toc-number">3.</span> <span class="toc-text">搜集信息和学习知识的能力</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#外界压力"><span class="toc-number">4.</span> <span class="toc-text">外界压力</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#优势与劣势"><span class="toc-number">5.</span> <span class="toc-text">优势与劣势</span></a></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 23
+        </div>
+        <!-- search  -->
+        
+            <div class="site-search popup-trigger">
+                <span class="iconfont-archer search-icon">&#xe627;</span>
+            </div>
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2017 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Life/InnerPath/17-12-312017年总结/" >2017年总结</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/14</span><a class="archive-post-title" href= "/2017/08/14/Life/Learning/王烁30天认知训练营 Day01 什么是查理·芒格的人生开关/" >Day01 什么是查理·芒格的人生开关</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2016 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/24</span><a class="archive-post-title" href= "/2016/12/24/Life/InnerPath/16-12-242016年总结/" >2016年总结</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/30</span><a class="archive-post-title" href= "/2016/10/30/Life/InnerPath/16-10-30VR创投会/" >VR创投会</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/30</span><a class="archive-post-title" href= "/2016/09/30/Life/InnerPath/16-09-30大者恒大，强者愈强/" >大者恒大，强者愈强</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/25</span><a class="archive-post-title" href= "/2016/09/25/Life/InnerPath/16-09-252016Q3总结——秋日已来，硕果寥寥/" >2016Q3总结——秋日已来，硕果寥寥</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/28</span><a class="archive-post-title" href= "/2016/08/28/Life/InnerPath/16-08-28谈谈RD和FAE/" >谈谈RD和FAE</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/17</span><a class="archive-post-title" href= "/2016/07/17/Life/InnerPath/16-07-172016Q2总结——春花夏拾/" >2016Q2总结——春花夏拾</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/29</span><a class="archive-post-title" href= "/2016/03/29/Life/InnerPath/16-03-29未来先见/" >未来先见</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/28</span><a class="archive-post-title" href= "/2016/03/28/Life/InnerPath/16-03-282016Q1总结/" >2016Q1总结</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/15</span><a class="archive-post-title" href= "/2016/03/15/Life/InnerPath/16-03-15世殊事异/" >世殊事异，所以兴怀</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/14</span><a class="archive-post-title" href= "/2016/03/14/Android_App/[Android5.1] 添加自定义开机动画（视频）并去黑屏/" >Android5.1 添加自定义开机动画（视频）并去黑屏</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/24</span><a class="archive-post-title" href= "/2016/02/24/Life/InnerPath/16-02-24瑞芯微出差记/" >瑞芯微出差记</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/30</span><a class="archive-post-title" href= "/2016/01/30/Life/InnerPath/16-01-30十二分之一/" >十二分之一</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/15</span><a class="archive-post-title" href= "/2016/01/15/Life/InnerPath/16-01-15书评《黑客与画家》/" >书评《黑客与画家》</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/03</span><a class="archive-post-title" href= "/2016/01/03/Life/InnerPath/16-01-03写在2015的尾巴与2016的开头/" >写在2015的尾巴与2016的开头</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2015 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/26</span><a class="archive-post-title" href= "/2015/10/26/Life/InnerPath/15-10-26英雄如你少年如我不负这移动盛世/" >英雄如你，少年如我，不负这移动盛世</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/20</span><a class="archive-post-title" href= "/2015/09/20/Life/InnerPath/15-09-20巴迪闲侃/" >巴迪闲侃</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/22</span><a class="archive-post-title" href= "/2015/08/22/Life/InnerPath/15-08-22深圳深圳/" >深圳深圳</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/01</span><a class="archive-post-title" href= "/2015/08/01/Life/InnerPath/15-08-01基本功/" >基本功</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/27</span><a class="archive-post-title" href= "/2015/07/27/Life/InnerPath/15-07-27入职杂谈/" >入职杂谈</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/19</span><a class="archive-post-title" href= "/2015/07/19/Life/InnerPath/15-07-19六月/" >六月的尾巴</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/14</span><a class="archive-post-title" href= "/2015/05/14/Life/InnerPath/15-05-04开始的废话总是特别多/" >开始的废话总是特别多</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="Android"><span class="iconfont-archer">&#xe606;</span>Android</span>
+    
+        <span class="sidebar-tag-name" data-tags="RockChip"><span class="iconfont-archer">&#xe606;</span>RockChip</span>
+    
+        <span class="sidebar-tag-name" data-tags="InnerPath"><span class="iconfont-archer">&#xe606;</span>InnerPath</span>
+    
+        <span class="sidebar-tag-name" data-tags="Food4Thought"><span class="iconfont-archer">&#xe606;</span>Food4Thought</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "Younix"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+        <div class="site-search">
+  <div class="algolia-popup popup">
+    <div class="algolia-search">
+      <div class="algolia-search-input-icon">
+        <i class="fa fa-search"></i>
+      </div>
+      <div class="algolia-search-input" id="algolia-search-input"></div>
+    </div>
+
+    <div class="algolia-results">
+      <div id="algolia-stats"></div>
+      <div id="algolia-hits"></div>
+      <div id="algolia-pagination" class="algolia-pagination"></div>
+    </div>
+
+    <span class="popup-btn-close">
+      <i class="iconfont-archer">&#xe609;</i>
+    </span>
+  </div>
+</div>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.8.0/dist/instantsearch.min.js" defer></script>
+        <script src="/scripts/search.js" defer></script>
+    
+    <!-- busuanzi  -->
+    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+
