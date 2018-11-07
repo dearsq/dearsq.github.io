@@ -81,3 +81,9 @@ deploy:
   type: git
   repo: https://github.com/dearsq/dearsq.github.io
   branch: master
+  
+algolia:
+  applicationID: '1MYSDXEEPM'
+  apiKey: '006bf3234a29ef116c82df0b1e558270'
+  indexName: 'YounixSearchKey'
+  chunkSize: 5000

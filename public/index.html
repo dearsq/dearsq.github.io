@@ -17,12 +17,12 @@
     <meta name="renderer" content="webkit">
     <meta name="copyright" content="John Doe">
     
-    <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
+    <meta name="keywords" content="Younix,hexo-theme,hexo-blog,黑羊爱学习,黑羊,dearsq">
     
     <meta name="description" content="">
     <meta http-equiv="Cache-control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-    <title>fi3ework&#39;s Studio</title>
+    <title>Younix&#39;s Studio</title>
     <style type="text/css">
     @font-face {
         font-family: 'Oswald-Regular';
@@ -192,6 +192,21 @@
     <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
     <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
     
+        <!-- algolia -->
+        <script>
+            
+            var hits = JSON.parse('{"per_page":10}')
+            var labels = JSON.parse('{"input_placeholder":"Search for Posts","hits_empty":"We did not find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}')
+
+            var algolia = {
+                applicationID: '1MYSDXEEPM',
+                apiKey: '006bf3234a29ef116c82df0b1e558270',
+                indexName: 'YounixSearchKey',
+                hits: hits,
+                labels: labels
+            }
+        </script>
+    
     <!-- fancybox -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
     <!-- 百度统计  -->
@@ -210,7 +225,7 @@
     <div class="header-sidebar-menu">&#xe775;</div>
     <!-- post页的toggle banner  -->
     
-    <a class="home-link" href=/>fi3ework's Studio.</a>
+    <a class="home-link" href=/>Younix's Studio.</a>
 </header>
     <div class="wrapper">
         <div class="site-intro" style="
@@ -236,7 +251,7 @@ height:50vh;
         <h1 class="intro-title">
             <!-- 主页  -->
             
-            fi3ework's Studio.
+            Younix's Studio.
             <!-- 文章页  -->
             
         </h1>
@@ -245,7 +260,7 @@ height:50vh;
             <!-- 主页副标题  -->
             
             
-                it's better to burn out than to fade away
+                do one thing and do it well.
             
             <!-- 文章页  -->
             
@@ -386,11 +401,11 @@ More...
             <!-- profile -->
             
             <div class="profile">
-    <img class="profile-avatar" alt="avatar" src= /avatar/Misaka.jpg >
-    <div class="profile-name">fi3ework</div>
+    <img class="profile-avatar" alt="avatar" src= /avatar/Younix.png >
+    <div class="profile-name">Younix</div>
     
     <div class="profile-signature">
-        witness me
+        do one thing and do it well.
     </div>
     
     
@@ -399,13 +414,13 @@ More...
     
         
             
-                <a href="mailto:12345@qq.com" class="iconfont-archer email" title=email ></a>
+                <a href="mailto:foreveryounix@mail.com" class="iconfont-archer email" title=email ></a>
             
         
     
         
             
-                <a href="//github.com/fi3ework" class="iconfont-archer github" target="_blank" title=github></a>
+                <a href="//github.com/dearsq" class="iconfont-archer github" target="_blank" title=github></a>
             
         
     
@@ -422,6 +437,10 @@ More...
     
         
     
+        
+            
+                <a href="https://weibo.com/younix" class="iconfont-archer weibo" target="_blank" title=weibo></a>
+            
         
     
         
@@ -464,15 +483,7 @@ More...
             <div>FRIENDS</div>
             
                 
-                    <span>
-                        <a href= //www.baidu.com target="_black">friendA</a>
-                    </span>
-                
             
-                
-                    <span>
-                        <a href= //www.google.com target="_black">friendB</a>
-                    </span>
                 
             
                 
@@ -495,13 +506,13 @@ More...
     
         
             
-                <a href="mailto:12345@qq.com" class="iconfont-archer email" title=email ></a>
+                <a href="mailto:foreveryounix@mail.com" class="iconfont-archer email" title=email ></a>
             
         
     
         
             
-                <a href="//github.com/fi3ework" class="iconfont-archer github" target="_blank" title=github></a>
+                <a href="//github.com/dearsq" class="iconfont-archer github" target="_blank" title=github></a>
             
         
     
@@ -518,6 +529,10 @@ More...
     
         
     
+        
+            
+                <a href="https://weibo.com/younix" class="iconfont-archer weibo" target="_blank" title=weibo></a>
+            
         
     
         
@@ -599,6 +614,10 @@ More...
         </div>
         <!-- search  -->
         
+            <div class="site-search popup-trigger">
+                <span class="iconfont-archer search-icon">&#xe627;</span>
+            </div>
+        
     </div>
     
     <div class="post-archive">
@@ -675,6 +694,29 @@ jsonContent:
     </script>
     <script src="/scripts/main.js"></script>
     <!-- algolia -->
+    
+        <div class="site-search">
+  <div class="algolia-popup popup">
+    <div class="algolia-search">
+      <div class="algolia-search-input-icon">
+        <i class="fa fa-search"></i>
+      </div>
+      <div class="algolia-search-input" id="algolia-search-input"></div>
+    </div>
+
+    <div class="algolia-results">
+      <div id="algolia-stats"></div>
+      <div id="algolia-hits"></div>
+      <div id="algolia-pagination" class="algolia-pagination"></div>
+    </div>
+
+    <span class="popup-btn-close">
+      <i class="iconfont-archer">&#xe609;</i>
+    </span>
+  </div>
+</div>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.8.0/dist/instantsearch.min.js" defer></script>
+        <script src="/scripts/search.js" defer></script>
     
     <!-- busuanzi  -->
     
