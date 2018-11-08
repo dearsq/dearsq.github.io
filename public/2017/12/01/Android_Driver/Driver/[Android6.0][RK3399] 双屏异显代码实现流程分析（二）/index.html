@@ -1,0 +1,5020 @@
+<!DOCTYPE html>
+<html lang="">
+    <!-- title -->
+
+
+
+
+<!-- keywords -->
+
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" >
+    <meta name="author" content="Younix">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="Younix">
+    
+    <meta name="keywords" content="Younix,hexo-theme,hexo-blog,黑羊爱学习,黑羊,dearsq">
+    
+    <meta name="description" content="">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <title>Android6.0 RK3399 双屏异显代码实现流程分析(二) · Younix&#39;s Studio</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href= "/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="stylesheet" href= "/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href= "/assets/favicon.ico" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script" />
+    <link rel="preload" href="/scripts/main.js" as="script" />
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+        <!-- algolia -->
+        <script>
+            
+            var hits = JSON.parse('{"per_page":10}')
+            var labels = JSON.parse('{"input_placeholder":"Search for Posts","hits_empty":"We did not find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}')
+
+            var algolia = {
+                applicationID: '1MYSDXEEPM',
+                apiKey: '006bf3234a29ef116c82df0b1e558270',
+                indexName: 'YounixSearchKey',
+                hits: hits,
+                labels: labels
+            }
+        </script>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >Younix&#39;s Studio.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">Android6.0 RK3399 双屏异显代码实现流程分析(二)</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>Younix's Studio.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="
+
+
+
+
+
+
+
+height:50vh;
+">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            Android6.0 RK3399 双屏异显代码实现流程分析(二)
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "RockChip">RockChip</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "Android">Android</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">4.2k</span>阅读时长: <span class="post-count reading-time">26 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2017/12/01</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <p>[TOC]</p>
+<p>Platform: RK3399<br>OS: Android 6.0<br>Version: v2016.08<br>LCD interface: eDP + mipi</p>
+<h2 id="Patch-Code"><a href="#Patch-Code" class="headerlink" title="Patch Code"></a>Patch Code</h2><p>Date: Fri, 09 Dec 2016 10:53:11 +0800<br>Subject: [PATCH] video: rockchip: fb: add support dual lcd<br>Change-Id: I246f8e7d725d26abf2555d3077dd87da72920731<br>Signed-off-by: Huang Jiachai &lt; ××× &gt;</p>
+<h3 id="dtsi"><a href="#dtsi" class="headerlink" title="dtsi"></a><strong>dtsi</strong></h3><h4 id="rk3399-android-dtsi"><a href="#rk3399-android-dtsi" class="headerlink" title="rk3399-android.dtsi"></a>rk3399-android.dtsi</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">diff --git a/arch/arm64/boot/dts/rockchip/rk3399-android.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-android.dtsi</span><br><span class="line">index a009537..05a8377 100644</span><br><span class="line">--- a/arch/arm64/boot/dts/rockchip/rk3399-android.dtsi</span><br><span class="line">+++ b/arch/arm64/boot/dts/rockchip/rk3399-android.dtsi</span><br><span class="line">@@ -287,7 +287,7 @@</span><br><span class="line"> 		status = &quot;okay&quot;;</span><br><span class="line"> 		compatible = &quot;rockchip,rk-fb&quot;;</span><br><span class="line"> 		rockchip,disp-mode = &lt;DUAL&gt;;</span><br><span class="line">-		rockchip,uboot-logo-on = &lt;1&gt;;</span><br><span class="line">+		rockchip,uboot-logo-on = &lt;0&gt;;</span><br><span class="line"> 		memory-region = &lt;&amp;rockchip_logo&gt;;</span><br><span class="line"> 	&#125;;</span><br></pre></td></tr></table></figure>
+<h4 id="rk3399-evb-rev3-android-dts"><a href="#rk3399-evb-rev3-android-dts" class="headerlink" title="rk3399-evb-rev3-android.dts"></a>rk3399-evb-rev3-android.dts</h4><p> 在 rk_screen 中默认只有一个 screen0, 用于填充 primary screen 的 timing<br> 现在需要添加 screen1，用于填充 extend screen 的 timing<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br></pre></td><td class="code"><pre><span class="line">diff --git a/arch/arm64/boot/dts/rockchip/rk3399-evb-rev3-android.dts b/arch/arm64/boot/dts/rockchip/rk3399-evb-rev3-android.dts</span><br><span class="line">index 3b3ff7c..3653205 100644</span><br><span class="line">--- a/arch/arm64/boot/dts/rockchip/rk3399-evb-rev3-android.dts</span><br><span class="line">+++ b/arch/arm64/boot/dts/rockchip/rk3399-evb-rev3-android.dts</span><br><span class="line">@@ -51,18 +51,55 @@</span><br><span class="line"> &#125;;</span><br><span class="line"> </span><br><span class="line"> &amp;rk_screen &#123;</span><br><span class="line">-	#include &lt;dt-bindings/display/screen-timing/lcd-tv080wum-nl0-mipi.dtsi&gt;</span><br><span class="line">+	status = &quot;okay&quot;;</span><br><span class="line">+	screen0 &#123;</span><br><span class="line">+		screen_prop = &lt;PRMRY&gt;;</span><br><span class="line">+		native-mode = &lt;DEFAULT_MODE&gt;;</span><br><span class="line">+		power_ctr &#123;</span><br><span class="line">+			lcd_en0: lcd-en &#123;</span><br><span class="line">+				rockchip,power_type = &lt;GPIO&gt;;</span><br><span class="line">+				gpios = &lt;&amp;gpio1 13 GPIO_ACTIVE_HIGH&gt;;</span><br><span class="line">+				rockchip,delay = &lt;10&gt;;</span><br><span class="line">+			&#125;;</span><br><span class="line">+			/* lcd_cs &#123;</span><br><span class="line">+				rockchip,power_type = &lt;GPIO&gt;;</span><br><span class="line">+				gpios = &lt;&amp;gpio7 GPIO_A4 GPIO_ACTIVE_HIGH&gt;;</span><br><span class="line">+				rockchip,delay = &lt;10&gt;;</span><br><span class="line">+			&#125;; */</span><br><span class="line">+		&#125;;</span><br><span class="line">+		#include &lt;dt-bindings/display/screen-timing/lcd-tv080wum-nl0-mipi.dtsi&gt;</span><br><span class="line">+		//#include &lt;dt-bindings/display/screen-timing/lcd-F402.dtsi&gt;</span><br><span class="line">+	&#125;;</span><br><span class="line">+	screen1 &#123;</span><br><span class="line">+		screen_prop = &lt;EXTEND&gt;;</span><br><span class="line">+		native-mode = &lt;DEFAULT_MODE&gt;;</span><br><span class="line">+		power_ctr &#123;</span><br><span class="line">+			/* cd_en1: lcd-en &#123;</span><br><span class="line">+				rockchip,power_type = &lt;GPIO&gt;;</span><br><span class="line">+				gpios = &lt;&amp;gpio1 13 GPIO_ACTIVE_HIGH&gt;;</span><br><span class="line">+				rockchip,delay = &lt;10&gt;;</span><br><span class="line">+			&#125;;*/</span><br><span class="line">+			/* lcd_cs &#123;</span><br><span class="line">+				rockchip,power_type = &lt;GPIO&gt;;</span><br><span class="line">+				gpios = &lt;&amp;gpio7 GPIO_A4 GPIO_ACTIVE_HIGH&gt;;</span><br><span class="line">+				rockchip,delay = &lt;10&gt;;</span><br><span class="line">+			&#125;; */</span><br><span class="line">+		&#125;;</span><br><span class="line">+		#include &lt;dt-bindings/display/screen-timing/lcd-F402.dtsi&gt;</span><br><span class="line">+		//#include &lt;dt-bindings/display/screen-timing/lcd-tv080wum-nl0-mipi.dtsi&gt;</span><br><span class="line">+		//#include &quot;lcd-box.dtsi&quot;</span><br><span class="line">+	&#125;;</span><br><span class="line"> &#125;;</span><br><span class="line"> </span><br><span class="line"> &amp;vopb_rk_fb &#123;</span><br><span class="line"> 	status = &quot;okay&quot;;</span><br><span class="line"> 	power_ctr: power_ctr &#123;</span><br><span class="line"> 		rockchip,debug = &lt;0&gt;;</span><br><span class="line">-		lcd_en: lcd-en &#123;</span><br><span class="line">+		/* lcd_en: lcd-en &#123;</span><br><span class="line"> 			rockchip,power_type = &lt;GPIO&gt;;</span><br><span class="line"> 			gpios = &lt;&amp;gpio1 13 GPIO_ACTIVE_HIGH&gt;;</span><br><span class="line"> 			rockchip,delay = &lt;10&gt;;</span><br><span class="line">-		&#125;;</span><br><span class="line">+		&#125;; */</span><br><span class="line"> </span><br><span class="line"> 		/*lcd_cs: lcd-cs &#123;</span><br><span class="line"> 			rockchip,power_type = &lt;GPIO&gt;;</span><br><span class="line">@@ -80,14 +117,23 @@</span><br><span class="line"> </span><br><span class="line"> &amp;vopl_rk_fb &#123;</span><br><span class="line"> 	status = &quot;okay&quot;;</span><br><span class="line">+	rockchip,uboot-logo-on = &lt;0&gt;;</span><br><span class="line"> &#125;;</span><br><span class="line"></span><br><span class="line">//设置 mipi 通道的为主屏， eDP 的为副屏</span><br><span class="line"></span><br><span class="line"> &amp;mipi0_rk_fb &#123;</span><br><span class="line"> 	status = &quot;okay&quot;;</span><br><span class="line">+	prop = &lt;PRMRY&gt;;</span><br><span class="line">+	//prop = &lt;EXTEND&gt;;</span><br><span class="line">+&#125;;</span><br><span class="line">+</span><br><span class="line">+&amp;edp_rk_fb &#123;</span><br><span class="line">+	status = &quot;okay&quot;;</span><br><span class="line">+	prop = &lt;EXTEND&gt;;</span><br><span class="line">+	//prop = &lt;PRMRY&gt;;</span><br><span class="line"> &#125;;</span><br><span class="line"> </span><br><span class="line"> &amp;hdmi_rk_fb &#123;</span><br><span class="line">-	status = &quot;okay&quot;;</span><br><span class="line">+	status = &quot;disabled&quot;;</span><br><span class="line"> 	rockchip,hdmi_video_source = &lt;DISPLAY_SOURCE_LCDC1&gt;;</span><br><span class="line"> &#125;;</span><br></pre></td></tr></table></figure></p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">diff --git a/arch/arm64/boot/dts/rockchip/rk3399-evb.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-evb.dtsi</span><br><span class="line">index b3c7141..b72ce6c 100644</span><br><span class="line">--- a/arch/arm64/boot/dts/rockchip/rk3399-evb.dtsi</span><br><span class="line">+++ b/arch/arm64/boot/dts/rockchip/rk3399-evb.dtsi</span><br><span class="line">@@ -101,7 +101,7 @@</span><br><span class="line"> 			232 233 234 235 236 237 238 239</span><br><span class="line"> 			240 241 242 243 244 245 246 247</span><br><span class="line"> 			248 249 250 251 252 253 254 255&gt;;</span><br><span class="line">-		default-brightness-level = &lt;200&gt;;</span><br><span class="line">+		default-brightness-level = &lt;128&gt;;</span><br><span class="line"> 	&#125;;</span><br><span class="line"> </span><br><span class="line"> 	clkin_gmac: external-gmac-clock &#123;</span><br><span class="line">@@ -370,7 +370,7 @@</span><br><span class="line"> &#125;;</span><br><span class="line"> </span><br><span class="line"> &amp;i2c4 &#123;</span><br><span class="line">-	status = &quot;okay&quot;;</span><br><span class="line">+	status = &quot;disabled&quot;;</span><br><span class="line"> 	i2c-scl-rising-time-ns = &lt;600&gt;;</span><br><span class="line"> 	i2c-scl-falling-time-ns = &lt;20&gt;;</span><br></pre></td></tr></table></figure>
+<h3 id="lcdc-控制器"><a href="#lcdc-控制器" class="headerlink" title="lcdc 控制器"></a><strong>lcdc 控制器</strong></h3><h4 id="rk322x-lcdc-c"><a href="#rk322x-lcdc-c" class="headerlink" title="rk322x_lcdc.c"></a>rk322x_lcdc.c</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">diff --git a/drivers/video/rockchip/lcdc/rk322x_lcdc.c b/drivers/video/rockchip/lcdc/rk322x_lcdc.c</span><br><span class="line">index 93c996a..d6bdff3 100644</span><br><span class="line">--- a/drivers/video/rockchip/lcdc/rk322x_lcdc.c</span><br><span class="line">+++ b/drivers/video/rockchip/lcdc/rk322x_lcdc.c</span><br><span class="line">@@ -5252,6 +5252,10 @@</span><br><span class="line"> </span><br><span class="line"> 	rk322x_pdev = pdev;</span><br><span class="line"> </span><br><span class="line">+	if (dev_drv-&gt;cur_screen-&gt;type != SCREEN_HDMI &amp;&amp;</span><br><span class="line">+		dev_drv-&gt;cur_screen-&gt;type != SCREEN_TVOUT)</span><br><span class="line">+		dev_drv-&gt;hot_plug_state = 1;</span><br><span class="line">+</span><br><span class="line"> 	if (dev_drv-&gt;cur_screen-&gt;refresh_mode == SCREEN_CMD_MODE) &#123;</span><br><span class="line"> 		te_pin = of_get_named_gpio_flags(np, &quot;te-gpio&quot;, 0, NULL);</span><br><span class="line"> 		if (IS_ERR_VALUE(te_pin)) &#123;</span><br></pre></td></tr></table></figure>
+<h4 id="rk-fb-c"><a href="#rk-fb-c" class="headerlink" title="rk_fb.c"></a>rk_fb.c</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br><span class="line">310</span><br><span class="line">311</span><br><span class="line">312</span><br><span class="line">313</span><br><span class="line">314</span><br><span class="line">315</span><br><span class="line">316</span><br><span class="line">317</span><br><span class="line">318</span><br><span class="line">319</span><br><span class="line">320</span><br><span class="line">321</span><br><span class="line">322</span><br><span class="line">323</span><br><span class="line">324</span><br><span class="line">325</span><br><span class="line">326</span><br><span class="line">327</span><br><span class="line">328</span><br></pre></td><td class="code"><pre><span class="line">diff --git a/drivers/video/rockchip/rk_fb.c b/drivers/video/rockchip/rk_fb.c</span><br><span class="line">index 25563a4..80db2e2 100644</span><br><span class="line">--- a/drivers/video/rockchip/rk_fb.c</span><br><span class="line">+++ b/drivers/video/rockchip/rk_fb.c</span><br><span class="line">@@ -73,9 +73,8 @@</span><br><span class="line"> extern phys_addr_t uboot_logo_base;</span><br><span class="line"> extern phys_addr_t uboot_logo_size;</span><br><span class="line"> extern phys_addr_t uboot_logo_offset;</span><br><span class="line">-static struct rk_fb_trsm_ops *trsm_lvds_ops;</span><br><span class="line">-static struct rk_fb_trsm_ops *trsm_edp_ops;</span><br><span class="line">-static struct rk_fb_trsm_ops *trsm_mipi_ops;</span><br><span class="line">+static struct rk_fb_trsm_ops *trsm_prmry_ops;</span><br><span class="line">+static struct rk_fb_trsm_ops *trsm_extend_ops;</span><br><span class="line"> static int uboot_logo_on;</span><br><span class="line"> </span><br><span class="line"> static int rk_fb_debug_lvl;</span><br><span class="line">@@ -115,26 +114,13 @@</span><br><span class="line"> </span><br><span class="line"> int rk_fb_trsm_ops_register(struct rk_fb_trsm_ops *ops, int type)</span><br><span class="line"> &#123;</span><br><span class="line">-	switch (type) &#123;</span><br><span class="line">-	case SCREEN_RGB:</span><br><span class="line">-	case SCREEN_LVDS:</span><br><span class="line">-	case SCREEN_DUAL_LVDS:</span><br><span class="line">-	case SCREEN_LVDS_10BIT:</span><br><span class="line">-	case SCREEN_DUAL_LVDS_10BIT:</span><br><span class="line">-		trsm_lvds_ops = ops;</span><br><span class="line">-		break;</span><br><span class="line">-	case SCREEN_EDP:</span><br><span class="line">-		trsm_edp_ops = ops;</span><br><span class="line">-		break;</span><br><span class="line">-	case SCREEN_MIPI:</span><br><span class="line">-	case SCREEN_DUAL_MIPI:</span><br><span class="line">-		trsm_mipi_ops = ops;</span><br><span class="line">-		break;</span><br><span class="line">-	default:</span><br><span class="line">-		pr_warn(&quot;%s: unsupported transmitter: %d!\n&quot;,</span><br><span class="line">-			__func__, type);</span><br><span class="line">-		break;</span><br><span class="line">-	&#125;</span><br><span class="line">+	if (type == PRMRY)</span><br><span class="line">+		trsm_prmry_ops = ops;</span><br><span class="line">+	else if (type == EXTEND)</span><br><span class="line">+		trsm_extend_ops = ops;</span><br><span class="line">+	else</span><br><span class="line">+		pr_err(&quot;%s, type:%d\n&quot;, __func__, type);</span><br><span class="line">+</span><br><span class="line"> 	return 0;</span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line">@@ -142,27 +128,12 @@</span><br><span class="line"> &#123;</span><br><span class="line"> 	struct rk_fb_trsm_ops *ops;</span><br><span class="line"> </span><br><span class="line">-	switch (type) &#123;</span><br><span class="line">-	case SCREEN_RGB:</span><br><span class="line">-	case SCREEN_LVDS:</span><br><span class="line">-	case SCREEN_DUAL_LVDS:</span><br><span class="line">-	case SCREEN_LVDS_10BIT:</span><br><span class="line">-	case SCREEN_DUAL_LVDS_10BIT:</span><br><span class="line">-		ops = trsm_lvds_ops;</span><br><span class="line">-		break;</span><br><span class="line">-	case SCREEN_EDP:</span><br><span class="line">-		ops = trsm_edp_ops;</span><br><span class="line">-		break;</span><br><span class="line">-	case SCREEN_MIPI:</span><br><span class="line">-	case SCREEN_DUAL_MIPI:</span><br><span class="line">-		ops = trsm_mipi_ops;</span><br><span class="line">-		break;</span><br><span class="line">-	default:</span><br><span class="line">-		ops = NULL;</span><br><span class="line">-		pr_warn(&quot;%s: unsupported transmitter: %d!\n&quot;,</span><br><span class="line">-			__func__, type);</span><br><span class="line">-		break;</span><br><span class="line">-	&#125;</span><br><span class="line">+	if (type == PRMRY)</span><br><span class="line">+		ops = trsm_prmry_ops;</span><br><span class="line">+	else if (type == EXTEND)</span><br><span class="line">+		ops = trsm_extend_ops;</span><br><span class="line">+	else</span><br><span class="line">+		pr_err(&quot;%s, type:%d\n&quot;, __func__, type);</span><br><span class="line"> 	return ops;</span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line">@@ -317,10 +288,10 @@</span><br><span class="line"> /*</span><br><span class="line">  * rk display power control parse from dts</span><br><span class="line">  */</span><br><span class="line">-int rk_disp_pwr_ctr_parse_dt(struct rk_lcdc_driver *dev_drv)</span><br><span class="line">+int rk_disp_pwr_ctr_parse_dt(struct device_node *np,</span><br><span class="line">+			     struct rk_screen *rk_screen)</span><br><span class="line"> &#123;</span><br><span class="line">-	struct device_node *root = of_get_child_by_name(dev_drv-&gt;dev-&gt;of_node,</span><br><span class="line">-							&quot;power_ctr&quot;);</span><br><span class="line">+	struct device_node *root = of_get_child_by_name(np, &quot;power_ctr&quot;);</span><br><span class="line"> 	struct device_node *child;</span><br><span class="line"> 	struct rk_disp_pwr_ctr_list *pwr_ctr;</span><br><span class="line"> 	struct list_head *pos;</span><br><span class="line">@@ -329,10 +300,10 @@</span><br><span class="line"> 	u32 debug = 0;</span><br><span class="line"> 	int ret;</span><br><span class="line"> </span><br><span class="line">-	INIT_LIST_HEAD(&amp;dev_drv-&gt;pwrlist_head);</span><br><span class="line">+	INIT_LIST_HEAD(rk_screen-&gt;pwrlist_head);</span><br><span class="line"> 	if (!root) &#123;</span><br><span class="line">-		dev_err(dev_drv-&gt;dev, &quot;can&apos;t find power_ctr node for lcdc%d\n&quot;,</span><br><span class="line">-			dev_drv-&gt;id);</span><br><span class="line">+		dev_err(rk_screen-&gt;dev, &quot;can&apos;t find power_ctr node for lcdc%d\n&quot;,</span><br><span class="line">+			rk_screen-&gt;lcdc_id);</span><br><span class="line"> 		return -ENODEV;</span><br><span class="line"> 	&#125;</span><br><span class="line"> </span><br><span class="line">@@ -347,7 +318,7 @@</span><br><span class="line"> 				pwr_ctr-&gt;pwr_ctr.type = GPIO;</span><br><span class="line"> 				pwr_ctr-&gt;pwr_ctr.gpio = of_get_gpio_flags(child, 0, &amp;flags);</span><br><span class="line"> 				if (!gpio_is_valid(pwr_ctr-&gt;pwr_ctr.gpio)) &#123;</span><br><span class="line">-					dev_err(dev_drv-&gt;dev, &quot;%s ivalid gpio\n&quot;,</span><br><span class="line">+					dev_err(rk_screen-&gt;dev, &quot;%s ivalid gpio\n&quot;,</span><br><span class="line"> 						child-&gt;name);</span><br><span class="line"> 					return -EINVAL;</span><br><span class="line"> 				&#125;</span><br><span class="line">@@ -355,7 +326,7 @@</span><br><span class="line"> 				ret = gpio_request(pwr_ctr-&gt;pwr_ctr.gpio,</span><br><span class="line"> 						   child-&gt;name);</span><br><span class="line"> 				if (ret) &#123;</span><br><span class="line">-					dev_err(dev_drv-&gt;dev,</span><br><span class="line">+					dev_err(rk_screen-&gt;dev,</span><br><span class="line"> 						&quot;request %s gpio fail:%d\n&quot;,</span><br><span class="line"> 						child-&gt;name, ret);</span><br><span class="line"> 				&#125;</span><br><span class="line">@@ -364,9 +335,9 @@</span><br><span class="line"> 				pwr_ctr-&gt;pwr_ctr.type = REGULATOR;</span><br><span class="line"> 				pwr_ctr-&gt;pwr_ctr.rgl_name = NULL;</span><br><span class="line"> 				ret = of_property_read_string(child, &quot;rockchip,regulator_name&quot;,</span><br><span class="line">-							      &amp;(pwr_ctr-&gt;pwr_ctr.rgl_name));</span><br><span class="line">+							     &amp;(pwr_ctr-&gt;pwr_ctr.rgl_name));</span><br><span class="line"> 				if (ret || IS_ERR_OR_NULL(pwr_ctr-&gt;pwr_ctr.rgl_name))</span><br><span class="line">-					dev_err(dev_drv-&gt;dev, &quot;get regulator name failed!\n&quot;);</span><br><span class="line">+					dev_err(rk_screen-&gt;dev, &quot;get regulator name failed!\n&quot;);</span><br><span class="line"> 				if (!of_property_read_u32(child, &quot;rockchip,regulator_voltage&quot;, &amp;val))</span><br><span class="line"> 					pwr_ctr-&gt;pwr_ctr.volt = val;</span><br><span class="line"> 				else</span><br><span class="line">@@ -378,29 +349,30 @@</span><br><span class="line"> 			pwr_ctr-&gt;pwr_ctr.delay = val;</span><br><span class="line"> 		else</span><br><span class="line"> 			pwr_ctr-&gt;pwr_ctr.delay = 0;</span><br><span class="line">-		list_add_tail(&amp;pwr_ctr-&gt;list, &amp;dev_drv-&gt;pwrlist_head);</span><br><span class="line">+		list_add_tail(&amp;pwr_ctr-&gt;list, rk_screen-&gt;pwrlist_head);</span><br><span class="line"> 	&#125;</span><br><span class="line"> </span><br><span class="line"> 	of_property_read_u32(root, &quot;rockchip,debug&quot;, &amp;debug);</span><br><span class="line"> </span><br><span class="line"> 	if (debug) &#123;</span><br><span class="line">-		list_for_each(pos, &amp;dev_drv-&gt;pwrlist_head) &#123;</span><br><span class="line">+		list_for_each(pos, rk_screen-&gt;pwrlist_head) &#123;</span><br><span class="line"> 			pwr_ctr = list_entry(pos, struct rk_disp_pwr_ctr_list,</span><br><span class="line"> 					     list);</span><br><span class="line">-			pr_info(&quot;pwr_ctr_name:%s\n&quot;</span><br><span class="line">-				&quot;pwr_type:%s\n&quot;</span><br><span class="line">-				&quot;gpio:%d\n&quot;</span><br><span class="line">-				&quot;atv_val:%d\n&quot;</span><br><span class="line">-				&quot;delay:%d\n\n&quot;,</span><br><span class="line">-				pwr_ctr-&gt;pwr_ctr.name,</span><br><span class="line">-				(pwr_ctr-&gt;pwr_ctr.type == GPIO) ? &quot;gpio&quot; : &quot;regulator&quot;,</span><br><span class="line">-				pwr_ctr-&gt;pwr_ctr.gpio,</span><br><span class="line">-				pwr_ctr-&gt;pwr_ctr.atv_val,</span><br><span class="line">-				pwr_ctr-&gt;pwr_ctr.delay);</span><br><span class="line">+			printk(KERN_INFO &quot;pwr_ctr_name:%s\n&quot;</span><br><span class="line">+			       &quot;pwr_type:%s\n&quot;</span><br><span class="line">+			       &quot;gpio:%d\n&quot;</span><br><span class="line">+			       &quot;atv_val:%d\n&quot;</span><br><span class="line">+			       &quot;delay:%d\n\n&quot;,</span><br><span class="line">+			       pwr_ctr-&gt;pwr_ctr.name,</span><br><span class="line">+			       (pwr_ctr-&gt;pwr_ctr.type == GPIO) ? &quot;gpio&quot; : &quot;regulator&quot;,</span><br><span class="line">+			       pwr_ctr-&gt;pwr_ctr.gpio,</span><br><span class="line">+			       pwr_ctr-&gt;pwr_ctr.atv_val,</span><br><span class="line">+			       pwr_ctr-&gt;pwr_ctr.delay);</span><br><span class="line"> 		&#125;</span><br><span class="line"> 	&#125;</span><br><span class="line"> </span><br><span class="line"> 	return 0;</span><br><span class="line">+</span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line"> int rk_disp_pwr_enable(struct rk_lcdc_driver *dev_drv)</span><br><span class="line">@@ -411,9 +383,14 @@</span><br><span class="line"> 	struct regulator *regulator_lcd = NULL;</span><br><span class="line"> 	int count = 10;</span><br><span class="line"> </span><br><span class="line">-	if (list_empty(&amp;dev_drv-&gt;pwrlist_head))</span><br><span class="line">+	if (!dev_drv-&gt;cur_screen-&gt;pwrlist_head) &#123;</span><br><span class="line">+		pr_info(&quot;error:  %s, lcdc%d screen pwrlist null\n&quot;,</span><br><span class="line">+			__func__, dev_drv-&gt;id);</span><br><span class="line"> 		return 0;</span><br><span class="line">-	list_for_each(pos, &amp;dev_drv-&gt;pwrlist_head) &#123;</span><br><span class="line">+	&#125;</span><br><span class="line">+	if (list_empty(dev_drv-&gt;cur_screen-&gt;pwrlist_head))</span><br><span class="line">+		return 0;</span><br><span class="line">+	list_for_each(pos, dev_drv-&gt;cur_screen-&gt;pwrlist_head) &#123;</span><br><span class="line"> 		pwr_ctr_list = list_entry(pos, struct rk_disp_pwr_ctr_list,</span><br><span class="line"> 					  list);</span><br><span class="line"> 		pwr_ctr = &amp;pwr_ctr_list-&gt;pwr_ctr;</span><br><span class="line">@@ -422,8 +399,7 @@</span><br><span class="line"> 			mdelay(pwr_ctr-&gt;delay);</span><br><span class="line"> 		&#125; else if (pwr_ctr-&gt;type == REGULATOR) &#123;</span><br><span class="line"> 			if (pwr_ctr-&gt;rgl_name)</span><br><span class="line">-				regulator_lcd =</span><br><span class="line">-					regulator_get(NULL, pwr_ctr-&gt;rgl_name);</span><br><span class="line">+				regulator_lcd = regulator_get(NULL, pwr_ctr-&gt;rgl_name);</span><br><span class="line"> 			if (regulator_lcd == NULL) &#123;</span><br><span class="line"> 				dev_err(dev_drv-&gt;dev,</span><br><span class="line"> 					&quot;%s: regulator get failed,regulator name:%s\n&quot;,</span><br><span class="line">@@ -456,9 +432,14 @@</span><br><span class="line"> 	struct regulator *regulator_lcd = NULL;</span><br><span class="line"> 	int count = 10;</span><br><span class="line"> </span><br><span class="line">-	if (list_empty(&amp;dev_drv-&gt;pwrlist_head))</span><br><span class="line">+	if (!dev_drv-&gt;cur_screen-&gt;pwrlist_head) &#123;</span><br><span class="line">+		pr_info(&quot;error:  %s, lcdc%d screen pwrlist null\n&quot;,</span><br><span class="line">+			__func__, dev_drv-&gt;id);</span><br><span class="line"> 		return 0;</span><br><span class="line">-	list_for_each(pos, &amp;dev_drv-&gt;pwrlist_head) &#123;</span><br><span class="line">+	&#125;</span><br><span class="line">+	if (list_empty(dev_drv-&gt;cur_screen-&gt;pwrlist_head))</span><br><span class="line">+		return 0;</span><br><span class="line">+	list_for_each(pos, dev_drv-&gt;cur_screen-&gt;pwrlist_head) &#123;</span><br><span class="line"> 		pwr_ctr_list = list_entry(pos, struct rk_disp_pwr_ctr_list,</span><br><span class="line"> 					  list);</span><br><span class="line"> 		pwr_ctr = &amp;pwr_ctr_list-&gt;pwr_ctr;</span><br><span class="line">@@ -474,8 +455,7 @@</span><br><span class="line"> 				continue;</span><br><span class="line"> 			&#125;</span><br><span class="line"> 			while (regulator_is_enabled(regulator_lcd) &gt; 0) &#123;</span><br><span class="line">-				if (regulator_disable(regulator_lcd) == 0 ||</span><br><span class="line">-				    count == 0)</span><br><span class="line">+				if (regulator_disable(regulator_lcd) == 0 || count == 0)</span><br><span class="line"> 					break;</span><br><span class="line"> 				else</span><br><span class="line"> 					dev_err(dev_drv-&gt;dev,</span><br><span class="line">@@ -530,6 +510,8 @@</span><br><span class="line"> 		screen-&gt;pin_den = 1;</span><br><span class="line"> 	else</span><br><span class="line"> 		screen-&gt;pin_den = 0;</span><br><span class="line">+	printk(&quot;hjc&gt;&gt;&gt;prop:%d, x:%d, y:%d, dclk:%d\n&quot;, screen-&gt;prop,</span><br><span class="line">+		screen-&gt;mode.xres, screen-&gt;mode.yres, screen-&gt;mode.pixclock);</span><br><span class="line"> </span><br><span class="line"> 	return 0;</span><br><span class="line"> &#125;</span><br><span class="line">@@ -544,7 +526,7 @@</span><br><span class="line"> 		pr_err(&quot;parse display timing err\n&quot;);</span><br><span class="line"> 		return -EINVAL;</span><br><span class="line"> 	&#125;</span><br><span class="line">-	dt = display_timings_get(disp_timing, disp_timing-&gt;native_mode);</span><br><span class="line">+	dt = display_timings_get(disp_timing, screen-&gt;native_mode);</span><br><span class="line"> 	rk_fb_video_mode_from_timing(dt, screen);</span><br><span class="line"> </span><br><span class="line"> 	return 0;</span><br><span class="line">@@ -3942,7 +3924,8 @@</span><br><span class="line"> 		win = dev_drv-&gt;win[win_id];</span><br><span class="line"> </span><br><span class="line"> 	if (!strcmp(fbi-&gt;fix.id, &quot;fb0&quot;)) &#123;</span><br><span class="line">-		fb_mem_size = get_fb_size(dev_drv-&gt;reserved_fb);</span><br><span class="line">+		fb_mem_size = get_fb_size(dev_drv-&gt;reserved_fb,</span><br><span class="line">+					  dev_drv-&gt;cur_screen);</span><br><span class="line"> #if defined(CONFIG_ION_ROCKCHIP)</span><br><span class="line"> 		if (rk_fb_alloc_buffer_by_ion(fbi, win, fb_mem_size) &lt; 0)</span><br><span class="line"> 			return -ENOMEM;</span><br><span class="line">@@ -3963,8 +3946,7 @@</span><br><span class="line"> 		if (dev_drv-&gt;prop == EXTEND &amp;&amp; dev_drv-&gt;iommu_enabled) &#123;</span><br><span class="line"> 			struct rk_lcdc_driver *dev_drv_prmry;</span><br><span class="line"> 			int win_id_prmry;</span><br><span class="line">-</span><br><span class="line">-			fb_mem_size = get_fb_size(dev_drv-&gt;reserved_fb);</span><br><span class="line">+			fb_mem_size = get_fb_size(dev_drv-&gt;reserved_fb, dev_drv-&gt;cur_screen);</span><br><span class="line"> #if defined(CONFIG_ION_ROCKCHIP)</span><br><span class="line"> 			dev_drv_prmry = rk_get_prmry_lcdc_drv();</span><br><span class="line"> 			if (dev_drv_prmry == NULL)</span><br><span class="line">@@ -4129,14 +4111,9 @@</span><br><span class="line"> 		dev_drv-&gt;area_support[i] = 1;</span><br><span class="line"> 	if (dev_drv-&gt;ops-&gt;area_support_num)</span><br><span class="line"> 		dev_drv-&gt;ops-&gt;area_support_num(dev_drv, dev_drv-&gt;area_support);</span><br><span class="line">-	rk_disp_pwr_ctr_parse_dt(dev_drv);</span><br><span class="line">-	if (dev_drv-&gt;prop == PRMRY) &#123;</span><br><span class="line">-		rk_fb_set_prmry_screen(screen);</span><br><span class="line">-		rk_fb_get_prmry_screen(screen);</span><br><span class="line">-	&#125;</span><br><span class="line">-	dev_drv-&gt;trsm_ops = rk_fb_trsm_ops_get(screen-&gt;type);</span><br><span class="line">-	if (dev_drv-&gt;prop != PRMRY)</span><br><span class="line">-		rk_fb_get_extern_screen(screen);</span><br><span class="line">+	rk_fb_set_screen(screen, dev_drv-&gt;prop);</span><br><span class="line">+	rk_fb_get_screen(screen, dev_drv-&gt;prop);</span><br><span class="line">+	dev_drv-&gt;trsm_ops = rk_fb_trsm_ops_get(dev_drv-&gt;prop);</span><br><span class="line"> 	dev_drv-&gt;output_color = screen-&gt;color_mode;</span><br><span class="line"> </span><br><span class="line"> 	return 0;</span><br><span class="line">@@ -4511,15 +4488,24 @@</span><br><span class="line"> 		struct fb_info *extend_fbi = rk_fb-&gt;fb[dev_drv-&gt;fb_index_base];</span><br><span class="line"> </span><br><span class="line"> 		extend_fbi-&gt;var.pixclock = rk_fb-&gt;fb[0]-&gt;var.pixclock;</span><br><span class="line">-		if (rk_fb-&gt;disp_mode == DUAL_LCD) &#123;</span><br><span class="line">-			extend_fbi-&gt;fbops-&gt;fb_open(extend_fbi, 1);</span><br><span class="line">-			if (dev_drv-&gt;iommu_enabled) &#123;</span><br><span class="line">-				if (dev_drv-&gt;mmu_dev)</span><br><span class="line">-					rockchip_iovmm_set_fault_handler(dev_drv-&gt;dev,</span><br><span class="line">-									 rk_fb_sysmmu_fault_handler);</span><br><span class="line">-			&#125;</span><br><span class="line">-			rk_fb_alloc_buffer(extend_fbi);</span><br><span class="line">+		extend_fbi-&gt;var.xres_virtual = rk_fb-&gt;fb[0]-&gt;var.xres_virtual;</span><br><span class="line">+		extend_fbi-&gt;var.yres_virtual = rk_fb-&gt;fb[0]-&gt;var.yres_virtual;</span><br><span class="line">+		extend_fbi-&gt;var.xres = rk_fb-&gt;fb[0]-&gt;var.xres;</span><br><span class="line">+		extend_fbi-&gt;var.yres = rk_fb-&gt;fb[0]-&gt;var.yres;</span><br><span class="line">+		extend_fbi-&gt;fbops-&gt;fb_open(extend_fbi, 1);</span><br><span class="line">+		if (dev_drv-&gt;iommu_enabled) &#123;</span><br><span class="line">+			if (dev_drv-&gt;mmu_dev)</span><br><span class="line">+				rockchip_iovmm_set_fault_handler(dev_drv-&gt;dev,</span><br><span class="line">+								 rk_fb_sysmmu_fault_handler);</span><br><span class="line">+			if (dev_drv-&gt;ops-&gt;mmu_en)</span><br><span class="line">+				dev_drv-&gt;ops-&gt;mmu_en(dev_drv);</span><br><span class="line"> 		&#125;</span><br><span class="line">+		rk_fb_alloc_buffer(extend_fbi);</span><br><span class="line">+		//if (rk_fb-&gt;disp_mode == DUAL_LCD) &#123;</span><br><span class="line">+		extend_fbi-&gt;fbops-&gt;fb_set_par(extend_fbi);</span><br><span class="line">+		extend_fbi-&gt;fbops-&gt;fb_pan_display(&amp;extend_fbi-&gt;var,</span><br><span class="line">+						  extend_fbi);</span><br><span class="line">+		//&#125;</span><br><span class="line"> 	&#125;</span><br><span class="line"> #endif</span><br><span class="line"> 	return 0;</span><br></pre></td></tr></table></figure>
+<h3 id="timing-初始化"><a href="#timing-初始化" class="headerlink" title="timing 初始化"></a><strong>timing 初始化</strong></h3><h4 id="rk-screen-c"><a href="#rk-screen-c" class="headerlink" title="rk_screen.c"></a>rk_screen.c</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br></pre></td><td class="code"><pre><span class="line">diff --git a/drivers/video/rockchip/screen/rk_screen.c b/drivers/video/rockchip/screen/rk_screen.c</span><br><span class="line">index 3a4e6c3..7473e5f 100644</span><br><span class="line">--- a/drivers/video/rockchip/screen/rk_screen.c</span><br><span class="line">+++ b/drivers/video/rockchip/screen/rk_screen.c</span><br><span class="line">@@ -4,57 +4,102 @@</span><br><span class="line"> #include &quot;lcd.h&quot;</span><br><span class="line"> #include &quot;../hdmi/rockchip-hdmi.h&quot;</span><br><span class="line"> </span><br><span class="line">-static struct rk_screen *rk_screen;</span><br><span class="line">+static struct rk_screen *prmry_screen;</span><br><span class="line">+static struct rk_screen *extend_screen;</span><br><span class="line">+</span><br><span class="line">+static void rk_screen_info_error(struct rk_screen *screen, int prop)</span><br><span class="line">+&#123;</span><br><span class="line">+	pr_err(&quot;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;error&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;\n&quot;);</span><br><span class="line">+	pr_err(&quot;&gt;&gt;please init %s screen info in dtsi file&lt;&lt;\n&quot;,</span><br><span class="line">+		(prop == PRMRY) ? &quot;prmry&quot; : &quot;extend&quot;);</span><br><span class="line">+	pr_err(&quot;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;error&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;\n&quot;);</span><br><span class="line">+&#125;</span><br><span class="line"> </span><br><span class="line"> int rk_fb_get_extern_screen(struct rk_screen *screen)</span><br><span class="line"> &#123;</span><br><span class="line">-	if (unlikely(!rk_screen) || unlikely(!screen))</span><br><span class="line">+	if (unlikely(!extend_screen) || unlikely(!screen))</span><br><span class="line"> 		return -1;</span><br><span class="line">-</span><br><span class="line">-	memcpy(screen, rk_screen, sizeof(struct rk_screen));</span><br><span class="line">+	memcpy(screen, extend_screen, sizeof(struct rk_screen));</span><br><span class="line"> 	screen-&gt;dsp_lut = NULL;</span><br><span class="line"> 	screen-&gt;cabc_lut = NULL;</span><br><span class="line">-	screen-&gt;type = SCREEN_NULL;</span><br><span class="line">-</span><br><span class="line"> 	return 0;</span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line">-int  rk_fb_get_prmry_screen(struct rk_screen *screen)</span><br><span class="line">+int rk_fb_get_prmry_screen(struct rk_screen *screen)</span><br><span class="line"> &#123;</span><br><span class="line">-	if (unlikely(!rk_screen) || unlikely(!screen))</span><br><span class="line">+	if (unlikely(!prmry_screen) || unlikely(!screen))</span><br><span class="line"> 		return -1;</span><br><span class="line"> </span><br><span class="line">-	memcpy(screen, rk_screen, sizeof(struct rk_screen));</span><br><span class="line">+	memcpy(screen, prmry_screen, sizeof(struct rk_screen));</span><br><span class="line"> 	return 0;</span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line">-int rk_fb_set_prmry_screen(struct rk_screen *screen)</span><br><span class="line">+int  rk_fb_get_screen(struct rk_screen *screen, int prop)</span><br><span class="line"> &#123;</span><br><span class="line">-	if (unlikely(!rk_screen) || unlikely(!screen))</span><br><span class="line">+	struct rk_screen *cur_screen = NULL;</span><br><span class="line">+	if (unlikely(!screen))</span><br><span class="line"> 		return -1;</span><br><span class="line"> </span><br><span class="line">-	rk_screen-&gt;lcdc_id = screen-&gt;lcdc_id;</span><br><span class="line">-	rk_screen-&gt;screen_id = screen-&gt;screen_id;</span><br><span class="line">-	rk_screen-&gt;x_mirror = screen-&gt;x_mirror;</span><br><span class="line">-	rk_screen-&gt;y_mirror = screen-&gt;y_mirror;</span><br><span class="line">-	rk_screen-&gt;overscan.left = screen-&gt;overscan.left;</span><br><span class="line">-	rk_screen-&gt;overscan.top = screen-&gt;overscan.left;</span><br><span class="line">-	rk_screen-&gt;overscan.right = screen-&gt;overscan.left;</span><br><span class="line">-	rk_screen-&gt;overscan.bottom = screen-&gt;overscan.left;</span><br><span class="line">+	if (prop == PRMRY) &#123;</span><br><span class="line">+		if (unlikely(!prmry_screen)) &#123;</span><br><span class="line">+			rk_screen_info_error(screen, prop);</span><br><span class="line">+			return -1;</span><br><span class="line">+		&#125;</span><br><span class="line">+		cur_screen = prmry_screen;</span><br><span class="line">+	&#125; else &#123;</span><br><span class="line">+		if (unlikely(!extend_screen)) &#123;</span><br><span class="line">+			rk_screen_info_error(screen, prop);</span><br><span class="line">+			return -1;</span><br><span class="line">+		&#125;</span><br><span class="line">+		cur_screen = extend_screen;</span><br><span class="line">+	&#125;</span><br><span class="line">+	memcpy(screen, cur_screen, sizeof(struct rk_screen));</span><br><span class="line"> 	return 0;</span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line">-size_t get_fb_size(u8 reserved_fb)</span><br><span class="line">+int rk_fb_set_screen(struct rk_screen *screen, int prop)</span><br><span class="line">+&#123;</span><br><span class="line">+	struct rk_screen *cur_screen = NULL;</span><br><span class="line">+</span><br><span class="line">+	if (unlikely(!screen))</span><br><span class="line">+		return -1;</span><br><span class="line">+	if (prop == PRMRY) &#123;</span><br><span class="line">+		if (unlikely(!prmry_screen)) &#123;</span><br><span class="line">+			rk_screen_info_error(screen, prop);</span><br><span class="line">+			return -1;</span><br><span class="line">+		&#125;</span><br><span class="line">+	cur_screen = prmry_screen;</span><br><span class="line">+	&#125; else &#123;</span><br><span class="line">+		if (unlikely(!extend_screen)) &#123;</span><br><span class="line">+			rk_screen_info_error(screen, prop);</span><br><span class="line">+			return -1;</span><br><span class="line">+		&#125;</span><br><span class="line">+		cur_screen = extend_screen;</span><br><span class="line">+	&#125;</span><br><span class="line">+</span><br><span class="line">+	cur_screen-&gt;lcdc_id = screen-&gt;lcdc_id;</span><br><span class="line">+	cur_screen-&gt;screen_id = screen-&gt;screen_id;</span><br><span class="line">+	cur_screen-&gt;x_mirror = screen-&gt;x_mirror;</span><br><span class="line">+	cur_screen-&gt;y_mirror = screen-&gt;y_mirror;</span><br><span class="line">+	cur_screen-&gt;overscan.left = screen-&gt;overscan.left;</span><br><span class="line">+	cur_screen-&gt;overscan.top = screen-&gt;overscan.left;</span><br><span class="line">+	cur_screen-&gt;overscan.right = screen-&gt;overscan.left;</span><br><span class="line">+	cur_screen-&gt;overscan.bottom = screen-&gt;overscan.left;</span><br><span class="line">+</span><br><span class="line">+	return 0;</span><br><span class="line">+&#125;</span><br><span class="line">+</span><br><span class="line">+size_t get_fb_size(u8 reserved_fb, struct rk_screen *screen)</span><br><span class="line"> &#123;</span><br><span class="line"> 	size_t size = 0;</span><br><span class="line"> 	u32 xres = 0;</span><br><span class="line"> 	u32 yres = 0;</span><br><span class="line"> </span><br><span class="line">-	if (unlikely(!rk_screen))</span><br><span class="line">+	if (unlikely(!screen))</span><br><span class="line"> 		return 0;</span><br><span class="line"> </span><br><span class="line">-	xres = rk_screen-&gt;mode.xres;</span><br><span class="line">-	yres = rk_screen-&gt;mode.yres;</span><br><span class="line">+	xres = screen-&gt;mode.xres;</span><br><span class="line">+	yres = screen-&gt;mode.yres;</span><br><span class="line"> </span><br><span class="line"> 	/* align as 64 bytes(16*4) in an odd number of times */</span><br><span class="line"> 	xres = ALIGN_64BYTE_ODD_TIMES(xres, ALIGN_PIXEL_64BYTE_RGB8888);</span><br><span class="line">@@ -73,22 +118,51 @@</span><br><span class="line"> static int rk_screen_probe(struct platform_device *pdev)</span><br><span class="line"> &#123;</span><br><span class="line"> 	struct device_node *np = pdev-&gt;dev.of_node;</span><br><span class="line">-	int ret;</span><br><span class="line">+	struct device_node *screen_np;</span><br><span class="line">+	struct rk_screen *rk_screen;</span><br><span class="line">+	int ret, screen_prop;</span><br><span class="line"> </span><br><span class="line"> 	if (!np) &#123;</span><br><span class="line"> 		dev_err(&amp;pdev-&gt;dev, &quot;Missing device tree node.\n&quot;);</span><br><span class="line"> 		return -EINVAL;</span><br><span class="line"> 	&#125;</span><br><span class="line">-	rk_screen = devm_kzalloc(&amp;pdev-&gt;dev,</span><br><span class="line">-			sizeof(struct rk_screen), GFP_KERNEL);</span><br><span class="line">-	if (!rk_screen) &#123;</span><br><span class="line">-		dev_err(&amp;pdev-&gt;dev, &quot;kmalloc for rk screen fail!&quot;);</span><br><span class="line">-		return  -ENOMEM;</span><br><span class="line">+</span><br><span class="line">+	for_each_child_of_node(np, screen_np) &#123;</span><br><span class="line">+		rk_screen = devm_kzalloc(&amp;pdev-&gt;dev,</span><br><span class="line">+					 sizeof(struct rk_screen), GFP_KERNEL);</span><br><span class="line">+		if (!rk_screen) &#123;</span><br><span class="line">+			dev_err(&amp;pdev-&gt;dev, &quot;kmalloc for rk screen fail!&quot;);</span><br><span class="line">+			return  -ENOMEM;</span><br><span class="line">+		&#125;</span><br><span class="line">+		rk_screen-&gt;pwrlist_head = devm_kzalloc(&amp;pdev-&gt;dev,</span><br><span class="line">+				sizeof(struct list_head), GFP_KERNEL);</span><br><span class="line">+		if (!rk_screen-&gt;pwrlist_head) &#123;</span><br><span class="line">+			dev_err(&amp;pdev-&gt;dev, &quot;kmalloc for rk_screen pwrlist_head fail!&quot;);</span><br><span class="line">+			return  -ENOMEM;</span><br><span class="line">+		&#125;</span><br><span class="line">+		of_property_read_u32(screen_np, &quot;screen_prop&quot;, &amp;screen_prop);</span><br><span class="line">+		if (screen_prop == PRMRY)</span><br><span class="line">+			prmry_screen = rk_screen;</span><br><span class="line">+		else if (screen_prop == EXTEND)</span><br><span class="line">+			extend_screen = rk_screen;</span><br><span class="line">+		else</span><br><span class="line">+			dev_err(&amp;pdev-&gt;dev, &quot;unknow screen prop: %d\n&quot;,</span><br><span class="line">+				screen_prop);</span><br><span class="line">+		rk_screen-&gt;prop = screen_prop;</span><br><span class="line">+		of_property_read_u32(screen_np, &quot;native-mode&quot;, &amp;rk_screen-&gt;native_mode);</span><br><span class="line">+		rk_screen-&gt;dev = &amp;pdev-&gt;dev;</span><br><span class="line">+		ret = rk_fb_prase_timing_dt(screen_np, rk_screen);</span><br><span class="line">+		pr_info(&quot;%s screen timing parse %s\n&quot;,</span><br><span class="line">+			(screen_prop == PRMRY) ? &quot;prmry&quot; : &quot;extend&quot;,</span><br><span class="line">+			ret ? &quot;failed&quot; : &quot;success&quot;);</span><br><span class="line">+		ret = rk_disp_pwr_ctr_parse_dt(screen_np, rk_screen);</span><br><span class="line">+		pr_info(&quot;%s screen power ctrl parse %s\n&quot;,</span><br><span class="line">+			(screen_prop == PRMRY) ? &quot;prmry&quot; : &quot;extend&quot;,</span><br><span class="line">+			ret ? &quot;failed&quot; : &quot;success&quot;);</span><br><span class="line"> 	&#125;</span><br><span class="line">-	ret = rk_fb_prase_timing_dt(np, rk_screen);</span><br><span class="line">-	dev_info(&amp;pdev-&gt;dev, &quot;rockchip screen probe %s\n&quot;,</span><br><span class="line">-				ret ? &quot;failed&quot; : &quot;success&quot;);</span><br><span class="line">-	return ret;</span><br><span class="line">+</span><br><span class="line">+	dev_info(&amp;pdev-&gt;dev, &quot;rockchip screen probe success\n&quot;);</span><br><span class="line">+	return 0;</span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line"> static const struct of_device_id rk_screen_dt_ids[] = &#123;</span><br></pre></td></tr></table></figure>
+<h4 id="rk32-dp-c"><a href="#rk32-dp-c" class="headerlink" title="rk32_dp.c"></a>rk32_dp.c</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line">diff --git a/drivers/video/rockchip/transmitter/rk32_dp.c b/drivers/video/rockchip/transmitter/rk32_dp.c</span><br><span class="line">index 6d386bc..0bffdb0 100755</span><br><span class="line">--- a/drivers/video/rockchip/transmitter/rk32_dp.c</span><br><span class="line">+++ b/drivers/video/rockchip/transmitter/rk32_dp.c</span><br><span class="line">@@ -129,7 +129,7 @@</span><br><span class="line"> 	struct rk_screen *screen = &amp;edp-&gt;screen;</span><br><span class="line"> 	u32 val = 0;</span><br><span class="line"> </span><br><span class="line">-	rk_fb_get_prmry_screen(screen);</span><br><span class="line">+	rk_fb_get_screen(screen, edp-&gt;prop);</span><br><span class="line"> </span><br><span class="line"> 	if (cpu_is_rk3288()) &#123;</span><br><span class="line"> 		if (screen-&gt;lcdc_id == 1)  /*select lcdc*/</span><br><span class="line">@@ -1734,17 +1734,21 @@</span><br><span class="line"> 	struct resource *res;</span><br><span class="line"> 	struct device_node *np = pdev-&gt;dev.of_node;</span><br><span class="line"> 	int ret;</span><br><span class="line">+	int prop;</span><br><span class="line"> </span><br><span class="line"> 	if (!np) &#123;</span><br><span class="line"> 		dev_err(&amp;pdev-&gt;dev, &quot;Missing device tree node.\n&quot;);</span><br><span class="line"> 		return -EINVAL;</span><br><span class="line"> 	&#125;</span><br><span class="line">+	of_property_read_u32(np, &quot;prop&quot;, &amp;prop);</span><br><span class="line">+	pr_info(&quot;Use EDP as %s screen\n&quot;, (prop == PRMRY) ? &quot;prmry&quot; : &quot;extend&quot;);</span><br><span class="line"> </span><br><span class="line"> 	edp = devm_kzalloc(&amp;pdev-&gt;dev, sizeof(struct rk32_edp), GFP_KERNEL);</span><br><span class="line"> 	if (!edp) &#123;</span><br><span class="line"> 		dev_err(&amp;pdev-&gt;dev, &quot;no memory for state\n&quot;);</span><br><span class="line"> 		return -ENOMEM;</span><br><span class="line"> 	&#125;</span><br><span class="line">+	edp-&gt;prop = prop;</span><br><span class="line"> 	edp-&gt;dev = &amp;pdev-&gt;dev;</span><br><span class="line"> 	edp-&gt;video_info.h_sync_polarity	= 0;</span><br><span class="line"> 	edp-&gt;video_info.v_sync_polarity	= 0;</span><br><span class="line">@@ -1756,7 +1760,7 @@</span><br><span class="line"> </span><br><span class="line"> 	edp-&gt;video_info.link_rate	= LINK_RATE_1_62GBPS;</span><br><span class="line"> 	edp-&gt;video_info.lane_count	= LANE_CNT4;</span><br><span class="line">-	rk_fb_get_prmry_screen(&amp;edp-&gt;screen);</span><br><span class="line">+	rk_fb_get_screen(&amp;edp-&gt;screen, prop);</span><br><span class="line"> 	if (edp-&gt;screen.type != SCREEN_EDP) &#123;</span><br><span class="line"> 		dev_err(&amp;pdev-&gt;dev, &quot;screen is not edp!\n&quot;);</span><br><span class="line"> 		return -EINVAL;</span><br><span class="line">@@ -1852,7 +1856,7 @@</span><br><span class="line"> 		pm_runtime_get_sync(&amp;pdev-&gt;dev);</span><br><span class="line"> </span><br><span class="line"> 	rk32_edp = edp;</span><br><span class="line">-	rk_fb_trsm_ops_register(&amp;trsm_edp_ops, SCREEN_EDP);</span><br><span class="line">+	rk_fb_trsm_ops_register(&amp;trsm_edp_ops, prop);</span><br><span class="line"> #if defined(CONFIG_DEBUG_FS)</span><br><span class="line"> 	edp-&gt;debugfs_dir = debugfs_create_dir(&quot;edp&quot;, NULL);</span><br><span class="line"> 	if (IS_ERR(edp-&gt;debugfs_dir)) &#123;</span><br><span class="line">diff --git a/drivers/video/rockchip/transmitter/rk32_dp.h b/drivers/video/rockchip/transmitter/rk32_dp.h</span><br><span class="line">index 2dc41c6..fda0de2 100755</span><br><span class="line">--- a/drivers/video/rockchip/transmitter/rk32_dp.h</span><br><span class="line">+++ b/drivers/video/rockchip/transmitter/rk32_dp.h</span><br><span class="line">@@ -571,6 +571,7 @@</span><br><span class="line"> 	bool edp_en;</span><br><span class="line"> 	int soctype;</span><br><span class="line"> 	struct dentry *debugfs_dir;</span><br><span class="line">+	int prop;</span><br><span class="line"> &#125;;</span><br></pre></td></tr></table></figure>
+<h4 id="rk32-mipi-dsi-c"><a href="#rk32-mipi-dsi-c" class="headerlink" title="rk32_mipi_dsi.c"></a>rk32_mipi_dsi.c</h4> <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">diff --git a/drivers/video/rockchip/transmitter/rk32_mipi_dsi.c b/drivers/video/rockchip/transmitter/rk32_mipi_dsi.c</span><br><span class="line">index 741fdb5..ed68d85 100644</span><br><span class="line">--- a/drivers/video/rockchip/transmitter/rk32_mipi_dsi.c</span><br><span class="line">+++ b/drivers/video/rockchip/transmitter/rk32_mipi_dsi.c</span><br><span class="line">@@ -1609,7 +1609,7 @@</span><br><span class="line"> 		pm_runtime_get_sync(&amp;dsi0-&gt;pdev-&gt;dev);</span><br><span class="line"> #endif</span><br><span class="line"> 		opt_mode = dsi0-&gt;screen.refresh_mode;</span><br><span class="line">-		rk_fb_get_prmry_screen(dsi0-&gt;screen.screen);</span><br><span class="line">+		rk_fb_get_screen(dsi0-&gt;screen.screen, dsi0-&gt;prop);</span><br><span class="line"> 		dsi0-&gt;screen.lcdc_id = dsi0-&gt;screen.screen-&gt;lcdc_id;</span><br><span class="line"> 		rk32_init_phy_mode(dsi0-&gt;screen.lcdc_id);</span><br><span class="line"> </span><br><span class="line">@@ -1875,7 +1875,7 @@</span><br><span class="line"> static int rk32_mipi_dsi_probe(struct platform_device *pdev)</span><br><span class="line"> &#123;</span><br><span class="line"> 	int ret = 0;</span><br><span class="line">-	static int id;</span><br><span class="line">+	static int id, prop;</span><br><span class="line"> 	struct dsi *dsi;</span><br><span class="line"> 	struct mipi_dsi_ops *ops;</span><br><span class="line"> 	struct rk_screen *screen;</span><br><span class="line">@@ -1890,7 +1890,8 @@</span><br><span class="line"> 		return -ENODEV;</span><br><span class="line"> 	&#125;</span><br><span class="line"> 	data = of_id-&gt;data;</span><br><span class="line">-</span><br><span class="line">+	of_property_read_u32(np, &quot;prop&quot;, &amp;prop);</span><br><span class="line">+	pr_info(&quot;Use mipi as %s screen\n&quot;, (prop == PRMRY) ? &quot;prmry&quot; : &quot;extend&quot;);</span><br><span class="line"> 	dsi = devm_kzalloc(&amp;pdev-&gt;dev, sizeof(struct dsi), GFP_KERNEL);</span><br><span class="line"> 	if (!dsi) &#123;</span><br><span class="line"> 		dev_err(&amp;pdev-&gt;dev, &quot;request struct dsi fail!\n&quot;);</span><br><span class="line">@@ -1997,8 +1998,8 @@</span><br><span class="line"> 		dev_err(&amp;pdev-&gt;dev, &quot;request struct rk_screen fail!\n&quot;);</span><br><span class="line"> 		return -1;</span><br><span class="line"> 	&#125;</span><br><span class="line">-	rk_fb_get_prmry_screen(screen);</span><br><span class="line">-</span><br><span class="line">+	rk_fb_get_screen(screen, prop);</span><br><span class="line">+	dsi-&gt;prop = prop;</span><br><span class="line"> 	dsi-&gt;pdev = pdev;</span><br><span class="line"> 	ops = &amp;dsi-&gt;ops;</span><br><span class="line"> 	ops-&gt;dsi = dsi;</span><br><span class="line">@@ -2056,7 +2057,7 @@</span><br><span class="line"> 		if(!support_uboot_display())</span><br><span class="line"> 			rk32_init_phy_mode(dsi_screen-&gt;lcdc_id);</span><br><span class="line"> 		*/</span><br><span class="line">-		rk_fb_trsm_ops_register(&amp;trsm_dsi_ops, SCREEN_MIPI);</span><br><span class="line">+		rk_fb_trsm_ops_register(&amp;trsm_dsi_ops, prop);</span><br><span class="line"> #ifdef MIPI_DSI_REGISTER_IO</span><br><span class="line"> 		debugfs_create_file(&quot;mipidsi0&quot;, S_IFREG | S_IRUGO, dsi-&gt;debugfs_dir, dsi,</span><br><span class="line"> 							&amp;reg_proc_fops);</span><br></pre></td></tr></table></figure>
+<h4 id="rk32-mipi-dsi-h"><a href="#rk32-mipi-dsi-h" class="headerlink" title="rk32_mipi_dsi.h"></a>rk32_mipi_dsi.h</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">diff --git a/drivers/video/rockchip/transmitter/rk32_mipi_dsi.h b/drivers/video/rockchip/transmitter/rk32_mipi_dsi.h</span><br><span class="line">index f568254..473db82 100644</span><br><span class="line">--- a/drivers/video/rockchip/transmitter/rk32_mipi_dsi.h</span><br><span class="line">+++ b/drivers/video/rockchip/transmitter/rk32_mipi_dsi.h</span><br><span class="line">@@ -307,6 +307,7 @@</span><br><span class="line"> struct dsi &#123;</span><br><span class="line"> 	u8 dsi_id;</span><br><span class="line"> 	u8 lcdc_id;</span><br><span class="line">+	int prop;</span><br><span class="line"> 	u8 vid;</span><br><span class="line"> 	u8 clk_on;</span><br><span class="line"> 	struct regmap *grf_base;</span><br></pre></td></tr></table></figure>
+<h4 id="rk-fb-h"><a href="#rk-fb-h" class="headerlink" title="rk_fb.h"></a>rk_fb.h</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">diff --git a/include/dt-bindings/display/rk_fb.h b/include/dt-bindings/display/rk_fb.h</span><br><span class="line">index 81c9855..ae7241d 100755</span><br><span class="line">--- a/include/dt-bindings/display/rk_fb.h</span><br><span class="line">+++ b/include/dt-bindings/display/rk_fb.h</span><br><span class="line">@@ -14,6 +14,13 @@</span><br><span class="line"> #define DUAL		2</span><br><span class="line"> #define DUAL_LCD	3</span><br><span class="line"> </span><br><span class="line">+#define DEFAULT_MODE	0</span><br><span class="line">+#define HDMI_720P	0</span><br><span class="line">+#define HDMI_1080P	1</span><br><span class="line">+#define HDMI_2160P	2</span><br><span class="line">+#define NTSC_CVBS	3</span><br><span class="line">+#define PAL_CVBS	4</span><br><span class="line">+</span><br><span class="line"> #define DEFAULT_MODE			0</span><br><span class="line"> #define ONE_VOP_DUAL_MIPI_HOR_SCAN	1</span><br><span class="line"> #define ONE_VOP_DUAL_MIPI_VER_SCAN	2</span><br></pre></td></tr></table></figure>
+<h4 id="lcd-的-dtsi"><a href="#lcd-的-dtsi" class="headerlink" title="lcd 的 dtsi"></a>lcd 的 dtsi</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">diff --git a/include/dt-bindings/display/screen-timing/lcd-F402.dtsi b/include/dt-bindings/display/screen-timing/lcd-F402.dtsi</span><br><span class="line">index a3ad25f..abe178f 100644</span><br><span class="line">--- a/include/dt-bindings/display/screen-timing/lcd-F402.dtsi</span><br><span class="line">+++ b/include/dt-bindings/display/screen-timing/lcd-F402.dtsi</span><br><span class="line">@@ -4,9 +4,9 @@</span><br><span class="line">  */</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">-disp_timings: display-timings &#123;</span><br><span class="line">-        native-mode = &lt;&amp;timing0&gt;;</span><br><span class="line">-        timing0: timing0 &#123;</span><br><span class="line">+display-timings &#123;</span><br><span class="line">+        native-mode = &lt;&amp;f402&gt;;</span><br><span class="line">+        f402: timing0 &#123;</span><br><span class="line"> 		screen-type = &lt;SCREEN_EDP&gt;;</span><br><span class="line"> 		out-face    = &lt;OUT_P666&gt;;</span><br><span class="line"> 		clock-frequency = &lt;205000000&gt;;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line">diff --git a/include/dt-bindings/display/screen-timing/lcd-box.dtsi b/include/dt-bindings/display/screen-timing/lcd-box.dtsi</span><br><span class="line">index 2109a89..20e2a21 100644</span><br><span class="line">--- a/include/dt-bindings/display/screen-timing/lcd-box.dtsi</span><br><span class="line">+++ b/include/dt-bindings/display/screen-timing/lcd-box.dtsi</span><br><span class="line">@@ -3,36 +3,9 @@</span><br><span class="line">  *</span><br><span class="line">  */</span><br><span class="line"> </span><br><span class="line">-	disp_power_ctr: power_ctr &#123;</span><br><span class="line">-     /*                        rockchip,debug = &lt;0&gt;;</span><br><span class="line">-        lcd_en:lcd_en &#123;</span><br><span class="line">-                rockchip,power_type = &lt;GPIO&gt;;</span><br><span class="line">-                gpios = &lt;&amp;gpio0 GPIO_B0 GPIO_ACTIVE_HIGH&gt;;</span><br><span class="line">-                rockchip,delay = &lt;10&gt;;</span><br><span class="line">-        &#125;;</span><br><span class="line">-</span><br><span class="line">-        bl_en:bl_en &#123;</span><br><span class="line">-                rockchip,power_type = &lt;GPIO&gt;;</span><br><span class="line">-                gpios = &lt;&amp;gpio0 GPIO_A2 GPIO_ACTIVE_HIGH&gt;;</span><br><span class="line">-                rockchip,delay = &lt;10&gt;;</span><br><span class="line">-        &#125;;</span><br><span class="line">-</span><br><span class="line">-        bl_ctr:bl_ctr &#123;</span><br><span class="line">-                rockchip,power_type = &lt;GPIO&gt;;</span><br><span class="line">-                gpios = &lt;&amp;gpio3 GPIO_D6 GPIO_ACTIVE_HIGH&gt;;</span><br><span class="line">-                rockchip,delay = &lt;10&gt;;</span><br><span class="line">-        &#125;;</span><br><span class="line">-</span><br><span class="line">-        lcd_rst:lcd_rst &#123;</span><br><span class="line">-                rockchip,power_type = &lt;REGULATOR&gt;;</span><br><span class="line">-                rockchip,delay = &lt;5&gt;;</span><br><span class="line">-        &#125;;*/</span><br><span class="line">-</span><br><span class="line">-&#125;;</span><br><span class="line">-</span><br><span class="line">-disp_timings: display-timings &#123;</span><br><span class="line">-	native-mode = &lt;&amp;timing0&gt;;</span><br><span class="line">-	timing0: timing0 &#123;</span><br><span class="line">+display-timings &#123;</span><br><span class="line">+	native-mode = &lt;&amp;hdmi_720p&gt;;</span><br><span class="line">+	hdmi_720p: timing0 &#123;</span><br><span class="line"> 		screen-type = &lt;SCREEN_RGB&gt;;</span><br><span class="line"> 		out-face    = &lt;OUT_P888&gt;;</span><br><span class="line"> 		color-mode = &lt;COLOR_YCBCR&gt;;</span><br><span class="line">@@ -53,7 +26,7 @@</span><br><span class="line"> 		swap-rg = &lt;0&gt;;</span><br><span class="line"> 		swap-gb = &lt;0&gt;;</span><br><span class="line"> 	&#125;;</span><br><span class="line">-	timing1: timing1 &#123;</span><br><span class="line">+	hdmi_1080p: timing1 &#123;</span><br><span class="line"> 		screen-type = &lt;SCREEN_RGB&gt;;</span><br><span class="line"> 		out-face    = &lt;OUT_P888&gt;;</span><br><span class="line"> 		color-mode = &lt;COLOR_YCBCR&gt;;</span><br><span class="line">@@ -74,7 +47,7 @@</span><br><span class="line"> 		swap-rg = &lt;0&gt;;</span><br><span class="line"> 		swap-gb = &lt;0&gt;;</span><br><span class="line"> 	&#125;;</span><br><span class="line">-	timing2: timing2 &#123;</span><br><span class="line">+	hdmi_2160p: timing2 &#123;</span><br><span class="line"> 		screen-type = &lt;SCREEN_RGB&gt;;</span><br><span class="line"> 		out-face    = &lt;OUT_P888&gt;;</span><br><span class="line"> 		color-mode = &lt;COLOR_YCBCR&gt;;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line">diff --git a/include/dt-bindings/display/screen-timing/lcd-tv080wum-nl0-mipi.dtsi b/include/dt-bindings/display/screen-timing/lcd-tv080wum-nl0-mipi.dtsi</span><br><span class="line">index b408d65..6a203a9 100644</span><br><span class="line">--- a/include/dt-bindings/display/screen-timing/lcd-tv080wum-nl0-mipi.dtsi</span><br><span class="line">+++ b/include/dt-bindings/display/screen-timing/lcd-tv080wum-nl0-mipi.dtsi</span><br><span class="line">@@ -84,10 +84,10 @@</span><br><span class="line"> 	*/</span><br><span class="line"> &#125;;</span><br><span class="line"> </span><br><span class="line">-disp_timings: display-timings &#123;</span><br><span class="line">-	native-mode = &lt;&amp;timing0&gt;;</span><br><span class="line">+display-timings &#123;</span><br><span class="line">+	native-mode = &lt;&amp;tv080wum_nl0_mipi&gt;;</span><br><span class="line"> 	compatible = &quot;rockchip,display-timings&quot;;</span><br><span class="line">-	timing0: timing0 &#123;</span><br><span class="line">+	tv080wum_nl0_mipi: timing0 &#123;</span><br><span class="line"> 		screen-type = &lt;SCREEN_MIPI&gt;;</span><br><span class="line"> 		lvds-format = &lt;LVDS_8BIT_2&gt;;</span><br><span class="line"> 		out-face    = &lt;OUT_P888&gt;;</span><br><span class="line">diff --git a/include/linux/rk_fb.h b/include/linux/rk_fb.h</span><br><span class="line">index d7634a8..1130ea4 100755</span><br><span class="line">--- a/include/linux/rk_fb.h</span><br><span class="line">+++ b/include/linux/rk_fb.h</span><br><span class="line">@@ -811,7 +811,10 @@</span><br><span class="line"> extern int rk_fb_get_prmry_screen( struct rk_screen *screen);</span><br><span class="line"> extern int rk_fb_set_prmry_screen(struct rk_screen *screen);</span><br><span class="line"> extern u32 rk_fb_get_prmry_screen_pixclock(void);</span><br><span class="line">-extern int rk_disp_pwr_ctr_parse_dt(struct rk_lcdc_driver *dev_drv);</span><br><span class="line">+extern int rk_fb_get_screen(struct rk_screen *screen, int prop);</span><br><span class="line">+extern int rk_fb_set_screen(struct rk_screen *screen, int prop);</span><br><span class="line">+extern int rk_disp_pwr_ctr_parse_dt(struct device_node *np,</span><br><span class="line">+				    struct rk_screen *rk_screen);</span><br><span class="line"> extern int rk_disp_pwr_enable(struct rk_lcdc_driver *dev_drv);</span><br><span class="line"> extern int rk_disp_pwr_disable(struct rk_lcdc_driver *dev_drv);</span><br><span class="line"> extern bool is_prmry_rk_lcdc_registered(void);</span><br><span class="line">diff --git a/include/linux/rk_screen.h b/include/linux/rk_screen.h</span><br><span class="line">index 5e5cd30..71a0d4d 100644</span><br><span class="line">--- a/include/linux/rk_screen.h</span><br><span class="line">+++ b/include/linux/rk_screen.h</span><br><span class="line">@@ -61,13 +61,17 @@</span><br><span class="line"> *ft: the time need to display one frame time</span><br><span class="line"> */</span><br><span class="line"> struct rk_screen &#123;</span><br><span class="line">-	u16 type;</span><br><span class="line">+	struct device	*dev;</span><br><span class="line">+	int prop;</span><br><span class="line"> 	u16 refresh_mode;</span><br><span class="line">+	struct list_head *pwrlist_head;</span><br><span class="line">+	u16 type;</span><br><span class="line"> 	u16 lvds_format;</span><br><span class="line"> 	u16 face;</span><br><span class="line"> 	u16 color_mode;</span><br><span class="line"> 	u8 lcdc_id;</span><br><span class="line"> 	u8 screen_id;</span><br><span class="line">+	int native_mode;</span><br><span class="line"> 	struct fb_videomode mode;</span><br><span class="line"> 	u32 post_dsp_stx;</span><br><span class="line"> 	u32 post_dsp_sty;</span><br><span class="line">@@ -145,7 +149,7 @@</span><br><span class="line"> &#125;;</span><br><span class="line"> </span><br><span class="line"> extern void set_lcd_info(struct rk_screen *screen, struct rk29lcd_info *lcd_info);</span><br><span class="line">-extern size_t get_fb_size(u8 reserved_fb);</span><br><span class="line">+extern size_t get_fb_size(u8 reserved_fb, struct rk_screen *screen);</span><br><span class="line"> </span><br><span class="line"> extern void set_tv_info(struct rk_screen *screen);</span><br><span class="line"> extern void set_hdmi_info(struct rk_screen *screen);</span><br></pre></td></tr></table></figure>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者：<a href="http://iyounix.com">Younix</a>
+            <p>原文链接：<a href="http://iyounix.com/2017/12/01/Android_Driver/Driver/[Android6.0][RK3399] 双屏异显代码实现流程分析（二）/">http://iyounix.com/2017/12/01/Android_Driver/Driver/[Android6.0][RK3399] 双屏异显代码实现流程分析（二）/</a>
+            <p>发表日期：<a href="http://iyounix.com/2017/12/01/Android_Driver/Driver/[Android6.0][RK3399] 双屏异显代码实现流程分析（二）/">December 1st 2017, 3:33:06 am</a>
+            <p>更新日期：<a href="http://iyounix.com/2017/12/01/Android_Driver/Driver/[Android6.0][RK3399] 双屏异显代码实现流程分析（二）/">November 8th 2018, 10:42:44 am</a>
+            <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/deed.zh">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href= "/2017/12/01/Android_Sys/[Android6.0] 开发环境搭建中碰到的问题/" title= "Android6.0 RK3399 开发环境搭建中碰到的问题">
+                    <div class="nextTitle">Android6.0 RK3399 开发环境搭建中碰到的问题</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/2017/12/01/Android_Driver/Driver/[Android6.0][RK3399] 双屏异显代码实现流程分析（一）/" title= "Android6.0 RK3399 双屏异显代码实现流程分析">
+                    <div class="prevTitle">Android6.0 RK3399 双屏异显代码实现流程分析</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
+    
+    
+    <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+    <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+    <div id="comment"></div>
+    <script>
+    new Valine({
+        el: '#comment' ,
+        notify:false, 
+        verify:false, 
+        appId: "il9qYeGCfA80xAqoGXBmDaU3-gzGzoHsz",
+        appKey: "OCMYJee8Ua8CVylQSQB75Kla",
+        placeholder: "既然看完了,那就评论一下吧",
+        path:window.location.pathname, 
+        avatar:'mm' 
+    });
+    </script>
+
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:foreveryounix@mail.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/dearsq" class="iconfont-archer github" target="_blank" title=github></a>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer wechat" title=wechat>
+                  
+                  <img class="profile-qr" src="/assets/example_qr.png" />
+                </span>
+            
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="https://weibo.com/younix" class="iconfont-archer weibo" target="_blank" title=weibo></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="/atom.xml" class="iconfont-archer rss" target="_blank" title=rss></a>
+            
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+    
+     
+    <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+    
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Patch-Code"><span class="toc-number">1.</span> <span class="toc-text">Patch Code</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#dtsi"><span class="toc-number">1.1.</span> <span class="toc-text">dtsi</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#rk3399-android-dtsi"><span class="toc-number">1.1.1.</span> <span class="toc-text">rk3399-android.dtsi</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#rk3399-evb-rev3-android-dts"><span class="toc-number">1.1.2.</span> <span class="toc-text">rk3399-evb-rev3-android.dts</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#lcdc-控制器"><span class="toc-number">1.2.</span> <span class="toc-text">lcdc 控制器</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#rk322x-lcdc-c"><span class="toc-number">1.2.1.</span> <span class="toc-text">rk322x_lcdc.c</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#rk-fb-c"><span class="toc-number">1.2.2.</span> <span class="toc-text">rk_fb.c</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#timing-初始化"><span class="toc-number">1.3.</span> <span class="toc-text">timing 初始化</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#rk-screen-c"><span class="toc-number">1.3.1.</span> <span class="toc-text">rk_screen.c</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#rk32-dp-c"><span class="toc-number">1.3.2.</span> <span class="toc-text">rk32_dp.c</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#rk32-mipi-dsi-c"><span class="toc-number">1.3.3.</span> <span class="toc-text">rk32_mipi_dsi.c</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#rk32-mipi-dsi-h"><span class="toc-number">1.3.4.</span> <span class="toc-text">rk32_mipi_dsi.h</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#rk-fb-h"><span class="toc-number">1.3.5.</span> <span class="toc-text">rk_fb.h</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#lcd-的-dtsi"><span class="toc-number">1.3.6.</span> <span class="toc-text">lcd 的 dtsi</span></a></li></ol></li></ol></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 163
+        </div>
+        <!-- search  -->
+        
+            <div class="site-search popup-trigger">
+                <span class="iconfont-archer search-icon">&#xe627;</span>
+            </div>
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/08</span><a class="archive-post-title" href= "/2018/11/08/Android_Driver/Driver/[Android6.0][RK3399] Mipi LCD RM72014 移植调试流程/" >Android6.0 RK3399 Mipi LCD RM72014 移植调试流程</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_Notification/" >SOP_Notification</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_动态权限/" >SOP_动态权限</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/组件_BroadcastReceiver/" >组件_BroadcastReceiver</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_Intent传输对象的方法/" >SOP_Intent传输对象的方法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/数据持久化_数据库_LitePal 和 SQLite/" >数据持久化_数据库_LitePal 和 SQLite</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_WebView/" >SOP_WebView</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/数据持久化_文件存储/" >数据持久化_文件存储</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_异步消息处理机制/" >SOP_异步消息处理机制</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_控件_AlertDialog/" >SOP_控件_AlertDialog</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_MediaPlayer/" >SOP_MediaPlayer</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/数据持久化_SharedPreferences/" >数据持久化_SharedPreferences</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_全局获取Context方法/" >SOP_全局获取Context方法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_WebView_XML和JSON/" >SOP_WebView_XML和JSON</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_控件_Fragment/" >SOP_控件_Fragment</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/组件_ContentProvider/" >组件_ContentProvider</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_多线程编程/" >SOP_多线程编程</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/31</span><a class="archive-post-title" href= "/2018/05/31/Android_App/[Android7.1][RK3399] 添加开机播放视频功能/" >Android7.1 RK3399 添加开机播放视频功能</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/01</span><a class="archive-post-title" href= "/2018/05/01/Android_App/[Android7.1] 打开设置中的返回键/" >Android7.1 打开设置中的返回键</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_App/[Android6.0][MTK6737]添加长按Power重启按钮/" >Android6.0 MTK6737 添加长按Power重启按钮</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_App/[Android6.0][MTK6737] App 添加系统权限/" >Android6.0 App 添加系统权限</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_Sys/[Android6.0][MTK6737] 优化开机启动时间/" >Android6.0 MTK6737 优化开机启动时间</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_Driver/Driver/[Android6.0][MTK6737]UVC Camera 移植/" >Android6.0 MTK6737 UVC Camera 移植</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_App/[Android6.0][MTK6737] 修改默认允许位置来源第三方应用安装/" >Android6.0 修改默认允许位置来源第三方应用安装</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_App/[Android6.0][MTK6737] 替换原生 Launcher/" >Android6.0 MTK6737 替换原生 Launcher</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_App/[Android6.0][MTK6737] 系统旋转后导航栏丢失，并有黑边/" >Android6.0 MTK6737 系统旋转后导航栏丢失，并有黑边</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Environment/MTK6737/[Android6.0][MTK6737] 移植 Modem/" >Android6.0 MTK6737 移植 Modem</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_Driver/Driver/[Android6.0][MTK6737] 长按 Power 没有真正关机 (MTK IPO 功能)/" >Android6.0 MTK6737 长按 Power 没有真正关机 (MTK IPO 功能)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Environment/MTK6737/[IoT4G] MTK DCT 工具介绍/" >Android6.0 MTK6737 DCT 工具介绍</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_Driver/Driver/[Android6.0][MTK6737] 设置屏幕旋转 270 度/" >Android6.0 MTK6737 设置屏幕旋转 270 度</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Environment/MTK6737/[IoT4G] 启动流程/" >Android6.0 MTK6737 启动流程</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_Driver/Driver/[Android6.0][MTK6737]版本控制和开发流程说明/" >Android6.0 MTK6737 版本控制和开发流程说明</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_App/[Android] 反编译 Android APK/" >Android 反编译 Android APK</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_App/[Android6.0][RK3399] 修改浏览器默认主页/" >Android6.0 RK3399 修改浏览器默认主页</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/30</span><a class="archive-post-title" href= "/2018/03/30/Environment/MTK6737/[Android6.0][MT6737] 环境搭建和烧录/" >Android6.0 MTK6737 环境搭建和烧录中的问题</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/29</span><a class="archive-post-title" href= "/2018/03/29/Environment/MTK6737/[IoT4G] MTK开发环境搭建/" >Android6.0 MTK6737 开发环境搭建</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/03</span><a class="archive-post-title" href= "/2018/03/03/Android_Driver/Driver/[Android7.1][RK3399] 使用 ramoops 机制查看开机 Kernel Log/" >Android7.1 RK3399 使用 ramoops 机制查看开机 Kernel Log</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/31</span><a class="archive-post-title" href= "/2018/01/31/Android_Driver/Debug/[Android7.1][RK3399] 添加对三路以上 Camera 同时预览的支持/" >Android7.1 RK3399 添加对三路以上 Camera 同时预览的支持</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/31</span><a class="archive-post-title" href= "/2018/01/31/Android_Driver/Debug/[Android7.1][RK3399] 添加对 Camera 动态热插拔的支持/" >Android7.1 RK3399 添加对 USB Camera 动态热插拔的支持.md</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/31</span><a class="archive-post-title" href= "/2018/01/31/Android_Driver/Debug/[Android7.1][RK3399] WiFi 吞吐率周期性变差问题(扫描机制)/" >Android7.1 RK3399 WiFi 吞吐率周期性变差问题(扫描机制)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/31</span><a class="archive-post-title" href= "/2018/01/31/Android_Driver/Driver/[Android7.1][RK3399] Codec rt5640 移植/" >Android7.1 RK3399 Codec rt5640 移植.md</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/31</span><a class="archive-post-title" href= "/2018/01/31/Android_Driver/Debug/[Android7.1][RK3399] 插上 TypeC 为 USB_FLOATING_CHARGER 模式/" >Android7.1 RK3399 插上 TypeC 为 USB_FLOATING_CHARGER 模式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/31</span><a class="archive-post-title" href= "/2018/01/31/Android_Driver/Debug/[Android7.1][RK3399] 只保留 USB Camera (去掉对 Mipi DVP Camera 的支持)/" >Android7.1 RK3399 只保留 USB Camera (去掉对 Mipi DVP Camera 的支持)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/31</span><a class="archive-post-title" href= "/2018/01/31/Android_Driver/Driver/[Android7.1][RK3399] RK reboot 机制驱动分析/" >Android7.1 RK3399 RK reboot 机制驱动分析</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2017 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] SATA 设备调试笔记/" >Android6.0 RK3399 SATA 设备调试笔记</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] Mipi LCD NT35521 移植调试流程/" >Android6.0 RK3399 Mipi LCD NT35521 移植调试流程</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_App/[Android6.0][RK3399] 隐藏导航栏或状态栏/" >Android6.0 RK3399 隐藏导航栏或状态栏</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Linux4.4][RK3399] DRM HDMI 调试小结/" >Linux RK3399 HDMI 调试小结</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android] init.rc 文件浅析/" >Android init.rc 文件浅析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android6.0] Reference-RIL 运行框架/" >Android6.0 Reference-RIL 运行框架</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] U-boot启动流程分析（准备）/" >Android6.0 RK3399 U-boot启动流程分析（准备）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] IR(红外线)移植步骤/" >Android6.0 RK3399 IR(红外线)移植步骤</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android] 智能指针 SP强指针WP弱指针 用法/" >Android 智能指针 SP强指针WP弱指针 用法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_App/[Android6.0][RK3399]去掉鼠标移动唤醒功能/" >Android6.0 RK3399 去掉鼠标移动唤醒功能</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] PCIe 接口 4G模块 EC20 调试记录/" >Android6.0 RK3399 PCIe 接口 4G模块 EC20 调试记录</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_App/[Android6.0][RK3399] 关闭双击 Power 打开 Camera 功能/" >Android6.0 RK3399 关闭双击 Power 打开 Camera 功能</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] PCIe 转 SATA 调试步骤/" >Android6.0 RK3399 PCIe 转 SATA 调试步骤</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] Uboot 代码分析/" >Android6.0 RK3399 Uboot 代码分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android6.0] 启动流程分析之二init分析/" >Android6.0 启动流程分析之二init分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] Uboot 编译规则/" >Android6.0 RK3399 Uboot 编译规则</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android6.0] RILC 系统结构及 LibRIL 运行机制/" >Android6.0 RILC 系统结构及 LibRIL 运行机制</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] Wifi Card 驱动流程分析/" >Android6.0 RK3399 Wifi Card 驱动流程分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Environment/Firefly-RK3399/[Linux][RK3399] 基于 Firefly RK3399 Board 制作 Ubuntu Base 版本/" >Linux RK3399 基于 Firefly RK3399 Board 制作 Ubuntu Base 版本</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] 修改默认按键 KEY-PAD/" >Android6.0 RK3399 修改默认按键 KEY-PAD</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Linux4.4][RK3399] DRM 框架及代码流程/" >Linux RK3399 DRM 框架及代码流程</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_App/[Android6.0][RK3399] 出厂预置可卸载 APK/" >Android6.0 RK3399 出厂预置可卸载 APK</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android] 文件系统分区挂载流程/" >Android 文件系统分区挂载流程</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_App/[Android6.0][RK3399] 去掉滑动锁屏(swipe lock)/" >Android6.0 RK3399 去掉滑动锁屏</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android] property_get 及 property_set 系统属性/" >Android property_get 及 property_set 系统属性</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android6.0] 启动流程分析之一概述/" >Android6.0 启动流程分析之一概述</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] 实现耳机和喇叭自动切换功能/" >Android6.0 RK3399 实现耳机和喇叭自动切换功能</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Debug/[Android6.0][RK3399] 更换64GeMMC后无法启动的问题/" >Android6.0 RK3399 更换64GeMMC后无法启动的问题</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_App/[Android6.0][RK3399] 去掉顶部Google搜索栏/" >Android6.0 RK3399 去掉顶部Google搜索栏</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_App/[Android6.0][RK3399] 设置系统默认不会休眠/" >Android6.0 RK3399 设置系统默认不会休眠</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Environment/Firefly-RK3399/[Linux][RK3399] 基于 Firefly RK3399 Board 制作 Ubuntu Desktop 版本/" >Linux RK3399 基于 Firefly RK3399 Board 制作 Ubuntu Desktop 版本</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android6.0] 启动流程(从开机到第一个程序）/" >Android6.0 启动流程(从开机到第一个程序）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] PWM Backlight 驱动分析/" >Android6.0 RK3399 PWM Backlight 驱动分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Environment/Firefly-RK3399/[Android6.0][RK3399] OTA差异包制作方法/" >Android6.0 RK3399 OTA差异包制作方法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Life/InnerPath/17-12-312017年总结/" >2017年总结</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Linux/[Linux][RK3399] 移植蓝牙驱动/" >Linux RK3399 移植蓝牙驱动</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Linux/[Linux][RK3399] 以太网调试 — 利用 ping 和 pathping 工具/" >Linux RK3399 以太网调试 — 利用 ping 和 pathping 工具</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Linux/[Linux][RK3399] ISP 矫正算法的移植/" >Linux RK3399 ISP 矫正算法的移植</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Linux/[Linux][RK3399] RK Linux 平台启动过程（5个阶段）详解/" >Linux RK3399 RK Linux 平台启动过程（5个阶段）详解</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/01</span><a class="archive-post-title" href= "/2017/12/01/Android_App/[Android6.0][RK3399] 修改默认壁纸/" >Android6.0 RK3399 修改默认壁纸</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/01</span><a class="archive-post-title" href= "/2017/12/01/Android_Sys/[Android6.0] 开发环境搭建中碰到的问题/" >Android6.0 RK3399 开发环境搭建中碰到的问题</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/01</span><a class="archive-post-title" href= "/2017/12/01/Android_Driver/Driver/[Android6.0][RK3399] 双屏异显代码实现流程分析（二）/" >Android6.0 RK3399 双屏异显代码实现流程分析(二)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/01</span><a class="archive-post-title" href= "/2017/12/01/Android_Driver/Driver/[Android6.0][RK3399] 双屏异显代码实现流程分析（一）/" >Android6.0 RK3399 双屏异显代码实现流程分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/31</span><a class="archive-post-title" href= "/2017/08/31/Android_Driver/Driver/[Android6.0][RK3399] 电池管理系统/" >Android6.0 RK3399 电源管理系统</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/31</span><a class="archive-post-title" href= "/2017/08/31/Android_Driver/Driver/[Android6.0][RK3399] 电池系统（二）BQ IC 添加 DC 充电功能/" >Android6.0 RK3399 电池系统（二）BQ IC 添加 DC 充电功能</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/31</span><a class="archive-post-title" href= "/2017/08/31/Android_Driver/Driver/[Android6.0][RK3399] 电池系统（三）电量计 CW2015 驱动流程分析/" >Android6.0 RK3399 电池系统（三）电量计 CW2015 驱动流程分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/31</span><a class="archive-post-title" href= "/2017/08/31/Android_Driver/Driver/[Android6.0][RK3399] 电池系统（四）不插电池无法开机的问题/" >Android6.0 RK3399 电池系统（四）不插电池无法开机的问题</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/31</span><a class="archive-post-title" href= "/2017/08/31/Android_Driver/Driver/[Android6.0][RK3399] 电池系统（一）BQ25700 IC 驱动分析/" >Android6.0 RK3399 电池系统（一）BQ25700 IC 驱动分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/14</span><a class="archive-post-title" href= "/2017/08/14/Life/Learning/王烁30天认知训练营 Day01 什么是查理·芒格的人生开关/" >Day01 什么是查理·芒格的人生开关</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2017/08/05/Environment/[Ubuntu] 服务器添加硬盘方法/" >Ubuntu 服务器添加硬盘方法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2017/08/05/Android_App/[Android6.0] App中调用init.rc中的服务，从而运行shell脚本/" >Android6.0 App中调用init.rc中的服务，从而运行shell脚本</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2017/08/05/Environment/[Ubuntu] 在终端中利用Wget下载百度云资源/" >Ubuntu 在终端中利用Wget/aria2下载百度云资源</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2017/08/05/Environment/[Ubuntu] Linux下访问NAS服务器/" >Linux 下访问 NAS 服务器</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2017/08/05/Android_App/[Android6.0][MTK6737] 修改默认输入法为 Sogou/" >Android6.0 修改默认输入法为 Sogou</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2017/08/05/Android_Driver/Driver/[Linux4.4] 以 SPI 驱动模型为例分析 Linux 主机驱动与外设驱动分离模型/" >Linux 以 SPI 驱动模型为例分析 Linux 主机驱动与外设驱动分离模型</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/01</span><a class="archive-post-title" href= "/2017/07/01/Android_Driver/Debug/[Android6.0][RK3399] 开机前几秒串口打印异常问题/" >Android6.0 RK3399 开机前几秒串口打印异常问题</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/01</span><a class="archive-post-title" href= "/2017/07/01/Android_Driver/Debug/[Android6.0][RK3399][BUG] 插上 HDMI 时开机解锁锁屏后死机/" >Android6.0 RK3399 插上 HDMI 时开机解锁锁屏后死机</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/06</span><a class="archive-post-title" href= "/2017/06/06/VR/OpenGL/[OpenGL]创建一个三角形/" >OpenGL 创建一个三角形</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/06</span><a class="archive-post-title" href= "/2017/06/06/VR/OpenGL/[OpenGL]创建一个窗口/" >OpenGL 创建一个窗口</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/06</span><a class="archive-post-title" href= "/2017/06/06/VR/OpenGL/[OpenGL]一些基本概念和基于状态的方法/" >OpenGL 一些基本概念和基于状态的方法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/05</span><a class="archive-post-title" href= "/2017/06/05/VR/[VR] Cardboard Treasure Hunter 代码分析/" >VR Cardboard Treasure Hunter 代码分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/05</span><a class="archive-post-title" href= "/2017/06/05/VR/[VR] 应用开发入门基本知识/" >VR 应用开发入门基本知识(Oculus/Cardboard/Daydream)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/05</span><a class="archive-post-title" href= "/2017/04/05/Android_App/[Android6.0] 使用 repo 更新某个指定 git 仓库/" >Android6.0 使用 repo 更新某个指定 git 仓库</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2016 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2016/12/31/Android_Driver/Debug/[Android5.1][RK3288] LCD Mipi 初始化长包数据规范问题/" >Android5.1 RK3288 LCD Mipi 初始化长包数据规范问题</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2016/12/31/Android_Driver/Driver/[Android5.1][RK3288] LCD (Mipi) 调试方法及问题汇总/" >Android5.1 RK3288 LCD (Mipi) 调试方法及问题汇总</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2016/12/31/Android_Driver/Driver/[Android5.1][RK3288] SPI 设备驱动模型（Ad714x CapTouch 驱动分析）/" >Android5.1 RK3288 SPI 设备驱动模型（Ad714x CapTouch 驱动分析）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2016/12/31/Android_Driver/Driver/[Android5.1][RK3288] Framebuffer 设备驱动/" >Android5.1 RK3288 Framebuffer 设备驱动</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2016/12/31/Android_Driver/Device/[Device] Mipi LCD 的基础知识/" >Mipi LCD 的基础知识</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2016/12/31/Android_Sys/[Android5.1][RK3288]build.sh脚本分析/" >Android5.1 RK3288 build.sh脚本分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2016/12/31/Android_Driver/Device/[Device] TypeC 基础知识/" >TypeC 基础知识</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2016/12/31/Android_Driver/Device/[Device] Mipi 接口 和 LVDS 接口区别/" >Mipi 接口 和 LVDS 接口区别</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/24</span><a class="archive-post-title" href= "/2016/12/24/Life/InnerPath/16-12-242016年总结/" >2016年总结</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/30</span><a class="archive-post-title" href= "/2016/10/30/Life/InnerPath/16-10-30VR创投会/" >VR创投会</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/01</span><a class="archive-post-title" href= "/2016/10/01/Android_Sys/[Android] build 流程/" >Android build 流程</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/30</span><a class="archive-post-title" href= "/2016/09/30/Life/InnerPath/16-09-30大者恒大，强者愈强/" >大者恒大，强者愈强</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/25</span><a class="archive-post-title" href= "/2016/09/25/Life/InnerPath/16-09-252016Q3总结——秋日已来，硕果寥寥/" >2016Q3总结——秋日已来，硕果寥寥</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/28</span><a class="archive-post-title" href= "/2016/08/28/Life/InnerPath/16-08-28谈谈RD和FAE/" >谈谈RD和FAE</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/19</span><a class="archive-post-title" href= "/2016/08/19/Linux/[Linux] Linux 平台嵌入式开发 101/" >Linux 平台嵌入式开发 101</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/28</span><a class="archive-post-title" href= "/2016/07/28/Android_Driver/Driver/NFC/[NFC] NFC 客户 Support 流程/" >NFC 客户 Support 流程</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/28</span><a class="archive-post-title" href= "/2016/07/28/Android_Driver/Driver/NFC/[NFC] NFC 程序设计（基础知识）/" >NFC 程序设计（基础知识）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/28</span><a class="archive-post-title" href= "/2016/07/28/Android_Driver/Driver/NFC/[NFC] NFC 程序设计（NDEF 格式介绍）/" >NFC 程序设计（NDEF 格式介绍）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/28</span><a class="archive-post-title" href= "/2016/07/28/Android_Driver/Driver/NFC/[NFC] Android 平台（Linux3.10） NXP NFC 移植流程归纳/" >NFC Android 平台 NXP NFC 移植流程归纳</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/17</span><a class="archive-post-title" href= "/2016/07/17/Life/InnerPath/16-07-172016Q2总结——春花夏拾/" >2016Q2总结——春花夏拾</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/29</span><a class="archive-post-title" href= "/2016/03/29/Life/InnerPath/16-03-29未来先见/" >未来先见</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/28</span><a class="archive-post-title" href= "/2016/03/28/Life/InnerPath/16-03-282016Q1总结/" >2016Q1总结</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/15</span><a class="archive-post-title" href= "/2016/03/15/Life/InnerPath/16-03-15世殊事异/" >世殊事异，所以兴怀</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/14</span><a class="archive-post-title" href= "/2016/03/14/Android_App/[Android5.1] 添加自定义开机动画（视频）并去黑屏/" >Android5.1 添加自定义开机动画（视频）并去黑屏</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/24</span><a class="archive-post-title" href= "/2016/02/24/Life/InnerPath/16-02-24瑞芯微出差记/" >瑞芯微出差记</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/30</span><a class="archive-post-title" href= "/2016/01/30/Life/InnerPath/16-01-30十二分之一/" >十二分之一</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/15</span><a class="archive-post-title" href= "/2016/01/15/Life/InnerPath/16-01-15书评《黑客与画家》/" >书评《黑客与画家》</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/03</span><a class="archive-post-title" href= "/2016/01/03/Life/InnerPath/16-01-03写在2015的尾巴与2016的开头/" >写在2015的尾巴与2016的开头</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/01</span><a class="archive-post-title" href= "/2016/01/01/Language/[UnixC] 内存 mem 操作/" >UnixC 内存 mem 操作</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/01</span><a class="archive-post-title" href= "/2016/01/01/Language/[其他] 编程修养/" >编程修养</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/01</span><a class="archive-post-title" href= "/2016/01/01/Language/[C] 第一章 GCC 编译的背后/" >C 第一章 GCC 编译的背后</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/01</span><a class="archive-post-title" href= "/2016/01/01/Language/[C] 函数调用的时候栈发生了什么/" >C 函数调用的时候栈发生了什么</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/01</span><a class="archive-post-title" href= "/2016/01/01/Language/[Git] 如何修改之前的某次commit/" >Git 如何修改之前的某次commit</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2015 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] 中的阻塞与非阻塞（等待队列、轮询）/" >Linux 阻塞与非阻塞（等待队列、轮询）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] DTS 架构下 Device 与 Driver 匹配流程/" >Linux DTS 架构下 Device 与 Driver 匹配流程</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] 统一设备模型/" >Linux 统一设备模型</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] 服务器添加硬盘方法/" >Linux 服务器添加硬盘方法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] 内核的 proc 文件系统/" >Linux 内核的 proc 文件系统</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux][Tool] 程序内存检查工具 Valgrind/" >Linux 程序内存检查工具 Valgrind</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] 文件批量重命名 rename/" >Linux 文件批量重命名 rename</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] 下的 SPI 设备驱动模型（SPI 协议基础）/" >Linux 中的 SPI 设备驱动模型（SPI 协议基础）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] 内核的 sysfs 文件系统/" >Linux 内核的 sysfs 文件系统</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] 中的互斥机制（中断屏蔽、原子操作、自旋锁、信号量）/" >Linux 中的互斥机制（中断屏蔽、原子操作、自旋锁、信号量）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] likely() 和 unlikely()/" >Linux likely() 和 unlikely()</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] passwd 文件格式详解/" >Linux passwd 文件格式详解</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/26</span><a class="archive-post-title" href= "/2015/10/26/Life/InnerPath/15-10-26英雄如你少年如我不负这移动盛世/" >英雄如你，少年如我，不负这移动盛世</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/20</span><a class="archive-post-title" href= "/2015/09/20/Life/InnerPath/15-09-20巴迪闲侃/" >巴迪闲侃</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/31</span><a class="archive-post-title" href= "/2015/08/31/Linux/[Linux] i2c 与 spi 设备在新版内核中不采用DTS设备树形式 在驱动添加设备信息(board_info)的方法/" >Linux i2c 与 spi 设备在新版内核中不采用DTS设备树形式 在驱动添加设备信息(board_info)的方法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/22</span><a class="archive-post-title" href= "/2015/08/22/Life/InnerPath/15-08-22深圳深圳/" >深圳深圳</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2015/08/05/Environment/[RockChip] parameter.txt 文件详解/" >RockChip parameter.txt 文件详解</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2015/08/05/Environment/[Android] eng、user、userdebug区别/" >Android eng、user、userdebug区别</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/01</span><a class="archive-post-title" href= "/2015/08/01/Life/InnerPath/15-08-01基本功/" >基本功</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/27</span><a class="archive-post-title" href= "/2015/07/27/Life/InnerPath/15-07-27入职杂谈/" >入职杂谈</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/19</span><a class="archive-post-title" href= "/2015/07/19/Life/InnerPath/15-07-19六月/" >六月的尾巴</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/14</span><a class="archive-post-title" href= "/2015/05/14/Life/InnerPath/15-05-04开始的废话总是特别多/" >开始的废话总是特别多</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> Invalid date </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">Invalid date</span><a class="archive-post-title" href= "/2018/11/08/Android_App/组件_Service/" >组件_Service.md</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="RockChip"><span class="iconfont-archer">&#xe606;</span>RockChip</span>
+    
+        <span class="sidebar-tag-name" data-tags="Android"><span class="iconfont-archer">&#xe606;</span>Android</span>
+    
+        <span class="sidebar-tag-name" data-tags="MediaTek"><span class="iconfont-archer">&#xe606;</span>MediaTek</span>
+    
+        <span class="sidebar-tag-name" data-tags="Linux"><span class="iconfont-archer">&#xe606;</span>Linux</span>
+    
+        <span class="sidebar-tag-name" data-tags="git"><span class="iconfont-archer">&#xe606;</span>git</span>
+    
+        <span class="sidebar-tag-name" data-tags="C"><span class="iconfont-archer">&#xe606;</span>C</span>
+    
+        <span class="sidebar-tag-name" data-tags="InnerPath"><span class="iconfont-archer">&#xe606;</span>InnerPath</span>
+    
+        <span class="sidebar-tag-name" data-tags="android"><span class="iconfont-archer">&#xe606;</span>android</span>
+    
+        <span class="sidebar-tag-name" data-tags="VR"><span class="iconfont-archer">&#xe606;</span>VR</span>
+    
+        <span class="sidebar-tag-name" data-tags="Food4Thought"><span class="iconfont-archer">&#xe606;</span>Food4Thought</span>
+    
+        <span class="sidebar-tag-name" data-tags="NFC"><span class="iconfont-archer">&#xe606;</span>NFC</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "Younix"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+        <div class="site-search">
+  <div class="algolia-popup popup">
+    <div class="algolia-search">
+      <div class="algolia-search-input-icon">
+        <i class="fa fa-search"></i>
+      </div>
+      <div class="algolia-search-input" id="algolia-search-input"></div>
+    </div>
+
+    <div class="algolia-results">
+      <div id="algolia-stats"></div>
+      <div id="algolia-hits"></div>
+      <div id="algolia-pagination" class="algolia-pagination"></div>
+    </div>
+
+    <span class="popup-btn-close">
+      <i class="iconfont-archer">&#xe609;</i>
+    </span>
+  </div>
+</div>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.8.0/dist/instantsearch.min.js" defer></script>
+        <script src="/scripts/search.js" defer></script>
+    
+    <!-- busuanzi  -->
+    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+
