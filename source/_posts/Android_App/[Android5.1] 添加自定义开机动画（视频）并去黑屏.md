@@ -1,9 +1,6 @@
 title: Android5.1 添加自定义开机动画（视频）并去黑屏
-
 date: 2016-03-14 23:01:05
-
 tags: 
-
 - Android
 - RockChip
 
