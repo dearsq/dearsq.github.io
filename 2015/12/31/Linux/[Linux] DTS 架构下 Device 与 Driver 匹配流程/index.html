@@ -1,0 +1,5118 @@
+<!DOCTYPE html>
+<html lang="">
+    <!-- title -->
+
+
+
+
+<!-- keywords -->
+
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" >
+    <meta name="author" content="Younix">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="Younix">
+    
+    <meta name="keywords" content="Younix,hexo-theme,hexo-blog,黑羊爱学习,黑羊,dearsq">
+    
+    <meta name="description" content="">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <title>Linux DTS 架构下 Device 与 Driver 匹配流程 · Younix&#39;s Studio</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href= "/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="stylesheet" href= "/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href= "/assets/favicon.ico" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script" />
+    <link rel="preload" href="/scripts/main.js" as="script" />
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+        <!-- algolia -->
+        <script>
+            
+            var hits = JSON.parse('{"per_page":10}')
+            var labels = JSON.parse('{"input_placeholder":"Search for Posts","hits_empty":"We did not find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}')
+
+            var algolia = {
+                applicationID: '1MYSDXEEPM',
+                apiKey: '006bf3234a29ef116c82df0b1e558270',
+                indexName: 'YounixSearchKey',
+                hits: hits,
+                labels: labels
+            }
+        </script>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >Younix&#39;s Studio.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">Linux DTS 架构下 Device 与 Driver 匹配流程</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>Younix's Studio.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="
+
+
+
+
+
+
+
+height:50vh;
+">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            Linux DTS 架构下 Device 与 Driver 匹配流程
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "Linux">Linux</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">5.6k</span>阅读时长: <span class="post-count reading-time">23 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2015/12/31</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <h2 id="旧与新"><a href="#旧与新" class="headerlink" title="旧与新"></a>旧与新</h2><p>我们知道原来采用 板级文件 架构的时候，device 与 driver 匹配的方式是 调用 platform 的 match 函数。如果 板级结构体 borad_info 中的 name 与 driver 中的 name 相同（匹配），则调用 probe 函数。</p>
+<p>但是现在引入了 DTS 架构。所以这个流程也有些变化，加上最近在调 spi 的 Sensor，刚编写完最小驱动模块却发现 probe 没有被调用，所以借此机会梳理一下 device 与 driver 的匹配流程。</p>
+<ol>
+<li>分析初始化流程。（扫描 dts 生成的 dtb 文件，并展开成为 Device Tree Structure）</li>
+<li>platform的识别流程与分析</li>
+<li>Device Tree Structure 是如何加入 linux kernel 的设备驱动模型的</li>
+</ol>
+<h2 id="初始化流程"><a href="#初始化流程" class="headerlink" title="初始化流程"></a>初始化流程</h2><p>系统初始化流程可以参见 <a href="http://blog.csdn.net/dearsq/article/details/51063207" target="_blank" rel="noopener">展讯平台启动流程（uboot）</a></p>
+<h3 id="unflat"><a href="#unflat" class="headerlink" title="unflat"></a>unflat</h3><p>我们知道 dtb 是 dts 与 dtsi 编译的二进制文件，在系统初始化的过程中，我们将 dtb 转化成 device_node 的树状结构，便于后续的方便操作：<br>setup_ArchName -&gt; unflatten_device_tree<br>drivers/of/fdt.c, line 1119<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1119</span> <span class="keyword">void</span> __<span class="function">init <span class="title">unflatten_device_tree</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function">1120 </span>&#123;</span><br><span class="line"><span class="number">1121</span>         __unflatten_device_tree(initial_boot_params, &amp;of_root,</span><br><span class="line"><span class="number">1122</span>                                 early_init_dt_alloc_memory_arch);</span><br><span class="line"><span class="number">1123</span> </span><br><span class="line"><span class="number">1124</span>         <span class="comment">/* Get pointer to "/chosen" and "/aliases" nodes for use everywhere */</span></span><br><span class="line"><span class="number">1125</span>         of_alias_scan(early_init_dt_alloc_memory_arch);</span><br><span class="line"><span class="number">1126</span> &#125;</span><br><span class="line"><span class="number">1127</span></span><br></pre></td></tr></table></figure></p>
+<p>我们利用 struct device_node 来抽象 设备树 中的一个节点：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">device_node</span> &#123;</span> </span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *name;			<span class="comment">//device node name </span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *type;			  <span class="comment">//对应device_type的属性 </span></span><br><span class="line">    phandle phandle;			 <span class="comment">//对应该节点的phandle属性 </span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *full_name; 		<span class="comment">//从“/”开始的，表示该node的full path</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span>    <span class="title">property</span> *<span class="title">properties</span>;</span>  <span class="comment">//该节点的属性列表 </span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span>    <span class="title">property</span> *<span class="title">deadprops</span>;</span> <span class="comment">//如果需要删除某些属性，kernel并非真的删除，而是挂入到deadprops的列表 </span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span>    <span class="title">device_node</span> *<span class="title">parent</span>;</span> <span class="comment">//parent、child以及sibling将所有的device node连接起来 </span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span>    <span class="title">device_node</span> *<span class="title">child</span>;</span> </span><br><span class="line">    <span class="class"><span class="keyword">struct</span>    <span class="title">device_node</span> *<span class="title">sibling</span>;</span> </span><br><span class="line">    <span class="class"><span class="keyword">struct</span>    <span class="title">device_node</span> *<span class="title">next</span>;</span>  <span class="comment">//通过该指针可以获取相同类型的下一个node </span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span>    <span class="title">device_node</span> *<span class="title">allnext</span>;</span> <span class="comment">//通过该指针可以获取node global list下一个node </span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span>    <span class="title">proc_dir_entry</span> *<span class="title">pde</span>;</span>  <span class="comment">//开放到userspace的proc接口信息 </span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span>    <span class="title">kref</span> <span class="title">kref</span>;</span>					<span class="comment">//该node的reference count </span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> _flags; </span><br><span class="line">    <span class="keyword">void</span>    *data; </span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>如上 device_node 被组织成<br>1.global list。全局变量struct device_node *of_allnodes就是指向设备树的global list<br>2.tree。<br>_ _unflatten_device_tree 的主要功能就是扫描 DTB。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">void</span> __unflatten_device_tree(struct boot_param_header *blob;<span class="comment">//需要扫描的DTB </span></span><br><span class="line">                 struct device_node **mynodes,<span class="comment">//global list指针 </span></span><br><span class="line">                 <span class="keyword">void</span> * (*dt_alloc)(u64 size, u64 align))<span class="comment">//内存分配函数 </span></span><br><span class="line">&#123; </span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> size; </span><br><span class="line">    <span class="keyword">void</span> *start, *mem; </span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">device_node</span> **<span class="title">allnextp</span> = <span class="title">mynodes</span>;</span></span><br><span class="line">    此处删除了health check代码，例如检查DTB header的magic，确认blob的确指向一个DTB。</span><br><span class="line">    <span class="comment">/* scan过程分成两轮，第一轮主要是确定device-tree structure的长度，保存在size变量中 */</span> </span><br><span class="line">    start = ((<span class="keyword">void</span> *)blob) + be32_to_cpu(blob-&gt;off_dt_struct); </span><br><span class="line">    size = (<span class="keyword">unsigned</span> <span class="keyword">long</span>)unflatten_dt_node(blob, <span class="number">0</span>, &amp;start, <span class="literal">NULL</span>, <span class="literal">NULL</span>, <span class="number">0</span>); </span><br><span class="line">    size = ALIGN(size, <span class="number">4</span>);</span><br><span class="line">    <span class="comment">/* 初始化的时候，并不是扫描到一个node或者property就分配相应的内存，实际上内核是一次性的分配了一大片内存，这些内存包括了所有的struct device_node、node name、struct property所需要的内存。*/</span> </span><br><span class="line">    mem = dt_alloc(size + <span class="number">4</span>, __alignof__(struct device_node)); </span><br><span class="line">    <span class="built_in">memset</span>(mem, <span class="number">0</span>, size);</span><br><span class="line">    *(__be32 *)(mem + size) = cpu_to_be32(<span class="number">0xdeadbeef</span>);   <span class="comment">//用来检验后面unflattening是否溢出</span></span><br><span class="line">    <span class="comment">/* 这是第二轮的scan，第一次scan是为了得到保存所有node和property所需要的内存size，第二次就是实打实的要构建device node tree了 */</span> </span><br><span class="line">    start = ((<span class="keyword">void</span> *)blob) + be32_to_cpu(blob-&gt;off_dt_struct); </span><br><span class="line">    unflatten_dt_node(blob, mem, &amp;start, <span class="literal">NULL</span>, &amp;allnextp, <span class="number">0</span>);     </span><br><span class="line">    <span class="comment">//... 此处略去校验溢出和校验OF_DT_END。 </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="platform的识别流程与分析"><a href="#platform的识别流程与分析" class="headerlink" title="platform的识别流程与分析"></a>platform的识别流程与分析</h3><p>Device Tree 是如何完成运行时的参数传递和 platform 识别功能的?</p>
+<h4 id="汇编部分代码分析（关于参数传递）"><a href="#汇编部分代码分析（关于参数传递）" class="headerlink" title="汇编部分代码分析（关于参数传递）"></a>汇编部分代码分析（关于参数传递）</h4><p>linux/arch/arm/kernel/head.S文件定义了bootloader和kernel的参数传递要求：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MMU = off, D-cache = off, I-cache = dont care, r0 = 0, r1 = machine nr, r2 = atags or dtb pointer.</span><br></pre></td></tr></table></figure></p>
+<p>目前的kernel支持旧的 tag list 的方式，同时也支持 device tree 的方式。<br>r2可能是device tree binary file的指针（bootloader要传递给内核之前要copy到memory中），也可以能是tag list的指针。<br>在ARM的汇编部分的启动代码中（主要是 head.S 和 head-common.S），machine type ID和指向DTB或者atags的指针被保存在变量<strong>machine_arch_type和</strong>atags_pointer中，这么做是为了后续c代码进行处理。</p>
+<h4 id="setup-ARCH"><a href="#setup-ARCH" class="headerlink" title="setup_ARCH"></a>setup_ARCH</h4><p>arch/arm/kernel/setup.c#L1052<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> __<span class="function">init <span class="title">setup_arch</span><span class="params">(<span class="keyword">char</span> **cmdline_p)</span> </span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line">    <span class="keyword">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">machine_desc</span> *<span class="title">mdesc</span>;</span></span><br><span class="line">……</span><br><span class="line">    mdesc = setup_machine_fdt(__atags_pointer); </span><br><span class="line">    <span class="keyword">if</span> (!mdesc) </span><br><span class="line">        mdesc = setup_machine_tags(__atags_pointer, __machine_arch_type); </span><br><span class="line">    machine_desc = mdesc; </span><br><span class="line">    machine_name = mdesc-&gt;name;</span><br><span class="line">…… </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>对于如何确定HW platform这个问题。<br>旧的方法是静态定义若干的machine描述符（struct machine_desc ），在启动过程中，通过machine type ID作为索引，在这些静态定义的machine描述符中扫描，找到那个ID匹配的描述符。<br>在新的内核中，首先使用 setup_machine_fdt 来 setup machine描述符，如果返回 NULL，才使用传统的方法setup_machine_tags来setup machine描述符。<br>传统的方法需要给出_._machine_arch_type（bootloader通过r1寄存器传递给kernel的）和tag list的地址（用来进行tag parse）。<br>_._machine_arch_type用来寻找machine描述符；<br>tag list用于运行时参数的传递。随着内核的不断发展，相信有一天linux kernel会完全抛弃tag list的机制。</p>
+<h4 id="匹配-platform（machine-描述符）"><a href="#匹配-platform（machine-描述符）" class="headerlink" title="匹配 platform（machine 描述符）"></a>匹配 platform（machine 描述符）</h4><p>setup_machine_fdt 函数的功能就是根据Device Tree的信息，找到最适合的machine描述符。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">machine_desc</span> * __<span class="title">init</span> <span class="title">setup_machine_fdt</span>(<span class="title">unsigned</span> <span class="title">int</span> <span class="title">dt_phys</span>) </span></span><br><span class="line"><span class="class">&#123;</span> </span><br><span class="line">    <span class="keyword">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">machine_desc</span> *<span class="title">mdesc</span>, *<span class="title">mdesc_best</span> = <span class="title">NULL</span>;</span></span><br><span class="line">    <span class="keyword">if</span> (!dt_phys || !early_init_dt_scan(phys_to_virt(dt_phys))) </span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    mdesc = of_flat_dt_match_machine(mdesc_best, arch_get_next_mach);</span><br><span class="line">    <span class="keyword">if</span> (!mdesc) &#123;  </span><br><span class="line">        出错处理 </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/* Change machine number to match the mdesc we're using */</span> </span><br><span class="line">    __machine_arch_type = mdesc-&gt;nr;</span><br><span class="line">    <span class="keyword">return</span> mdesc; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>early_init_dt_scan 函数有两个功能，一个是为后续的DTB scan进行准备工作，另外一个是运行时参数传递。具体请参考下面一个section的描述。<br>of_flat_dt_match_machine是在machine描述符的列表中scan，找到最合适的那个machine描述符。我们首先看如何组成machine描述符的列表。和传统的方法类似，也是静态定义的。DT_MACHINE_START和MACHINE_END用来定义一个machine描述符。编译的时候，compiler会把这些machine descriptor放到一个特殊的段中（.arch.info.init），形成machine描述符的列表。machine描述符用下面的数据结构来标识（删除了不相关的member）：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">machine_desc</span> &#123;</span> </span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span>        nr;        <span class="comment">/* architecture number    */</span> </span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *<span class="keyword">const</span>     *dt_compat;    <span class="comment">/* array of device tree 'compatible' strings    */</span></span><br><span class="line">……</span><br><span class="line">   &#125;;</span><br></pre></td></tr></table></figure></p>
+<p>nr成员就是过去使用的machine type ID。内核machine描述符的table有若干个entry，每个都有自己的ID。bootloader传递了machine type ID，指明使用哪一个machine描述符。目前匹配machine描述符使用compatible strings，也就是dt_compat成员，这是一个string list，定义了这个machine所支持的列表。在扫描machine描述符列表的时候需要不断的获取下一个machine描述符的compatible字符串的信息，具体的代码如下：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">void</span> * __<span class="function">init <span class="title">arch_get_next_mach</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *<span class="keyword">const</span> **match)</span> </span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">machine_desc</span> *<span class="title">mdesc</span> = __<span class="title">arch_info_begin</span>;</span> </span><br><span class="line">    <span class="keyword">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">machine_desc</span> *<span class="title">m</span> = <span class="title">mdesc</span>;</span></span><br><span class="line">    <span class="keyword">if</span> (m &gt;= __arch_info_end) </span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    mdesc++; </span><br><span class="line">    *match = m-&gt;dt_compat; </span><br><span class="line">    <span class="keyword">return</span> m; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>_._arch_info_begin指向machine描述符列表第一个entry。通过mdesc++不断的移动machine描述符指针（Note：mdesc是static的）。match返回了该machine描述符的compatible string list。具体匹配的算法倒是很简单，就是比较字符串而已，一个是root node的compatible字符串列表，一个是machine描述符的compatible字符串列表，得分最低的（最匹配的）就是我们最终选定的machine type。</p>
+<h4 id="运行时传递参数"><a href="#运行时传递参数" class="headerlink" title="运行时传递参数"></a>运行时传递参数</h4><p>运行时参数是在扫描DTB的chosen node时候完成的，具体的动作就是获取chosen node的bootargs、initrd等属性的value，并将其保存在全局变量（boot_command_line，initrd_start、initrd_end）中。使用tag list方法是类似的，通过分析tag list，获取相关信息，保存在同样的全局变量中。具体代码位于early_init_dt_scan函数中：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">bool</span> __<span class="function">init <span class="title">early_init_dt_scan</span><span class="params">(<span class="keyword">void</span> *params)</span> </span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line">    <span class="keyword">if</span> (!params) </span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    <span class="comment">/* 全局变量initial_boot_params指向了DTB的header*/</span> </span><br><span class="line">    initial_boot_params = params;</span><br><span class="line">    <span class="comment">/* 检查DTB的magic，确认是一个有效的DTB */</span> </span><br><span class="line">    <span class="keyword">if</span> (be32_to_cpu(initial_boot_params-&gt;magic) != OF_DT_HEADER) &#123; </span><br><span class="line">        initial_boot_params = <span class="literal">NULL</span>; </span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>; </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/* 扫描 /chosen node，保存运行时参数（bootargs）到boot_command_line，此外，还处理initrd相关的property，并保存在initrd_start和initrd_end这两个全局变量中 */</span> </span><br><span class="line">    of_scan_flat_dt(early_init_dt_scan_chosen, boot_command_line);</span><br><span class="line">    <span class="comment">/* 扫描根节点，获取 &#123;size,address&#125;-cells信息，并保存在dt_root_size_cells和dt_root_addr_cells全局变量中 */</span> </span><br><span class="line">    of_scan_flat_dt(early_init_dt_scan_root, <span class="literal">NULL</span>);</span><br><span class="line">    <span class="comment">/* 扫描DTB中的memory node，并把相关信息保存在meminfo中，全局变量meminfo保存了系统内存相关的信息。*/</span> </span><br><span class="line">    of_scan_flat_dt(early_init_dt_scan_memory, <span class="literal">NULL</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>设定meminfo（该全局变量确定了物理内存的布局）有若干种途径：<br>1、通过tag list（tag是ATAG_MEM）传递memory bank的信息。<br>2、通过command line（可以用tag list，也可以通过DTB）传递memory bank的信息。<br>3、通过DTB的memory node传递memory bank的信息。<br>目前当然是推荐使用Device Tree的方式来传递物理内存布局信息。</p>
+<h3 id="Device-Tree-Structure-是如何加入-linux-kernel-的设备驱动模型的"><a href="#Device-Tree-Structure-是如何加入-linux-kernel-的设备驱动模型的" class="headerlink" title="Device Tree Structure 是如何加入 linux kernel 的设备驱动模型的"></a>Device Tree Structure 是如何加入 linux kernel 的设备驱动模型的</h3><p>在linux kernel引入统一设备模型之后，bus、driver和device形成了设备模型中的铁三角。在驱动初始化的时候会将代表该driver的一个数据结构（一般是xxx_driver）挂入bus上的driver链表。device挂入链表分成两种情况，一种是即插即用类型的bus，在插入一个设备后，总线可以检测到这个行为并动态分配一个device数据结构（一般是xxx_device，例如usb_device），之后，将该数据结构挂入bus上的device链表。bus上挂满了driver和device，那么如何让device遇到“对”的那个driver呢？那么就要靠缘分了，也就是bus的match函数。<br>上面是一段导论，我们还是回到Device Tree。导致Device Tree的引入ARM体系结构的代码其中一个最重要的原因的太多的静态定义的表格。例如：一般代码中会定义一个static struct platform_device *xxx_devices的静态数组，在初始化的时候调用platform_add_devices。这些静态定义的platform_device往往又需要静态定义各种resource，这导致静态表格进一步增大。如果ARM linux中不再定义这些表格，那么一定需要一个转换的过程，也就是说，系统应该会根据Device tree来动态的增加系统中的platform_device。当然，这个过程并非只是发生在platform bus上（具体可以参考“Platform Device”的设备），也可能发生在其他的非即插即用的bus上，例如AMBA总线、PCI总线。一言以蔽之，如果要并入linux kernel的设备驱动模型，那么就需要根据device_node的树状结构（root是of_allnodes）将一个个的device node挂入到相应的总线device链表中。只要做到这一点，总线机制就会安排device和driver的约会。<br>当然，也不是所有的device node都会挂入bus上的设备链表，比如cpus node，memory node，choose node等。</p>
+<p>1、cpus node的处理<br>这部分的处理可以参考setup_arch-&gt;arm_dt_init_cpu_maps中的代码，具体的代码如下：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> __<span class="function">init <span class="title">arm_dt_init_cpu_maps</span><span class="params">(<span class="keyword">void</span>)</span> </span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line">    scan device node global <span class="built_in">list</span>，寻找full path是“/cpus”的那个device node。cpus这个device node只是一个容器，其中包括了各个cpu node的定义以及所有cpu node共享的property。 </span><br><span class="line">    cpus = of_find_node_by_path(<span class="string">"/cpus"</span>);</span><br><span class="line"> </span><br><span class="line">    for_each_child_of_node(cpus, cpu) &#123;           遍历cpus的所有的child node </span><br><span class="line">        u32 hwid;</span><br><span class="line">        <span class="keyword">if</span> (of_node_cmp(cpu-&gt;type, <span class="string">"cpu"</span>))        我们只关心那些device_type是cpu的node </span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (of_property_read_u32(cpu, <span class="string">"reg"</span>, &amp;hwid)) &#123;    读取reg属性的值并赋值给hwid </span><br><span class="line">            <span class="keyword">return</span>; </span><br><span class="line">        &#125;</span><br><span class="line">        reg的属性值的<span class="number">8</span> MSBs必须设置为<span class="number">0</span>，这是ARM CPU binding定义的。 </span><br><span class="line">        <span class="keyword">if</span> (hwid &amp; ~MPIDR_HWID_BITMASK)   </span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        不允许重复的CPU id，那是一个灾难性的设定 </span><br><span class="line">        <span class="keyword">for</span> (j = <span class="number">0</span>; j &lt; cpuidx; j++) </span><br><span class="line">            <span class="keyword">if</span> (WARN(tmp_map[j] == hwid, <span class="string">"Duplicate /cpu reg "</span> </span><br><span class="line">                             <span class="string">"properties in the DT\n"</span>)) </span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">数组tmp_map保存了系统中所有CPU的MPIDR值（CPU ID值），具体的index的编码规则是： tmp_map[<span class="number">0</span>]保存了booting CPU的id值，其余的CPU的ID值保存在<span class="number">1</span>～NR_CPUS的位置。 </span><br><span class="line">        <span class="keyword">if</span> (hwid == mpidr) &#123; </span><br><span class="line">            i = <span class="number">0</span>; </span><br><span class="line">            bootcpu_valid = <span class="literal">true</span>; </span><br><span class="line">        &#125; <span class="keyword">else</span> &#123; </span><br><span class="line">            i = cpuidx++; </span><br><span class="line">        &#125;</span><br><span class="line">        tmp_map[i] = hwid; </span><br><span class="line">    &#125;</span><br><span class="line">根据DTB中的信息设定cpu logical <span class="built_in">map</span>数组。</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; cpuidx; i++) &#123; </span><br><span class="line">        set_cpu_possible(i, <span class="literal">true</span>); </span><br><span class="line">        cpu_logical_map(i) = tmp_map[i]; </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>要理解这部分的内容，需要理解ARM CUPs binding的概念，可以参考linux/Documentation/devicetree/bindings/arm目录下的CPU.txt文件的描述。<br>2、memory的处理<br>这部分的处理可以参考setup_arch-&gt;setup_machine_fdt-&gt;early_init_dt_scan-&gt;early_init_dt_scan_memory中的代码。具体如下：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> __<span class="function">init <span class="title">early_init_dt_scan_memory</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">long</span> node, <span class="keyword">const</span> <span class="keyword">char</span> *uname, </span></span></span><br><span class="line"><span class="function"><span class="params">                     <span class="keyword">int</span> depth, <span class="keyword">void</span> *data)</span> </span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line">    <span class="keyword">char</span> *type = of_get_flat_dt_prop(node, <span class="string">"device_type"</span>, <span class="literal">NULL</span>); 获取device_type属性值 </span><br><span class="line">    __be32 *reg, *endp; </span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> l;</span><br><span class="line">    在初始化的时候，我们会对每一个device node都要调用该call back函数，因此，我们要过滤掉那些和memory block定义无关的node。和memory block定义有的节点有两种，一种是node name是memory@形态的，另外一种是node中定义了device_type属性并且其值是memory。 </span><br><span class="line">    <span class="keyword">if</span> (type == <span class="literal">NULL</span>) &#123; </span><br><span class="line">        <span class="keyword">if</span> (depth != <span class="number">1</span> || <span class="built_in">strcmp</span>(uname, <span class="string">"memory@0"</span>) != <span class="number">0</span>) </span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>; </span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="built_in">strcmp</span>(type, <span class="string">"memory"</span>) != <span class="number">0</span>) </span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    获取memory的起始地址和length的信息。有两种属性和该信息有关，一个是linux,usable-memory，不过最新的方式还是使用reg属性。</span><br><span class="line">reg = of_get_flat_dt_prop(node, <span class="string">"linux,usable-memory"</span>, &amp;l); </span><br><span class="line">    <span class="keyword">if</span> (reg == <span class="literal">NULL</span>) </span><br><span class="line">        reg = of_get_flat_dt_prop(node, <span class="string">"reg"</span>, &amp;l); </span><br><span class="line">    <span class="keyword">if</span> (reg == <span class="literal">NULL</span>) </span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    endp = reg + (l / <span class="keyword">sizeof</span>(__be32));</span><br><span class="line">reg属性的值是address，size数组，那么如何来取出一个个的address/size呢？由于memory node一定是root node的child，因此dt_root_addr_cells（root node的<span class="meta">#address-cells属性值）和dt_root_size_cells（root node的#size-cells属性值）之和就是address，size数组的entry size。</span></span><br><span class="line">    <span class="keyword">while</span> ((endp - reg) &gt;= (dt_root_addr_cells + dt_root_size_cells)) &#123; </span><br><span class="line">        u64 base, size;</span><br><span class="line">        base = dt_mem_next_cell(dt_root_addr_cells, ®); </span><br><span class="line">        size = dt_mem_next_cell(dt_root_size_cells, ®);</span><br><span class="line">        early_init_dt_add_memory_arch(base, size);  将具体的memory block信息加入到内核中。 </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>3、interrupt controller的处理<br>初始化是通过start_kernel-&gt;init_IRQ-&gt;machine_desc-&gt;init_irq()实现的。我们用S3C2416为例来描述interrupt controller的处理过程。下面是machine描述符的定义。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">DT_MACHINE_START(S3C2416_DT, <span class="string">"Samsung S3C2416 (Flattened Device Tree)"</span>) </span><br><span class="line">…… </span><br><span class="line">    .init_irq    = irqchip_init, </span><br><span class="line">…… </span><br><span class="line">MACHINE_END</span><br></pre></td></tr></table></figure></p>
+<p>在driver/irqchip/irq-s3c24xx.c文件中定义了两个interrupt controller，如下：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">IRQCHIP_DECLARE(s3c2416_irq, <span class="string">"samsung,s3c2416-irq"</span>, s3c2416_init_intc_of);</span><br><span class="line">IRQCHIP_DECLARE(s3c2410_irq, <span class="string">"samsung,s3c2410-irq"</span>, s3c2410_init_intc_of);</span><br></pre></td></tr></table></figure></p>
+<p>当然，系统中可以定义更多的irqchip，不过具体用哪一个是根据DTB中的interrupt controller node中的compatible属性确定的。在driver/irqchip/irqchip.c文件中定义了irqchip_init函数，如下：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> __<span class="function">init <span class="title">irqchip_init</span><span class="params">(<span class="keyword">void</span>)</span> </span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line">    of_irq_init(__irqchip_begin); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>_._irqchip_begin就是所有的irqchip的一个列表，of_irq_init函数是遍历Device Tree，找到匹配的irqchip。具体的代码如下：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> __<span class="function">init <span class="title">of_irq_init</span><span class="params">(<span class="keyword">const</span> struct of_device_id *matches)</span> </span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">device_node</span> *<span class="title">np</span>, *<span class="title">parent</span> = <span class="title">NULL</span>;</span> </span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">intc_desc</span> *<span class="title">desc</span>, *<span class="title">temp_desc</span>;</span> </span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">intc_desc_list</span>, <span class="title">intc_parent_list</span>;</span></span><br><span class="line">    INIT_LIST_HEAD(&amp;intc_desc_list); </span><br><span class="line">    INIT_LIST_HEAD(&amp;intc_parent_list);</span><br><span class="line">    遍历所有的node，寻找定义了interrupt-controller属性的node，如果定义了interrupt-controller属性则说明该node就是一个中断控制器。</span><br><span class="line">    for_each_matching_node(np, matches) &#123; </span><br><span class="line">        <span class="keyword">if</span> (!of_find_property(np, <span class="string">"interrupt-controller"</span>, <span class="literal">NULL</span>) || </span><br><span class="line">                !of_device_is_available(np)) </span><br><span class="line">            <span class="keyword">continue</span>; </span><br><span class="line">       </span><br><span class="line">分配内存并挂入链表，当然还有根据interrupt-parent建立controller之间的父子关系。对于interrupt controller，它也可能是一个树状的结构。 </span><br><span class="line">        desc = kzalloc(<span class="keyword">sizeof</span>(*desc), GFP_KERNEL); </span><br><span class="line">        <span class="keyword">if</span> (WARN_ON(!desc)) </span><br><span class="line">            <span class="keyword">goto</span> err;</span><br><span class="line">        desc-&gt;dev = np; </span><br><span class="line">        desc-&gt;interrupt_parent = of_irq_find_parent(np); </span><br><span class="line">        <span class="keyword">if</span> (desc-&gt;interrupt_parent == np) </span><br><span class="line">            desc-&gt;interrupt_parent = <span class="literal">NULL</span>; </span><br><span class="line">        list_add_tail(&amp;desc-&gt;<span class="built_in">list</span>, &amp;intc_desc_list); </span><br><span class="line">    &#125;</span><br><span class="line">    正因为interrupt controller被组织成树状的结构，因此初始化的顺序就需要控制，应该从根节点开始，依次递进到下一个level的interrupt controller。 </span><br><span class="line">    <span class="keyword">while</span> (!list_empty(&amp;intc_desc_list)) &#123;  intc_desc_list链表中的节点会被一个个的处理，每处理完一个节点就会将该节点删除，当所有的节点被删除，整个处理过程也就是结束了。 </span><br><span class="line">         </span><br><span class="line">        list_for_each_entry_safe(desc, temp_desc, &amp;intc_desc_list, <span class="built_in">list</span>) &#123; </span><br><span class="line">            <span class="keyword">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">of_device_id</span> *<span class="title">match</span>;</span> </span><br><span class="line">            <span class="keyword">int</span> ret; </span><br><span class="line">            <span class="keyword">of_irq_init_cb_t</span> irq_init_cb;</span><br><span class="line">            最开始的时候parent变量是<span class="literal">NULL</span>，确保第一个被处理的是root interrupt controller。在处理完root node之后，parent变量被设定为root interrupt controller，因此，第二个循环中处理的是所有parent是root interrupt controller的child interrupt controller。也就是level <span class="number">1</span>（如果root是level <span class="number">0</span>的话）的节点。</span><br><span class="line">            <span class="keyword">if</span> (desc-&gt;interrupt_parent != parent) </span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            list_del(&amp;desc-&gt;<span class="built_in">list</span>);      －－－－－从链表中删除 </span><br><span class="line">            match = of_match_node(matches, desc-&gt;dev);－－－－－匹配并初始化 </span><br><span class="line">            <span class="keyword">if</span> (WARN(!match-&gt;data,－－－－－－－－－－match-&gt;data是初始化函数 </span><br><span class="line">                <span class="string">"of_irq_init: no init function for %s\n"</span>, </span><br><span class="line">                match-&gt;compatible)) &#123; </span><br><span class="line">                kfree(desc); </span><br><span class="line">                <span class="keyword">continue</span>; </span><br><span class="line">            &#125;</span><br><span class="line">            irq_init_cb = (<span class="keyword">of_irq_init_cb_t</span>)match-&gt;data; </span><br><span class="line">            ret = irq_init_cb(desc-&gt;dev, desc-&gt;interrupt_parent);－－－－－执行初始化函数 </span><br><span class="line">            <span class="keyword">if</span> (ret) &#123; </span><br><span class="line">                kfree(desc); </span><br><span class="line">                <span class="keyword">continue</span>; </span><br><span class="line">            &#125;</span><br><span class="line">           处理完的节点放入intc_parent_list链表，后面会用到 </span><br><span class="line">            list_add_tail(&amp;desc-&gt;<span class="built_in">list</span>, &amp;intc_parent_list); </span><br><span class="line">        &#125;</span><br><span class="line">        对于level <span class="number">0</span>，只有一个root interrupt controller，对于level <span class="number">1</span>，可能有若干个interrupt controller，因此要遍历这些parent interrupt controller，以便处理下一个level的child node。 </span><br><span class="line">        desc = list_first_entry_or_null(&amp;intc_parent_list, </span><br><span class="line">                        typeof(*desc), <span class="built_in">list</span>); </span><br><span class="line">        <span class="keyword">if</span> (!desc) &#123; </span><br><span class="line">            pr_err(<span class="string">"of_irq_init: children remain, but no parents\n"</span>); </span><br><span class="line">            <span class="keyword">break</span>; </span><br><span class="line">        &#125; </span><br><span class="line">        list_del(&amp;desc-&gt;<span class="built_in">list</span>); </span><br><span class="line">        parent = desc-&gt;dev; </span><br><span class="line">        kfree(desc); </span><br><span class="line">    &#125;</span><br><span class="line">    list_for_each_entry_safe(desc, temp_desc, &amp;intc_parent_list, <span class="built_in">list</span>) &#123; </span><br><span class="line">        list_del(&amp;desc-&gt;<span class="built_in">list</span>); </span><br><span class="line">        kfree(desc); </span><br><span class="line">    &#125; </span><br><span class="line">err: </span><br><span class="line">    list_for_each_entry_safe(desc, temp_desc, &amp;intc_desc_list, <span class="built_in">list</span>) &#123; </span><br><span class="line">        list_del(&amp;desc-&gt;<span class="built_in">list</span>); </span><br><span class="line">        kfree(desc); </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>只有该node中有interrupt-controller这个属性定义，那么linux kernel就会分配一个interrupt controller的描述符（struct intc_desc）并挂入队列。通过interrupt-parent属性，可以确定各个interrupt controller的层次关系。在scan了所有的Device Tree中的interrupt controller的定义之后，系统开始匹配过程。一旦匹配到了interrupt chip列表中的项次后，就会调用相应的初始化函数。如果CPU是S3C2416的话，匹配到的是irqchip的初始化函数是s3c2416_init_intc_of。<br>OK，我们已经通过compatible属性找到了适合的interrupt controller，那么如何解析reg属性呢？我们知道，对于s3c2416的interrupt controller而言，其#interrupt-cells的属性值是4，定义为。每个域的解释如下：<br>（1）ctrl_num表示使用哪一种类型的interrupt controller，其值的解释如下：</p>
+<pre><code>- 0 ... main controller 
+- 1 ... sub controller 
+- 2 ... second main controller
+</code></pre><p>（2）parent_irq。对于sub controller，parent_irq标识了其在main controller的bit position。<br>（3）ctrl_irq标识了在controller中的bit位置。<br>（4）type标识了该中断的trigger type，例如：上升沿触发还是电平触发。<br>为了更顺畅的描述后续的代码，我需要简单的介绍2416的中断控制器，其block diagram如下：<br><img src="http://ww1.sinaimg.cn/large/ba061518gw1f5tawr9fptg20hs085glp.gif" alt=""><br>53个Samsung2416的中断源被分成两种类型，一种是需要sub寄存器进行控制的，例如DMA，系统中的8个DMA中断是通过两级识别的，先在SRCPND寄存器中得到是DMA中断的信息，具体是哪一个channel的DMA中断需要继续查询SUBSRC寄存器。那些不需要sub寄存器进行控制的，例如timer，5个timer的中断可以直接从SRCPND中得到。<br>中断MASK寄存器可以控制产生的中断是否要报告给CPU，当一个中断被mask的时候，虽然SRCPND寄存器中，硬件会set该bit，但是不会影响到INTPND寄存器，从而不会向CPU报告该中断。对于SUBMASK寄存器，如果该bit被set，也就是该sub中断被mask了，那么即便产生了对应的sub中断，也不会修改SRCPND寄存器的内容，只是修改SUBSRCPND中寄存器的内容。<br>不过随着硬件的演化，更多的HW block加入到SOC中，这使得中断源不够用了，因此中断寄存器又被分成两个group，一个是group 1（开始地址是0X4A000000，也就是main controller了），另外一个是group2（开始地址是0X4A000040，叫做second main controller）。group 1中的sub寄存器的起始地址是0X4A000018（也就是sub controller）。<br>了解了上面的内容后，下面的定义就比较好理解了：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">struct</span> <span class="title">s3c24xx_irq_of_ctrl</span> <span class="title">s3c2416_ctrl</span>[] = &#123;</span> </span><br><span class="line">    &#123; </span><br><span class="line">        .name = <span class="string">"intc"</span>, －－－－－－－－－－－main controller </span><br><span class="line">        .offset = <span class="number">0</span>, </span><br><span class="line">    &#125;, &#123; </span><br><span class="line">        .name = <span class="string">"subintc"</span>, －－－－－－－－－sub controller </span><br><span class="line">        .offset = <span class="number">0x18</span>, </span><br><span class="line">        .parent = &amp;s3c_intc[<span class="number">0</span>], </span><br><span class="line">    &#125;, &#123; </span><br><span class="line">        .name = <span class="string">"intc2"</span>, －－－－－－－－－－second main controller </span><br><span class="line">        .offset = <span class="number">0x40</span>, </span><br><span class="line">    &#125; </span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>对于s3c2416而言，irqchip的初始化函数是s3c2416_init_intc_of，s3c2416_ctrl作为参数传递给了s3c_init_intc_of，大部分的处理都是在s3c_init_intc_of函数中完成的，由于这个函数和中断子系统非常相关，这里就不详述了，后续会有一份专门的文档描述之。<br>4、GPIO controller的处理<br>暂不描述，后续会有一份专门的文档描述GPIO sub system。<br>5、machine初始化<br>machine初始化的代码可以沿着start_kernel-&gt;rest_init-&gt;kernel_init-&gt;kernel_init_freeable-&gt;do_basic_setup-&gt;do_initcalls路径寻找。在do_initcalls函数中，kernel会依次执行各个initcall函数，在这个过程中，会调用customize_machine，具体如下：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> __<span class="function">init <span class="title">customize_machine</span><span class="params">(<span class="keyword">void</span>)</span> </span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (machine_desc-&gt;init_machine) </span><br><span class="line">        machine_desc-&gt;init_machine(); </span><br><span class="line">    <span class="keyword">else</span> </span><br><span class="line">        of_platform_populate(<span class="literal">NULL</span>, of_default_bus_match_table, <span class="literal">NULL</span>, <span class="literal">NULL</span>); </span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>; </span><br><span class="line">&#125; </span><br><span class="line">arch_initcall(customize_machine);</span><br></pre></td></tr></table></figure></p>
+<p>在这个函数中，一般会调用machine描述符中的init_machine callback函数来把各种Device Tree中定义的platform device设备节点加入到系统（即platform bus的所有的子节点，对于device tree中其他的设备节点，需要在各自bus controller初始化的时候自行处理）。如果machine描述符中没有定义init_machine函数，那么直接调用of_platform_populate把所有的platform device加入到kernel中。对于s3c2416，其machine描述符中的init_machine callback函数就是s3c2416_dt_machine_init，代码如下：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">void</span> __<span class="function">init <span class="title">s3c2416_dt_machine_init</span><span class="params">(<span class="keyword">void</span>)</span> </span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line">    of_platform_populate(<span class="literal">NULL</span>, --------传入<span class="literal">NULL</span>参数表示从root node开始scan</span><br><span class="line">of_default_bus_match_table, s3c2416_auxdata_lookup, <span class="literal">NULL</span>);</span><br><span class="line">    s3c_pm_init(); －－－－－－－－power management相关的初始化 </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>由此可见，最终生成platform device的代码来自of_platform_populate函数。该函数的逻辑比较简单，遍历device node global list中所有的node，并调用of_platform_bus_create处理，of_platform_bus_create函数代码如下：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">of_platform_bus_create</span><span class="params">(struct device_node *bus,-------------要创建的那个device node </span></span></span><br><span class="line"><span class="function"><span class="params">                  <span class="keyword">const</span> struct of_device_id *matches,-------要匹配的<span class="built_in">list</span> </span></span></span><br><span class="line"><span class="function"><span class="params">                  <span class="keyword">const</span> struct of_dev_auxdata *lookup,------附属数据 </span></span></span><br><span class="line">                  struct device *parent, bool strict)---------------parent指向父节点。strict是否要求完全匹配 </span><br><span class="line">&#123; </span><br><span class="line">    <span class="keyword">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">of_dev_auxdata</span> *<span class="title">auxdata</span>;</span> </span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">device_node</span> *<span class="title">child</span>;</span> </span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">platform_device</span> *<span class="title">dev</span>;</span> </span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *bus_id = <span class="literal">NULL</span>; </span><br><span class="line">    <span class="keyword">void</span> *platform_data = <span class="literal">NULL</span>; </span><br><span class="line">    <span class="keyword">int</span> rc = <span class="number">0</span>;</span><br><span class="line">删除确保device node有compatible属性的代码。</span><br><span class="line">    auxdata = of_dev_lookup(lookup, bus);  在传入的lookup table寻找和该device node匹配的附加数据 </span><br><span class="line">    <span class="keyword">if</span> (auxdata) &#123; </span><br><span class="line">        bus_id = auxdata-&gt;name;-----------------如果找到，那么就用附加数据中的静态定义的内容 </span><br><span class="line">        platform_data = auxdata-&gt;platform_data; </span><br><span class="line">    &#125;</span><br><span class="line">ARM公司提供了CPU core，除此之外，它设计了AMBA的总线来连接SOC内的各个block。符合这个总线标准的SOC上的外设叫做ARM Primecell Peripherals。如果一个device node的compatible属性值是arm,primecell的话，可以调用of_amba_device_create来向amba总线上增加一个amba device。</span><br><span class="line">    <span class="keyword">if</span> (of_device_is_compatible(bus, <span class="string">"arm,primecell"</span>)) &#123; </span><br><span class="line">        of_amba_device_create(bus, bus_id, platform_data, parent); </span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>; </span><br><span class="line">    &#125;</span><br><span class="line">    如果不是ARM Primecell Peripherals，那么我们就需要向platform bus上增加一个platform device了</span><br><span class="line">    dev = of_platform_device_create_pdata(bus, bus_id, platform_data, parent); </span><br><span class="line">    <span class="keyword">if</span> (!dev || !of_match_node(matches, bus)) </span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    一个device node可能是一个桥设备，因此要重复调用of_platform_bus_create来把所有的device node处理掉。</span><br><span class="line">    for_each_child_of_node(bus, child) &#123; </span><br><span class="line">        pr_debug(<span class="string">"   create child: %s\n"</span>, child-&gt;full_name); </span><br><span class="line">        rc = of_platform_bus_create(child, matches, lookup, &amp;dev-&gt;dev, strict); </span><br><span class="line">        <span class="keyword">if</span> (rc) &#123; </span><br><span class="line">            of_node_put(child); </span><br><span class="line">            <span class="keyword">break</span>; </span><br><span class="line">        &#125; </span><br><span class="line">    &#125; </span><br><span class="line">    <span class="keyword">return</span> rc; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>具体增加platform device的代码在of_platform_device_create_pdata中，代码如下：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> struct platform_device *<span class="title">of_platform_device_create_pdata</span><span class="params">( </span></span></span><br><span class="line"><span class="function"><span class="params">                    struct device_node *np, </span></span></span><br><span class="line"><span class="function"><span class="params">                    <span class="keyword">const</span> <span class="keyword">char</span> *bus_id, </span></span></span><br><span class="line"><span class="function"><span class="params">                    <span class="keyword">void</span> *platform_data, </span></span></span><br><span class="line"><span class="function"><span class="params">                    struct device *parent)</span> </span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">platform_device</span> *<span class="title">dev</span>;</span></span><br><span class="line">    <span class="keyword">if</span> (!of_device_is_available(np))---------check status属性，确保是enable或者OK的。 </span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    of_device_alloc除了分配<span class="class"><span class="keyword">struct</span> <span class="title">platform_device</span>的内存，还分配了该<span class="title">platform</span> <span class="title">device</span>需要的<span class="title">resource</span>的内存（参考<span class="title">struct</span> <span class="title">platform_device</span> 中的<span class="title">resource</span>成员）。当然，这就需要解析该<span class="title">device</span> <span class="title">node</span>的<span class="title">interrupt</span>资源以及<span class="title">memory</span> <span class="title">address</span>资源。</span></span><br><span class="line"><span class="class">    <span class="title">dev</span> = <span class="title">of_device_alloc</span>(<span class="title">np</span>, <span class="title">bus_id</span>, <span class="title">parent</span>);</span> </span><br><span class="line">    <span class="keyword">if</span> (!dev) </span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">设定platform_device 中的其他成员 </span><br><span class="line">    dev-&gt;dev.coherent_dma_mask = DMA_BIT_MASK(<span class="number">32</span>); </span><br><span class="line">    <span class="keyword">if</span> (!dev-&gt;dev.dma_mask) </span><br><span class="line">        dev-&gt;dev.dma_mask = &amp;dev-&gt;dev.coherent_dma_mask; </span><br><span class="line">    dev-&gt;dev.bus = &amp;platform_bus_type; </span><br><span class="line">    dev-&gt;dev.platform_data = platform_data;</span><br><span class="line">    <span class="keyword">if</span> (of_device_add(dev) != <span class="number">0</span>) &#123;------------------把这个platform device加入统一设备模型系统中 </span><br><span class="line">        platform_device_put(dev); </span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>; </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> dev; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者：<a href="http://iyounix.com">Younix</a>
+            <p>原文链接：<a href="http://iyounix.com/2015/12/31/Linux/[Linux] DTS 架构下 Device 与 Driver 匹配流程/">http://iyounix.com/2015/12/31/Linux/[Linux] DTS 架构下 Device 与 Driver 匹配流程/</a>
+            <p>发表日期：<a href="http://iyounix.com/2015/12/31/Linux/[Linux] DTS 架构下 Device 与 Driver 匹配流程/">December 31st 2015, 6:06:06 am</a>
+            <p>更新日期：<a href="http://iyounix.com/2015/12/31/Linux/[Linux] DTS 架构下 Device 与 Driver 匹配流程/">November 8th 2018, 9:55:36 am</a>
+            <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/deed.zh">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href= "/2015/12/31/Linux/[Linux] 中的阻塞与非阻塞（等待队列、轮询）/" title= "Linux 阻塞与非阻塞（等待队列、轮询）">
+                    <div class="nextTitle">Linux 阻塞与非阻塞（等待队列、轮询）</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/2015/12/31/Linux/[Linux] 下的 SPI 设备驱动模型（SPI 协议基础）/" title= "Linux 中的 SPI 设备驱动模型（SPI 协议基础）">
+                    <div class="prevTitle">Linux 中的 SPI 设备驱动模型（SPI 协议基础）</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
+    
+    
+    <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+    <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+    <div id="comment"></div>
+    <script>
+    new Valine({
+        el: '#comment' ,
+        notify:false, 
+        verify:false, 
+        appId: "il9qYeGCfA80xAqoGXBmDaU3-gzGzoHsz",
+        appKey: "OCMYJee8Ua8CVylQSQB75Kla",
+        placeholder: "既然看完了,那就评论一下吧",
+        path:window.location.pathname, 
+        avatar:'mm' 
+    });
+    </script>
+
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:foreveryounix@mail.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/dearsq" class="iconfont-archer github" target="_blank" title=github></a>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer wechat" title=wechat>
+                  
+                  <img class="profile-qr" src="/assets/example_qr.png" />
+                </span>
+            
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="https://weibo.com/younix" class="iconfont-archer weibo" target="_blank" title=weibo></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="/atom.xml" class="iconfont-archer rss" target="_blank" title=rss></a>
+            
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+    
+     
+    <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+    
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#旧与新"><span class="toc-number">1.</span> <span class="toc-text">旧与新</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#初始化流程"><span class="toc-number">2.</span> <span class="toc-text">初始化流程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#unflat"><span class="toc-number">2.1.</span> <span class="toc-text">unflat</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#platform的识别流程与分析"><span class="toc-number">2.2.</span> <span class="toc-text">platform的识别流程与分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#汇编部分代码分析（关于参数传递）"><span class="toc-number">2.2.1.</span> <span class="toc-text">汇编部分代码分析（关于参数传递）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#setup-ARCH"><span class="toc-number">2.2.2.</span> <span class="toc-text">setup_ARCH</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#匹配-platform（machine-描述符）"><span class="toc-number">2.2.3.</span> <span class="toc-text">匹配 platform（machine 描述符）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#运行时传递参数"><span class="toc-number">2.2.4.</span> <span class="toc-text">运行时传递参数</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Device-Tree-Structure-是如何加入-linux-kernel-的设备驱动模型的"><span class="toc-number">2.3.</span> <span class="toc-text">Device Tree Structure 是如何加入 linux kernel 的设备驱动模型的</span></a></li></ol></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 163
+        </div>
+        <!-- search  -->
+        
+            <div class="site-search popup-trigger">
+                <span class="iconfont-archer search-icon">&#xe627;</span>
+            </div>
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/08</span><a class="archive-post-title" href= "/2018/11/08/Android_Driver/Driver/[Android6.0][RK3399] Mipi LCD RM72014 移植调试流程/" >Android6.0 RK3399 Mipi LCD RM72014 移植调试流程</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_全局获取Context方法/" >SOP_全局获取Context方法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_Notification/" >SOP_Notification</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/数据持久化_文件存储/" >数据持久化_文件存储</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_多线程编程/" >SOP_多线程编程</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/数据持久化_SharedPreferences/" >数据持久化_SharedPreferences</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_WebView/" >SOP_WebView</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_控件_AlertDialog/" >SOP_控件_AlertDialog</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_控件_Fragment/" >SOP_控件_Fragment</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_动态权限/" >SOP_动态权限</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_MediaPlayer/" >SOP_MediaPlayer</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_Intent传输对象的方法/" >SOP_Intent传输对象的方法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/组件_ContentProvider/" >组件_ContentProvider</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_WebView_XML和JSON/" >SOP_WebView_XML和JSON</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_异步消息处理机制/" >SOP_异步消息处理机制</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/数据持久化_数据库_LitePal 和 SQLite/" >数据持久化_数据库_LitePal 和 SQLite</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/组件_BroadcastReceiver/" >组件_BroadcastReceiver</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/31</span><a class="archive-post-title" href= "/2018/05/31/Android_App/[Android7.1][RK3399] 添加开机播放视频功能/" >Android7.1 RK3399 添加开机播放视频功能</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/01</span><a class="archive-post-title" href= "/2018/05/01/Android_App/[Android7.1] 打开设置中的返回键/" >Android7.1 打开设置中的返回键</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Environment/MTK6737/[IoT4G] 启动流程/" >Android6.0 MTK6737 启动流程</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_Driver/Driver/[Android6.0][MTK6737] 长按 Power 没有真正关机 (MTK IPO 功能)/" >Android6.0 MTK6737 长按 Power 没有真正关机 (MTK IPO 功能)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_App/[Android6.0][MTK6737]添加长按Power重启按钮/" >Android6.0 MTK6737 添加长按Power重启按钮</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_Driver/Driver/[Android6.0][MTK6737]UVC Camera 移植/" >Android6.0 MTK6737 UVC Camera 移植</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_Driver/Driver/[Android6.0][MTK6737] 设置屏幕旋转 270 度/" >Android6.0 MTK6737 设置屏幕旋转 270 度</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_App/[Android6.0][MTK6737] 替换原生 Launcher/" >Android6.0 MTK6737 替换原生 Launcher</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_App/[Android6.0][RK3399] 修改浏览器默认主页/" >Android6.0 RK3399 修改浏览器默认主页</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_App/[Android6.0][MTK6737] App 添加系统权限/" >Android6.0 App 添加系统权限</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_App/[Android6.0][MTK6737] 系统旋转后导航栏丢失，并有黑边/" >Android6.0 MTK6737 系统旋转后导航栏丢失，并有黑边</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Environment/MTK6737/[Android6.0][MTK6737] 移植 Modem/" >Android6.0 MTK6737 移植 Modem</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_Driver/Driver/[Android6.0][MTK6737]版本控制和开发流程说明/" >Android6.0 MTK6737 版本控制和开发流程说明</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_App/[Android6.0][MTK6737] 修改默认允许位置来源第三方应用安装/" >Android6.0 修改默认允许位置来源第三方应用安装</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_App/[Android] 反编译 Android APK/" >Android 反编译 Android APK</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Environment/MTK6737/[IoT4G] MTK DCT 工具介绍/" >Android6.0 MTK6737 DCT 工具介绍</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_Sys/[Android6.0][MTK6737] 优化开机启动时间/" >Android6.0 MTK6737 优化开机启动时间</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/30</span><a class="archive-post-title" href= "/2018/03/30/Environment/MTK6737/[Android6.0][MT6737] 环境搭建和烧录/" >Android6.0 MTK6737 环境搭建和烧录中的问题</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/29</span><a class="archive-post-title" href= "/2018/03/29/Environment/MTK6737/[IoT4G] MTK开发环境搭建/" >Android6.0 MTK6737 开发环境搭建</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/03</span><a class="archive-post-title" href= "/2018/03/03/Android_Driver/Driver/[Android7.1][RK3399] 使用 ramoops 机制查看开机 Kernel Log/" >Android7.1 RK3399 使用 ramoops 机制查看开机 Kernel Log</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/31</span><a class="archive-post-title" href= "/2018/01/31/Android_Driver/Debug/[Android7.1][RK3399] WiFi 吞吐率周期性变差问题(扫描机制)/" >Android7.1 RK3399 WiFi 吞吐率周期性变差问题(扫描机制)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/31</span><a class="archive-post-title" href= "/2018/01/31/Android_Driver/Debug/[Android7.1][RK3399] 插上 TypeC 为 USB_FLOATING_CHARGER 模式/" >Android7.1 RK3399 插上 TypeC 为 USB_FLOATING_CHARGER 模式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/31</span><a class="archive-post-title" href= "/2018/01/31/Android_Driver/Debug/[Android7.1][RK3399] 添加对三路以上 Camera 同时预览的支持/" >Android7.1 RK3399 添加对三路以上 Camera 同时预览的支持</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/31</span><a class="archive-post-title" href= "/2018/01/31/Android_Driver/Debug/[Android7.1][RK3399] 添加对 Camera 动态热插拔的支持/" >Android7.1 RK3399 添加对 USB Camera 动态热插拔的支持.md</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/31</span><a class="archive-post-title" href= "/2018/01/31/Android_Driver/Debug/[Android7.1][RK3399] 只保留 USB Camera (去掉对 Mipi DVP Camera 的支持)/" >Android7.1 RK3399 只保留 USB Camera (去掉对 Mipi DVP Camera 的支持)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/31</span><a class="archive-post-title" href= "/2018/01/31/Android_Driver/Driver/[Android7.1][RK3399] Codec rt5640 移植/" >Android7.1 RK3399 Codec rt5640 移植.md</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/31</span><a class="archive-post-title" href= "/2018/01/31/Android_Driver/Driver/[Android7.1][RK3399] RK reboot 机制驱动分析/" >Android7.1 RK3399 RK reboot 机制驱动分析</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2017 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] U-boot启动流程分析（准备）/" >Android6.0 RK3399 U-boot启动流程分析（准备）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] Mipi LCD NT35521 移植调试流程/" >Android6.0 RK3399 Mipi LCD NT35521 移植调试流程</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android6.0] 启动流程(从开机到第一个程序）/" >Android6.0 启动流程(从开机到第一个程序）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] IR(红外线)移植步骤/" >Android6.0 RK3399 IR(红外线)移植步骤</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android] init.rc 文件浅析/" >Android init.rc 文件浅析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] Uboot 代码分析/" >Android6.0 RK3399 Uboot 代码分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] PCIe 接口 4G模块 EC20 调试记录/" >Android6.0 RK3399 PCIe 接口 4G模块 EC20 调试记录</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_App/[Android6.0][RK3399] 设置系统默认不会休眠/" >Android6.0 RK3399 设置系统默认不会休眠</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Environment/Firefly-RK3399/[Android6.0][RK3399] OTA差异包制作方法/" >Android6.0 RK3399 OTA差异包制作方法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] Uboot 编译规则/" >Android6.0 RK3399 Uboot 编译规则</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] SATA 设备调试笔记/" >Android6.0 RK3399 SATA 设备调试笔记</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] 修改默认按键 KEY-PAD/" >Android6.0 RK3399 修改默认按键 KEY-PAD</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] PCIe 转 SATA 调试步骤/" >Android6.0 RK3399 PCIe 转 SATA 调试步骤</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_App/[Android6.0][RK3399] 关闭双击 Power 打开 Camera 功能/" >Android6.0 RK3399 关闭双击 Power 打开 Camera 功能</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android6.0] 启动流程分析之一概述/" >Android6.0 启动流程分析之一概述</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_App/[Android6.0][RK3399] 去掉滑动锁屏(swipe lock)/" >Android6.0 RK3399 去掉滑动锁屏</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android6.0] Reference-RIL 运行框架/" >Android6.0 Reference-RIL 运行框架</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_App/[Android6.0][RK3399] 去掉顶部Google搜索栏/" >Android6.0 RK3399 去掉顶部Google搜索栏</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Environment/Firefly-RK3399/[Linux][RK3399] 基于 Firefly RK3399 Board 制作 Ubuntu Base 版本/" >Linux RK3399 基于 Firefly RK3399 Board 制作 Ubuntu Base 版本</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_App/[Android6.0][RK3399] 出厂预置可卸载 APK/" >Android6.0 RK3399 出厂预置可卸载 APK</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Linux4.4][RK3399] DRM HDMI 调试小结/" >Linux RK3399 HDMI 调试小结</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_App/[Android6.0][RK3399] 隐藏导航栏或状态栏/" >Android6.0 RK3399 隐藏导航栏或状态栏</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android] 智能指针 SP强指针WP弱指针 用法/" >Android 智能指针 SP强指针WP弱指针 用法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Debug/[Android6.0][RK3399] 更换64GeMMC后无法启动的问题/" >Android6.0 RK3399 更换64GeMMC后无法启动的问题</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android] property_get 及 property_set 系统属性/" >Android property_get 及 property_set 系统属性</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android6.0] RILC 系统结构及 LibRIL 运行机制/" >Android6.0 RILC 系统结构及 LibRIL 运行机制</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_App/[Android6.0][RK3399]去掉鼠标移动唤醒功能/" >Android6.0 RK3399 去掉鼠标移动唤醒功能</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] 实现耳机和喇叭自动切换功能/" >Android6.0 RK3399 实现耳机和喇叭自动切换功能</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] Wifi Card 驱动流程分析/" >Android6.0 RK3399 Wifi Card 驱动流程分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Environment/Firefly-RK3399/[Linux][RK3399] 基于 Firefly RK3399 Board 制作 Ubuntu Desktop 版本/" >Linux RK3399 基于 Firefly RK3399 Board 制作 Ubuntu Desktop 版本</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android6.0] 启动流程分析之二init分析/" >Android6.0 启动流程分析之二init分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] PWM Backlight 驱动分析/" >Android6.0 RK3399 PWM Backlight 驱动分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android] 文件系统分区挂载流程/" >Android 文件系统分区挂载流程</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Linux4.4][RK3399] DRM 框架及代码流程/" >Linux RK3399 DRM 框架及代码流程</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Life/InnerPath/17-12-312017年总结/" >2017年总结</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Linux/[Linux][RK3399] 移植蓝牙驱动/" >Linux RK3399 移植蓝牙驱动</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Linux/[Linux][RK3399] ISP 矫正算法的移植/" >Linux RK3399 ISP 矫正算法的移植</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Linux/[Linux][RK3399] RK Linux 平台启动过程（5个阶段）详解/" >Linux RK3399 RK Linux 平台启动过程（5个阶段）详解</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Linux/[Linux][RK3399] 以太网调试 — 利用 ping 和 pathping 工具/" >Linux RK3399 以太网调试 — 利用 ping 和 pathping 工具</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/01</span><a class="archive-post-title" href= "/2017/12/01/Android_App/[Android6.0][RK3399] 修改默认壁纸/" >Android6.0 RK3399 修改默认壁纸</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/01</span><a class="archive-post-title" href= "/2017/12/01/Android_Sys/[Android6.0] 开发环境搭建中碰到的问题/" >Android6.0 RK3399 开发环境搭建中碰到的问题</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/01</span><a class="archive-post-title" href= "/2017/12/01/Android_Driver/Driver/[Android6.0][RK3399] 双屏异显代码实现流程分析（一）/" >Android6.0 RK3399 双屏异显代码实现流程分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/01</span><a class="archive-post-title" href= "/2017/12/01/Android_Driver/Driver/[Android6.0][RK3399] 双屏异显代码实现流程分析（二）/" >Android6.0 RK3399 双屏异显代码实现流程分析(二)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/31</span><a class="archive-post-title" href= "/2017/08/31/Android_Driver/Driver/[Android6.0][RK3399] 电池系统（四）不插电池无法开机的问题/" >Android6.0 RK3399 电池系统（四）不插电池无法开机的问题</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/31</span><a class="archive-post-title" href= "/2017/08/31/Android_Driver/Driver/[Android6.0][RK3399] 电池系统（二）BQ IC 添加 DC 充电功能/" >Android6.0 RK3399 电池系统（二）BQ IC 添加 DC 充电功能</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/31</span><a class="archive-post-title" href= "/2017/08/31/Android_Driver/Driver/[Android6.0][RK3399] 电池系统（三）电量计 CW2015 驱动流程分析/" >Android6.0 RK3399 电池系统（三）电量计 CW2015 驱动流程分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/31</span><a class="archive-post-title" href= "/2017/08/31/Android_Driver/Driver/[Android6.0][RK3399] 电池系统（一）BQ25700 IC 驱动分析/" >Android6.0 RK3399 电池系统（一）BQ25700 IC 驱动分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/31</span><a class="archive-post-title" href= "/2017/08/31/Android_Driver/Driver/[Android6.0][RK3399] 电池管理系统/" >Android6.0 RK3399 电源管理系统</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/14</span><a class="archive-post-title" href= "/2017/08/14/Life/Learning/王烁30天认知训练营 Day01 什么是查理·芒格的人生开关/" >Day01 什么是查理·芒格的人生开关</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2017/08/05/Environment/[Ubuntu] 在终端中利用Wget下载百度云资源/" >Ubuntu 在终端中利用Wget/aria2下载百度云资源</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2017/08/05/Environment/[Ubuntu] Linux下访问NAS服务器/" >Linux 下访问 NAS 服务器</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2017/08/05/Environment/[Ubuntu] 服务器添加硬盘方法/" >Ubuntu 服务器添加硬盘方法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2017/08/05/Android_App/[Android6.0] App中调用init.rc中的服务，从而运行shell脚本/" >Android6.0 App中调用init.rc中的服务，从而运行shell脚本</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2017/08/05/Android_App/[Android6.0][MTK6737] 修改默认输入法为 Sogou/" >Android6.0 修改默认输入法为 Sogou</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2017/08/05/Android_Driver/Driver/[Linux4.4] 以 SPI 驱动模型为例分析 Linux 主机驱动与外设驱动分离模型/" >Linux 以 SPI 驱动模型为例分析 Linux 主机驱动与外设驱动分离模型</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/01</span><a class="archive-post-title" href= "/2017/07/01/Android_Driver/Debug/[Android6.0][RK3399][BUG] 插上 HDMI 时开机解锁锁屏后死机/" >Android6.0 RK3399 插上 HDMI 时开机解锁锁屏后死机</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/01</span><a class="archive-post-title" href= "/2017/07/01/Android_Driver/Debug/[Android6.0][RK3399] 开机前几秒串口打印异常问题/" >Android6.0 RK3399 开机前几秒串口打印异常问题</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/06</span><a class="archive-post-title" href= "/2017/06/06/VR/OpenGL/[OpenGL]创建一个窗口/" >OpenGL 创建一个窗口</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/06</span><a class="archive-post-title" href= "/2017/06/06/VR/OpenGL/[OpenGL]创建一个三角形/" >OpenGL 创建一个三角形</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/06</span><a class="archive-post-title" href= "/2017/06/06/VR/OpenGL/[OpenGL]一些基本概念和基于状态的方法/" >OpenGL 一些基本概念和基于状态的方法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/05</span><a class="archive-post-title" href= "/2017/06/05/VR/[VR] Cardboard Treasure Hunter 代码分析/" >VR Cardboard Treasure Hunter 代码分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/05</span><a class="archive-post-title" href= "/2017/06/05/VR/[VR] 应用开发入门基本知识/" >VR 应用开发入门基本知识(Oculus/Cardboard/Daydream)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/05</span><a class="archive-post-title" href= "/2017/04/05/Android_App/[Android6.0] 使用 repo 更新某个指定 git 仓库/" >Android6.0 使用 repo 更新某个指定 git 仓库</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2016 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2016/12/31/Android_Driver/Device/[Device] Mipi LCD 的基础知识/" >Mipi LCD 的基础知识</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2016/12/31/Android_Driver/Driver/[Android5.1][RK3288] Framebuffer 设备驱动/" >Android5.1 RK3288 Framebuffer 设备驱动</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2016/12/31/Android_Driver/Driver/[Android5.1][RK3288] LCD (Mipi) 调试方法及问题汇总/" >Android5.1 RK3288 LCD (Mipi) 调试方法及问题汇总</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2016/12/31/Android_Sys/[Android5.1][RK3288]build.sh脚本分析/" >Android5.1 RK3288 build.sh脚本分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2016/12/31/Android_Driver/Device/[Device] Mipi 接口 和 LVDS 接口区别/" >Mipi 接口 和 LVDS 接口区别</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2016/12/31/Android_Driver/Device/[Device] TypeC 基础知识/" >TypeC 基础知识</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2016/12/31/Android_Driver/Debug/[Android5.1][RK3288] LCD Mipi 初始化长包数据规范问题/" >Android5.1 RK3288 LCD Mipi 初始化长包数据规范问题</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2016/12/31/Android_Driver/Driver/[Android5.1][RK3288] SPI 设备驱动模型（Ad714x CapTouch 驱动分析）/" >Android5.1 RK3288 SPI 设备驱动模型（Ad714x CapTouch 驱动分析）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/24</span><a class="archive-post-title" href= "/2016/12/24/Life/InnerPath/16-12-242016年总结/" >2016年总结</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/30</span><a class="archive-post-title" href= "/2016/10/30/Life/InnerPath/16-10-30VR创投会/" >VR创投会</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/01</span><a class="archive-post-title" href= "/2016/10/01/Android_Sys/[Android] build 流程/" >Android build 流程</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/30</span><a class="archive-post-title" href= "/2016/09/30/Life/InnerPath/16-09-30大者恒大，强者愈强/" >大者恒大，强者愈强</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/25</span><a class="archive-post-title" href= "/2016/09/25/Life/InnerPath/16-09-252016Q3总结——秋日已来，硕果寥寥/" >2016Q3总结——秋日已来，硕果寥寥</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/28</span><a class="archive-post-title" href= "/2016/08/28/Life/InnerPath/16-08-28谈谈RD和FAE/" >谈谈RD和FAE</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/19</span><a class="archive-post-title" href= "/2016/08/19/Linux/[Linux] Linux 平台嵌入式开发 101/" >Linux 平台嵌入式开发 101</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/28</span><a class="archive-post-title" href= "/2016/07/28/Android_Driver/Driver/NFC/[NFC] NFC 程序设计（NDEF 格式介绍）/" >NFC 程序设计（NDEF 格式介绍）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/28</span><a class="archive-post-title" href= "/2016/07/28/Android_Driver/Driver/NFC/[NFC] NFC 客户 Support 流程/" >NFC 客户 Support 流程</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/28</span><a class="archive-post-title" href= "/2016/07/28/Android_Driver/Driver/NFC/[NFC] NFC 程序设计（基础知识）/" >NFC 程序设计（基础知识）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/28</span><a class="archive-post-title" href= "/2016/07/28/Android_Driver/Driver/NFC/[NFC] Android 平台（Linux3.10） NXP NFC 移植流程归纳/" >NFC Android 平台 NXP NFC 移植流程归纳</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/17</span><a class="archive-post-title" href= "/2016/07/17/Life/InnerPath/16-07-172016Q2总结——春花夏拾/" >2016Q2总结——春花夏拾</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/29</span><a class="archive-post-title" href= "/2016/03/29/Life/InnerPath/16-03-29未来先见/" >未来先见</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/28</span><a class="archive-post-title" href= "/2016/03/28/Life/InnerPath/16-03-282016Q1总结/" >2016Q1总结</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/15</span><a class="archive-post-title" href= "/2016/03/15/Life/InnerPath/16-03-15世殊事异/" >世殊事异，所以兴怀</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/14</span><a class="archive-post-title" href= "/2016/03/14/Android_App/[Android5.1] 添加自定义开机动画（视频）并去黑屏/" >Android5.1 添加自定义开机动画（视频）并去黑屏</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/24</span><a class="archive-post-title" href= "/2016/02/24/Life/InnerPath/16-02-24瑞芯微出差记/" >瑞芯微出差记</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/30</span><a class="archive-post-title" href= "/2016/01/30/Life/InnerPath/16-01-30十二分之一/" >十二分之一</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/15</span><a class="archive-post-title" href= "/2016/01/15/Life/InnerPath/16-01-15书评《黑客与画家》/" >书评《黑客与画家》</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/03</span><a class="archive-post-title" href= "/2016/01/03/Life/InnerPath/16-01-03写在2015的尾巴与2016的开头/" >写在2015的尾巴与2016的开头</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/01</span><a class="archive-post-title" href= "/2016/01/01/Language/[C] 函数调用的时候栈发生了什么/" >C 函数调用的时候栈发生了什么</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/01</span><a class="archive-post-title" href= "/2016/01/01/Language/[其他] 编程修养/" >编程修养</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/01</span><a class="archive-post-title" href= "/2016/01/01/Language/[UnixC] 内存 mem 操作/" >UnixC 内存 mem 操作</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/01</span><a class="archive-post-title" href= "/2016/01/01/Language/[C] 第一章 GCC 编译的背后/" >C 第一章 GCC 编译的背后</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/01</span><a class="archive-post-title" href= "/2016/01/01/Language/[Git] 如何修改之前的某次commit/" >Git 如何修改之前的某次commit</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2015 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] 下的 SPI 设备驱动模型（SPI 协议基础）/" >Linux 中的 SPI 设备驱动模型（SPI 协议基础）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] 统一设备模型/" >Linux 统一设备模型</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] 文件批量重命名 rename/" >Linux 文件批量重命名 rename</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] 服务器添加硬盘方法/" >Linux 服务器添加硬盘方法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] 内核的 proc 文件系统/" >Linux 内核的 proc 文件系统</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] 中的互斥机制（中断屏蔽、原子操作、自旋锁、信号量）/" >Linux 中的互斥机制（中断屏蔽、原子操作、自旋锁、信号量）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] 内核的 sysfs 文件系统/" >Linux 内核的 sysfs 文件系统</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] 中的阻塞与非阻塞（等待队列、轮询）/" >Linux 阻塞与非阻塞（等待队列、轮询）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] passwd 文件格式详解/" >Linux passwd 文件格式详解</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux][Tool] 程序内存检查工具 Valgrind/" >Linux 程序内存检查工具 Valgrind</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] DTS 架构下 Device 与 Driver 匹配流程/" >Linux DTS 架构下 Device 与 Driver 匹配流程</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] likely() 和 unlikely()/" >Linux likely() 和 unlikely()</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/26</span><a class="archive-post-title" href= "/2015/10/26/Life/InnerPath/15-10-26英雄如你少年如我不负这移动盛世/" >英雄如你，少年如我，不负这移动盛世</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> Invalid date </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">Invalid date</span><a class="archive-post-title" href= "/2018/11/08/Android_App/组件_Service/" >组件_Service.md</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2015 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/20</span><a class="archive-post-title" href= "/2015/09/20/Life/InnerPath/15-09-20巴迪闲侃/" >巴迪闲侃</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/31</span><a class="archive-post-title" href= "/2015/08/31/Linux/[Linux] i2c 与 spi 设备在新版内核中不采用DTS设备树形式 在驱动添加设备信息(board_info)的方法/" >Linux i2c 与 spi 设备在新版内核中不采用DTS设备树形式 在驱动添加设备信息(board_info)的方法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/22</span><a class="archive-post-title" href= "/2015/08/22/Life/InnerPath/15-08-22深圳深圳/" >深圳深圳</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2015/08/05/Environment/[RockChip] parameter.txt 文件详解/" >RockChip parameter.txt 文件详解</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2015/08/05/Environment/[Android] eng、user、userdebug区别/" >Android eng、user、userdebug区别</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/01</span><a class="archive-post-title" href= "/2015/08/01/Life/InnerPath/15-08-01基本功/" >基本功</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/27</span><a class="archive-post-title" href= "/2015/07/27/Life/InnerPath/15-07-27入职杂谈/" >入职杂谈</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/19</span><a class="archive-post-title" href= "/2015/07/19/Life/InnerPath/15-07-19六月/" >六月的尾巴</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/14</span><a class="archive-post-title" href= "/2015/05/14/Life/InnerPath/15-05-04开始的废话总是特别多/" >开始的废话总是特别多</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="RockChip"><span class="iconfont-archer">&#xe606;</span>RockChip</span>
+    
+        <span class="sidebar-tag-name" data-tags="Android"><span class="iconfont-archer">&#xe606;</span>Android</span>
+    
+        <span class="sidebar-tag-name" data-tags="MediaTek"><span class="iconfont-archer">&#xe606;</span>MediaTek</span>
+    
+        <span class="sidebar-tag-name" data-tags="android"><span class="iconfont-archer">&#xe606;</span>android</span>
+    
+        <span class="sidebar-tag-name" data-tags="Linux"><span class="iconfont-archer">&#xe606;</span>Linux</span>
+    
+        <span class="sidebar-tag-name" data-tags="C"><span class="iconfont-archer">&#xe606;</span>C</span>
+    
+        <span class="sidebar-tag-name" data-tags="git"><span class="iconfont-archer">&#xe606;</span>git</span>
+    
+        <span class="sidebar-tag-name" data-tags="InnerPath"><span class="iconfont-archer">&#xe606;</span>InnerPath</span>
+    
+        <span class="sidebar-tag-name" data-tags="VR"><span class="iconfont-archer">&#xe606;</span>VR</span>
+    
+        <span class="sidebar-tag-name" data-tags="Food4Thought"><span class="iconfont-archer">&#xe606;</span>Food4Thought</span>
+    
+        <span class="sidebar-tag-name" data-tags="NFC"><span class="iconfont-archer">&#xe606;</span>NFC</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "Younix"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+        <div class="site-search">
+  <div class="algolia-popup popup">
+    <div class="algolia-search">
+      <div class="algolia-search-input-icon">
+        <i class="fa fa-search"></i>
+      </div>
+      <div class="algolia-search-input" id="algolia-search-input"></div>
+    </div>
+
+    <div class="algolia-results">
+      <div id="algolia-stats"></div>
+      <div id="algolia-hits"></div>
+      <div id="algolia-pagination" class="algolia-pagination"></div>
+    </div>
+
+    <span class="popup-btn-close">
+      <i class="iconfont-archer">&#xe609;</i>
+    </span>
+  </div>
+</div>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.8.0/dist/instantsearch.min.js" defer></script>
+        <script src="/scripts/search.js" defer></script>
+    
+    <!-- busuanzi  -->
+    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+

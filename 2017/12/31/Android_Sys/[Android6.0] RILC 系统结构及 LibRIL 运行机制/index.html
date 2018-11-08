@@ -1,0 +1,5124 @@
+<!DOCTYPE html>
+<html lang="">
+    <!-- title -->
+
+
+
+
+<!-- keywords -->
+
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" >
+    <meta name="author" content="Younix">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="Younix">
+    
+    <meta name="keywords" content="Younix,hexo-theme,hexo-blog,黑羊爱学习,黑羊,dearsq">
+    
+    <meta name="description" content="">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <title>Android6.0 RILC 系统结构及 LibRIL 运行机制 · Younix&#39;s Studio</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href= "/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="stylesheet" href= "/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href= "/assets/favicon.ico" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script" />
+    <link rel="preload" href="/scripts/main.js" as="script" />
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+        <!-- algolia -->
+        <script>
+            
+            var hits = JSON.parse('{"per_page":10}')
+            var labels = JSON.parse('{"input_placeholder":"Search for Posts","hits_empty":"We did not find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}')
+
+            var algolia = {
+                applicationID: '1MYSDXEEPM',
+                apiKey: '006bf3234a29ef116c82df0b1e558270',
+                indexName: 'YounixSearchKey',
+                hits: hits,
+                labels: labels
+            }
+        </script>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >Younix&#39;s Studio.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">Android6.0 RILC 系统结构及 LibRIL 运行机制</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>Younix's Studio.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="
+
+
+
+
+
+
+
+height:50vh;
+">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            Android6.0 RILC 系统结构及 LibRIL 运行机制
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "Android">Android</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">2.6k</span>阅读时长: <span class="post-count reading-time">11 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2017/12/31</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <p>[TOC]</p>
+<h2 id="RILC-代码结构"><a href="#RILC-代码结构" class="headerlink" title="RILC 代码结构"></a>RILC 代码结构</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">hardware/ril/</span><br><span class="line"> |- CleanSpec.mk			// 编译文件</span><br><span class="line"> |- include					// 关键头文件目录，包括 ril.h ril_cdma_sms.h</span><br><span class="line"> |- libril					// LibRIL Runtime 运行环境的源文件目录</span><br><span class="line"> |- mock-ril				</span><br><span class="line"> |- reference-cdma-sms		// CDMA 短信相关代码</span><br><span class="line"> |- reference-ril			// RIL Stub 实现源码文件目录</span><br><span class="line"> |- rild					//守护进程源码文件目录</span><br></pre></td></tr></table></figure>
+<p>重点在于 libril、reference-ril 和 rild 三个目录中的 C/C++ 代码文件。<br>mmm 模块编译的结果分别为 libril.so、libreference-ril.so、rild<br>从编译 Log 中我们也可以看到<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Instal:out/target/product/rk3399_mid/system/lib64/libril.so</span><br><span class="line">Instal:out/target/product/rk3399_mid/system/lib64/libreference-rilso</span><br><span class="line">Instal:out/target/product/rk3399_mid/system/bin/rild</span><br></pre></td></tr></table></figure></p>
+<h2 id="RILC-运行机制"><a href="#RILC-运行机制" class="headerlink" title="RILC 运行机制"></a>RILC 运行机制</h2><p>RILC 运行在 UserLibraries 系统运行库中的 HAL 层，它使用 HAL Stub 运行结构。<br>最关键的为 Runtime 对外提供 Proxy 代理接口，Stub 向 Runtime 提供 Operations 操作函数，Runtime 向 Stub 提供 Callback 函数。</p>
+<p>RILC 运行机制主要围绕 LibRIL 与 Reference-RIL 相互调用，从而完成 Solicited 和 UnSolicited 消息处理，运行结构如下。<br>包括两个过程：启动和运行。<br>启动过程即 1.2.3. 是由 rild 完成的。<br>运行过程的核心为 LibRIL 和 Reference-RIL 消息交互。</p>
+<p><img src="http://ww1.sinaimg.cn/large/ba061518gy1fh94b2pjf7j20ku0egjto.jpg" alt=""></p>
+<p>LibRIL 和 Reference-RIL 交互过程，符合 HAL层中基于 Stub 方式的运行机制。<br>LibRIL 为 Runtime ，Reference-RIL 实现了 RIL 请求转换成 AT 命令，并执行 AT 命令逻辑。<br>LibRIL 提供了 Reference-RIL 的 Proxy 代理接口。RILJ 基于 Socket 网络连接完成 Solicited 和 UnSolicited 消息 和 LibRIL 进行交互。最终交给 Reference-RIL 进行处理。<br>Reference-RIL 和 Modem 之间通过串口通信，主要用于 AT 命令的执行。</p>
+<h3 id="1-RILC-启动过程"><a href="#1-RILC-启动过程" class="headerlink" title="1. RILC 启动过程"></a>1. RILC 启动过程</h3><h4 id="1-1-RILC-加载入口"><a href="#1-1-RILC-加载入口" class="headerlink" title="1.1 RILC 加载入口"></a>1.1 RILC 加载入口</h4><p>device/rockchip/rk3399/init.rc<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">565 service ril-daemon /system/bin/rild -l /system/lib/libreference-ril.so</span><br><span class="line">566     class main</span><br><span class="line">567     socket rild stream 660 root radio</span><br><span class="line">568     socket rild-debug stream 666 radio system</span><br><span class="line">569     user root</span><br><span class="line">570     group radio cache inet misc audio log</span><br></pre></td></tr></table></figure></p>
+<p>Linux 在启动过程中，会加载此配置文件中配置的系统服务。<br>所以 Android 在开机过程中，Linux Kernel 会运行 rild 可执行文件加载和启动 LibRIL。</p>
+<ol>
+<li>从上面可以看出建立了两个 Socket 连接，端口号分别是 rild 和 rild-debug。</li>
+<li>基于安全考虑，启动 ril-daemon 系统 service 服务的用户为 radio，进入控制台可以查看其进程信息<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root@rk3399_mid:/ # ps | grep rild                                             </span><br><span class="line">root      226   1     8416   2480  hrtimer_na 7fac161344 S /system/bin/rild</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h4 id="1-2-解析-RILC-加载方法"><a href="#1-2-解析-RILC-加载方法" class="headerlink" title="1.2 解析 RILC 加载方法"></a>1.2 解析 RILC 加载方法</h4><p>hardware/ril/rild/rild.c<br>关键函数是 RIL_startEventLoop、RIL_Init、RIL_register<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">main()&#123;</span><br><span class="line"><span class="comment">// 调用 ril.cpp 中的 RIL_startEventLoop，LibRIL 开始循环监听 Socket 事件</span></span><br><span class="line"><span class="comment">// 即 可开始接受 RILJ 发起的 Socket 连接请求和 RIL Solicited 消息请求</span></span><br><span class="line">   RIL_startEventLoop();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 通过 referece-ril.so 动态链接库，获取指向 RIL_Init 函数的指针 rilInit</span></span><br><span class="line">    rilInit = (<span class="keyword">const</span> RIL_RadioFunctions *(*)(<span class="keyword">const</span> struct RIL_Env *, <span class="keyword">int</span>, <span class="keyword">char</span> **))</span><br><span class="line">        dlsym(dlHandle, <span class="string">"RIL_Init"</span>);</span><br><span class="line"><span class="comment">// 异常处理</span></span><br><span class="line">    <span class="keyword">if</span> (rilInit == <span class="literal">NULL</span>) &#123;</span><br><span class="line">        RLOGE(<span class="string">"RIL_Init not defined or exported in %s\n"</span>, rilLibPath);</span><br><span class="line">        <span class="built_in">exit</span>(EXIT_FAILURE);</span><br><span class="line">    &#125;</span><br><span class="line"><span class="comment">// 调用 reference-ril.so 动态链接库的 RIL_Init 函数，传递 s_rilEnv 给 reference-ril.so</span></span><br><span class="line"><span class="comment">// 首先，前面 dlsym 方法获取了指向 RIL_init 的指针</span></span><br><span class="line"><span class="comment">// 其次，调用 RIL_init 完成 RIL Stub 的初始化，即 reference-ril.so 动态链接库</span></span><br><span class="line"><span class="comment">// 其参数 s_rilEnv 即 Runtime,它的获取是在 rild.c 代码中的静态代码块中完成的</span></span><br><span class="line"><span class="comment">// 其返回值 funcs 即 Functions</span></span><br><span class="line">    funcs = rilInit(&amp;s_rilEnv, argc, rilArgv);</span><br><span class="line">    RLOGD(<span class="string">"RIL_Init rilInit completed"</span>);</span><br><span class="line"><span class="comment">// 调用 libril.so 的 RIL_register 函数，将 funcs 传递给 libril.so</span></span><br><span class="line"><span class="comment">// 即提供其 Functions 给 LibRIL 调用。</span></span><br><span class="line">    RIL_register(funcs);</span><br><span class="line">    RLOGD(<span class="string">"RIL_Init RIL_register completed"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>上面的 main 函数整体负责启动 RILC。<br>关键职责便是建立 LibRIL 和 Reference-RIL 的一种相互协调的能力。<br>LibRIL 中有指向 Reference-RIL 中 funcs 结构体的指针。<br>Reference-RIL 中有指向 LibRIL 中 s_rilEnv 结构体（Runtime） 的指针。<br>建立关系后，两者就可以开始 RIL 消息的交互。</p>
+<h3 id="2-RILC-运行过程"><a href="#2-RILC-运行过程" class="headerlink" title="2. RILC 运行过程"></a>2. RILC 运行过程</h3><p>LibRIL 现在可以和 Reference-RIL 开始 RIL 消息的交互。<br>根据消息流向分为两种类型：<br>下行消息：LibRIL 接收到 RILJ 发起的 Solicited 消息后，LibRIL 适用 funcs 调用 Reference-RIL 的 onRequest、onStateRequest 等方法。<br>上行消息：Modem 中相关通信的状态发生变化或者执行完 Solicited 请求消息后，<br>Reference-RIL 可以通过 s_rilEnv 结构体指针调用 LibRIL 中的方法，完成上行消息的发送。</p>
+<h3 id="3-RILC-Runtime-LibRIL"><a href="#3-RILC-Runtime-LibRIL" class="headerlink" title="3. RILC Runtime LibRIL"></a>3. RILC Runtime LibRIL</h3><h4 id="3-1-代码架构"><a href="#3-1-代码架构" class="headerlink" title="3.1 代码架构"></a>3.1 代码架构</h4><p>hardware/ril/libril<br>├── Android.mk<br>├── ril_commands.h        // 定义了 LibRIL 接收到 RILJ发出的 Solicited 请求消息所对应的调用函数和返回调用函数<br>├── ril.cpp        // 建立 Runtime 框架<br>├── ril_event.cpp    // 实现基于 ril_event 双向链表操作函数 ，在 5 节中讲解<br>├── ril_event.h        // ril_event 事件的结构定义<br>├── ril_ex.h<br>├── RilSapSocket.cpp<br>├── RilSapSocket.h<br>├── RilSocket.cpp<br>├── RilSocket.h<br>├── rilSocketQueue.h<br>└── ril_unsol_commands.h  // 定义了 UnSolicited 消息返回调用的函数</p>
+<p>LibRIL 以 ril.cpp 代码为核心，其他代码协助它完成 LibRIL Runtime 的启动和运行，LibRIL Runtime 的两个作用：</p>
+<ol>
+<li>与 RILJ 基于 Socket 交互</li>
+<li>与 Reference-RIL 基于函数调用的交互</li>
+</ol>
+<h4 id="3-2-结构体-RIL-Env"><a href="#3-2-结构体-RIL-Env" class="headerlink" title="3.2 结构体 RIL_Env"></a>3.2 结构体 RIL_Env</h4><p>hardware/ril/include/telephony/ril.h<br>hardware/ril/reference-ril/ril.h<br>这两个 ril.h 完全相同。<br>RIL_Env 在 ril.h 中的定义如下<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">RIL_Env</span> &#123;</span></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * "t" is parameter passed in on previous call to RIL_Notification</span></span><br><span class="line"><span class="comment">     * routine.</span></span><br><span class="line"><span class="comment">     * If "e" != SUCCESS, then response can be null/is ignored</span></span><br><span class="line"><span class="comment">     * "response" is owned by caller, and should not be modified or</span></span><br><span class="line"><span class="comment">     * freed by callee</span></span><br><span class="line"><span class="comment">     * RIL_onRequestComplete will return as soon as possible</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="comment">//动态库完成一个请求后，通过 OnRequestComplete 通知处理结果，其中第一个参数标明是哪个请求的处理结果</span></span><br><span class="line">    <span class="keyword">void</span> (*OnRequestComplete)(RIL_Token t, RIL_Errno e,</span><br><span class="line">                           <span class="keyword">void</span> *response, <span class="keyword">size_t</span> responselen);</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> defined(ANDROID_MULTI_SIM)</span></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * "unsolResponse" is one of RIL_UNSOL_RESPONSE_*</span></span><br><span class="line"><span class="comment">     * "data" is pointer to data defined for that RIL_UNSOL_RESPONSE_*</span></span><br><span class="line"><span class="comment">     * "data" is owned by caller, and should not be modified or freed by callee</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">void</span> (*OnUnsolicitedResponse)(<span class="keyword">int</span> unsolResponse, <span class="keyword">const</span> <span class="keyword">void</span> *data, <span class="keyword">size_t</span> datalen, RIL_SOCKET_ID socket_id);</span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * "unsolResponse" is one of RIL_UNSOL_RESPONSE_*</span></span><br><span class="line"><span class="comment">     * "data" is pointer to data defined for that RIL_UNSOL_RESPONSE_*</span></span><br><span class="line"><span class="comment">     * "data" is owned by caller, and should not be modified or freed by callee</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">	<span class="comment">// 动态库用于进行unsolicited Response通知的函数</span></span><br><span class="line">    <span class="keyword">void</span> (*OnUnsolicitedResponse)(<span class="keyword">int</span> unsolResponse, <span class="keyword">const</span> <span class="keyword">void</span> *data, <span class="keyword">size_t</span> datalen);</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Call user-specifed "callback" function on on the same thread that</span></span><br><span class="line"><span class="comment">     * RIL_RequestFunc is called. If "relativeTime" is specified, then it specifies</span></span><br><span class="line"><span class="comment">     * a relative time value at which the callback is invoked. If relativeTime is</span></span><br><span class="line"><span class="comment">     * NULL or points to a 0-filled structure, the callback will be invoked as</span></span><br><span class="line"><span class="comment">     * soon as possible</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">	 <span class="comment">// 给Rild提交一个超时任务</span></span><br><span class="line">    <span class="keyword">void</span> (*RequestTimedCallback) (RIL_TimedCallback callback,</span><br><span class="line">                                   <span class="keyword">void</span> *param, <span class="keyword">const</span> struct timeval *relativeTime);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>定义了三个指向函数的指针。其功能在上面注释中有说明。</p>
+<h4 id="3-3-结构体-RIL-RadioFunctions"><a href="#3-3-结构体-RIL-RadioFunctions" class="headerlink" title="3.3 结构体 RIL_RadioFunctions"></a>3.3 结构体 RIL_RadioFunctions</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">typedef struct &#123;</span><br><span class="line">    int version;        /* set to RIL_VERSION */ //版本号</span><br><span class="line">    RIL_RequestFunc onRequest;	</span><br><span class="line">    RIL_RadioStateRequest onStateRequest;</span><br><span class="line">    RIL_Supports supports;</span><br><span class="line">    RIL_Cancel onCancel;</span><br><span class="line">    RIL_GetVersion getVersion;</span><br><span class="line">&#125; RIL_RadioFunctions;</span><br></pre></td></tr></table></figure>
+<p>当 LibRIL 接收到 RILJ 发起的 Solicited 请求消息后，其他 5 个指向函数的指针会调用 Reference-RIL 提供的 funcs 中对应请求函数。</p>
+<h3 id="4-LibRIL-Runtime-加载"><a href="#4-LibRIL-Runtime-加载" class="headerlink" title="4. LibRIL Runtime 加载"></a>4. LibRIL Runtime 加载</h3><p>LibRIL Runtime 的加载体现在 RIL_startEventLoop 和 RIL_register 两个函数。</p>
+<h4 id="4-1-RIL-startEventLoop"><a href="#4-1-RIL-startEventLoop" class="headerlink" title="4.1 RIL_startEventLoop"></a>4.1 RIL_startEventLoop</h4><p>RILC 启动过程中，先调用 LibRIL 中的 RIL_startEventLoop 函数完成 LibRIL 运行环境的准备，然后开始循环监听 Socket 相关 RIL 事件。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">extern</span> <span class="string">"C"</span> <span class="keyword">void</span>			<span class="comment">// 标识后此方法可以让 rild.c 调用</span></span><br><span class="line">RIL_startEventLoop(<span class="keyword">void</span>) &#123;</span><br><span class="line">    <span class="comment">/* spin up eventLoop thread and wait for it to get started */</span></span><br><span class="line">    s_started = <span class="number">0</span>;		<span class="comment">// 启动标志</span></span><br><span class="line">    pthread_mutex_lock(&amp;s_startupMutex);	<span class="comment">// 增加 pthread 的同步锁</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">pthread_attr_t</span> attr;</span><br><span class="line">    pthread_attr_init(&amp;attr);		<span class="comment">// 初始化 pthread 参数</span></span><br><span class="line">    pthread_attr_setdetachstate(&amp;attr, PTHREAD_CREATE_DETACHED);	</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 创建基于 eventLoop 函数调用的子线程</span></span><br><span class="line">    <span class="keyword">int</span> result = pthread_create(&amp;s_tid_dispatch, &amp;attr, eventLoop, <span class="literal">NULL</span>);</span><br><span class="line">    <span class="keyword">if</span> (result != <span class="number">0</span>) &#123;</span><br><span class="line">        RLOGE(<span class="string">"Failed to create dispatch thread: %s"</span>, strerror(result));</span><br><span class="line">        <span class="keyword">goto</span> done;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (s_started == <span class="number">0</span>) &#123; <span class="comment">// pthread 启动标志，会在 eventLoop 方法中设置为 1</span></span><br><span class="line">	    <span class="comment">// 等待 s_startupCond 通知</span></span><br><span class="line">        pthread_cond_wait(&amp;s_startupCond, &amp;s_startupMutex);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">done:</span><br><span class="line">    pthread_mutex_unlock(&amp;s_startupMutex); <span class="comment">//释放锁</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><strong>eventLoop 函数</strong></p>
+<p>进入 ril.cpp 代码中的 eventLoop 函数，其处理逻辑如下：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">void</span> *</span><br><span class="line">eventLoop(<span class="keyword">void</span> *param) &#123;</span><br><span class="line">    <span class="keyword">int</span> ret;</span><br><span class="line">    <span class="keyword">int</span> filedes[<span class="number">2</span>];</span><br><span class="line"></span><br><span class="line">    ril_event_init(); <span class="comment">// 初始化 ril_event 双向链表</span></span><br><span class="line"></span><br><span class="line">    pthread_mutex_lock(&amp;s_startupMutex); <span class="comment">// 增加 pthread 同步锁</span></span><br><span class="line"></span><br><span class="line">    s_started = <span class="number">1</span>; <span class="comment">// 修改启动状态为 1</span></span><br><span class="line">    pthread_cond_broadcast(&amp;s_startupCond);</span><br><span class="line"></span><br><span class="line">    pthread_mutex_unlock(&amp;s_startupMutex); <span class="comment">// 释放 thread 同步锁</span></span><br><span class="line"></span><br><span class="line">    ret = pipe(filedes); <span class="comment">//  创建管道通信</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (ret &lt; <span class="number">0</span>) &#123; <span class="comment">// 管道创建异常处理</span></span><br><span class="line">        RLOGE(<span class="string">"Error in pipe() errno:%d"</span>, errno);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>; <span class="comment">// 直接返回 NULL</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    s_fdWakeupRead = filedes[<span class="number">0</span>];  <span class="comment">// 输入文件描述符</span></span><br><span class="line">    s_fdWakeupWrite = filedes[<span class="number">1</span>];  <span class="comment">// 输出文件描述符</span></span><br><span class="line"></span><br><span class="line">    fcntl(s_fdWakeupRead, F_SETFL, O_NONBLOCK);</span><br><span class="line">    <span class="comment">// 设置新创建 RIL 事件的 ril_event 参数，关注 s_fdWakeupRead 文件描述符 以及 RIL 事件回调方法 processWakeupCallback</span></span><br><span class="line">    ril_event_set (&amp;s_wakeupfd_event, s_fdWakeupRead, <span class="literal">true</span>,</span><br><span class="line">                processWakeupCallback, <span class="literal">NULL</span>);</span><br><span class="line">	<span class="comment">// 增加 ril_event 节点，并激活</span></span><br><span class="line">    rilEventAddWakeup (&amp;s_wakeupfd_event);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Only returns on error 只在异常情况下才返回</span></span><br><span class="line">	<span class="comment">// 调用 ril_event.cpp 中 ril_event_init 函数，开始循环监听和处理 ril_event 时间</span></span><br><span class="line">    ril_event_loop();</span><br><span class="line">    RLOGE (<span class="string">"error in event_loop_base errno:%d"</span>, errno);</span><br><span class="line">    <span class="comment">// kill self to restart on error 异常时自杀重启</span></span><br><span class="line">    kill(<span class="number">0</span>, SIGKILL); </span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><strong>s_wakeupfd_event 的事件处理</strong><br>s_wakeupfd_event 事件处理主要分为三大块，如下：</p>
+<ol>
+<li>创建管道获取其输入输出文件描述符 s_fdWakeupRead、s_fdWakeupWrite</li>
+<li>使用 s_fdWakeupRead 和 processWakeupCallback 创建 s_wakeupfd_event 事件</li>
+<li>增加并激活 s_wakeupfd_event 事件</li>
+</ol>
+<p>ril_event 双向链表中此时仅有一个节点，那就是 s_wakeupfd_event。此节点的 fd 文件描述符为 s_fdWakeupRead，RIL 事件回调函数为 processWakeupCallback。</p>
+<p><strong>ril_event_loop 函数</strong><br>ril_event.cpp<br>在 ril_event_loop 函数中，核心是 for(;;) 循环，只要循环中处理逻辑不变化，ril_event_loop 函数调用是不会返回的。</p>
+<h4 id="4-2-RIL-register-函数引入三方-RIL-RadioFunctions"><a href="#4-2-RIL-register-函数引入三方-RIL-RadioFunctions" class="headerlink" title="4.2 RIL_register 函数引入三方 RIL_RadioFunctions"></a>4.2 RIL_register 函数引入三方 RIL_RadioFunctions</h4><p><strong>RIL_register 函数</strong><br>其作用在于引入第三方 Reference-RIL（以封装后 so 动态链接库提供 libreference-ril.so）。<br>关键代码在于对第三方 Reference-RIL 提供的 callbacks 参数（funcs）作 判空、版本号 等验证，验证过后，拷贝保存此指向 RIL_RadioFunctions 结构体指针。<br>这样 LibRIL 中就可以调用第三方 Reference-RIL 提供的 RIL 请求相关函数。</p>
+<h3 id="5-ril-event-事件处理机制"><a href="#5-ril-event-事件处理机制" class="headerlink" title="5. ril_event 事件处理机制"></a>5. ril_event 事件处理机制</h3><p>RIL 事件相关的数据均封装在 ril_event 结构体中，一个 RIL 事件会对应一个 ril_event 结构体。<br>LibRIL 在启动完成后进入运行状态，将围绕 ril_event 结构体处理 RIL 相关事件。</p>
+<h4 id="5-1-ril-event-数据结构"><a href="#5-1-ril-event-数据结构" class="headerlink" title="5.1 ril_event 数据结构"></a>5.1 ril_event 数据结构</h4><p>hardware/ril/libril/ril_event.h<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">// 定义指向 RIL 事件 Callback 回调函数的指针 ril_event_cb</span><br><span class="line">typedef void (*ril_event_cb)(int fd, short events, void *userdata);</span><br><span class="line"></span><br><span class="line">struct ril_event &#123;</span><br><span class="line">    struct ril_event *next;</span><br><span class="line">    struct ril_event *prev;</span><br><span class="line"></span><br><span class="line">    int fd;</span><br><span class="line">    int index;	// 当前 RIL 事件的索引</span><br><span class="line">    bool persist; // 保留当前 RIL 事件标志</span><br><span class="line">    struct timeval timeout; // RIL 事件超时设置</span><br><span class="line">    ril_event_cb func; // RIL 事件回调函数指针</span><br><span class="line">    void *param;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<h4 id="5-2-RIL-事件生命周期控制的处理函数"><a href="#5-2-RIL-事件生命周期控制的处理函数" class="headerlink" title="5.2 RIL 事件生命周期控制的处理函数"></a>5.2 RIL 事件生命周期控制的处理函数</h4><p>ril_event_init 双向链表初始化<br>ril_event_set 设置新创建 ril_event 时间参数<br>ril_event_add 增加 event</p>
+<h4 id="5-3-ril-event-loop-处理机制"><a href="#5-3-ril-event-loop-处理机制" class="headerlink" title="5.3 ril_event_loop 处理机制"></a>5.3 ril_event_loop 处理机制</h4><p>LibRIL 运行环境加载过程中，最后会调用 ril_event_loop 函数，开始监听 RIL 事件。<br>分为两步：<br>1）增加 pending_list 双向链表中的 RIL 事件节点。processTimeouts 和 processReadReadies 两个函数都是将对应 RIL 事件增加到 pending_list 双向链表。<br>2）调用 firePending 函数遍历 pending_list 双向链表获取 ril_event ，调用其 func 回调函数，完成对应 RIL 事件的回调。</p>
+<h3 id="6-LibRIL-运行机制"><a href="#6-LibRIL-运行机制" class="headerlink" title="6. LibRIL 运行机制"></a>6. LibRIL 运行机制</h3><p>分为两个部分：<br>1） RILJ 建立与 RIL 的 Socket 连接<br>2） RILJ 向 RIL 发起 Solicited 消息的交互流程和处理机制。</p>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者：<a href="http://iyounix.com">Younix</a>
+            <p>原文链接：<a href="http://iyounix.com/2017/12/31/Android_Sys/[Android6.0] RILC 系统结构及 LibRIL 运行机制/">http://iyounix.com/2017/12/31/Android_Sys/[Android6.0] RILC 系统结构及 LibRIL 运行机制/</a>
+            <p>发表日期：<a href="http://iyounix.com/2017/12/31/Android_Sys/[Android6.0] RILC 系统结构及 LibRIL 运行机制/">December 31st 2017, 11:33:05 pm</a>
+            <p>更新日期：<a href="http://iyounix.com/2017/12/31/Android_Sys/[Android6.0] RILC 系统结构及 LibRIL 运行机制/">November 8th 2018, 10:20:56 am</a>
+            <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/deed.zh">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href= "/2017/12/31/Android_Sys/[Android6.0] Reference-RIL 运行框架/" title= "Android6.0 Reference-RIL 运行框架">
+                    <div class="nextTitle">Android6.0 Reference-RIL 运行框架</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/2017/12/31/Android_Sys/[Android6.0] 启动流程分析之一概述/" title= "Android6.0 启动流程分析之一概述">
+                    <div class="prevTitle">Android6.0 启动流程分析之一概述</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
+    
+    
+    <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+    <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+    <div id="comment"></div>
+    <script>
+    new Valine({
+        el: '#comment' ,
+        notify:false, 
+        verify:false, 
+        appId: "il9qYeGCfA80xAqoGXBmDaU3-gzGzoHsz",
+        appKey: "OCMYJee8Ua8CVylQSQB75Kla",
+        placeholder: "既然看完了,那就评论一下吧",
+        path:window.location.pathname, 
+        avatar:'mm' 
+    });
+    </script>
+
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:foreveryounix@mail.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/dearsq" class="iconfont-archer github" target="_blank" title=github></a>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer wechat" title=wechat>
+                  
+                  <img class="profile-qr" src="/assets/example_qr.png" />
+                </span>
+            
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="https://weibo.com/younix" class="iconfont-archer weibo" target="_blank" title=weibo></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="/atom.xml" class="iconfont-archer rss" target="_blank" title=rss></a>
+            
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+    
+     
+    <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+    
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#RILC-代码结构"><span class="toc-number">1.</span> <span class="toc-text">RILC 代码结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RILC-运行机制"><span class="toc-number">2.</span> <span class="toc-text">RILC 运行机制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-RILC-启动过程"><span class="toc-number">2.1.</span> <span class="toc-text">1. RILC 启动过程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-1-RILC-加载入口"><span class="toc-number">2.1.1.</span> <span class="toc-text">1.1 RILC 加载入口</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2-解析-RILC-加载方法"><span class="toc-number">2.1.2.</span> <span class="toc-text">1.2 解析 RILC 加载方法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-RILC-运行过程"><span class="toc-number">2.2.</span> <span class="toc-text">2. RILC 运行过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-RILC-Runtime-LibRIL"><span class="toc-number">2.3.</span> <span class="toc-text">3. RILC Runtime LibRIL</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-1-代码架构"><span class="toc-number">2.3.1.</span> <span class="toc-text">3.1 代码架构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2-结构体-RIL-Env"><span class="toc-number">2.3.2.</span> <span class="toc-text">3.2 结构体 RIL_Env</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-结构体-RIL-RadioFunctions"><span class="toc-number">2.3.3.</span> <span class="toc-text">3.3 结构体 RIL_RadioFunctions</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-LibRIL-Runtime-加载"><span class="toc-number">2.4.</span> <span class="toc-text">4. LibRIL Runtime 加载</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#4-1-RIL-startEventLoop"><span class="toc-number">2.4.1.</span> <span class="toc-text">4.1 RIL_startEventLoop</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-2-RIL-register-函数引入三方-RIL-RadioFunctions"><span class="toc-number">2.4.2.</span> <span class="toc-text">4.2 RIL_register 函数引入三方 RIL_RadioFunctions</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-ril-event-事件处理机制"><span class="toc-number">2.5.</span> <span class="toc-text">5. ril_event 事件处理机制</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#5-1-ril-event-数据结构"><span class="toc-number">2.5.1.</span> <span class="toc-text">5.1 ril_event 数据结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-2-RIL-事件生命周期控制的处理函数"><span class="toc-number">2.5.2.</span> <span class="toc-text">5.2 RIL 事件生命周期控制的处理函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-3-ril-event-loop-处理机制"><span class="toc-number">2.5.3.</span> <span class="toc-text">5.3 ril_event_loop 处理机制</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-LibRIL-运行机制"><span class="toc-number">2.6.</span> <span class="toc-text">6. LibRIL 运行机制</span></a></li></ol></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 163
+        </div>
+        <!-- search  -->
+        
+            <div class="site-search popup-trigger">
+                <span class="iconfont-archer search-icon">&#xe627;</span>
+            </div>
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/08</span><a class="archive-post-title" href= "/2018/11/08/Android_Driver/Driver/[Android6.0][RK3399] Mipi LCD RM72014 移植调试流程/" >Android6.0 RK3399 Mipi LCD RM72014 移植调试流程</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_全局获取Context方法/" >SOP_全局获取Context方法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_Notification/" >SOP_Notification</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/数据持久化_文件存储/" >数据持久化_文件存储</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_多线程编程/" >SOP_多线程编程</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/数据持久化_SharedPreferences/" >数据持久化_SharedPreferences</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_WebView/" >SOP_WebView</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_控件_AlertDialog/" >SOP_控件_AlertDialog</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_控件_Fragment/" >SOP_控件_Fragment</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_动态权限/" >SOP_动态权限</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_MediaPlayer/" >SOP_MediaPlayer</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_Intent传输对象的方法/" >SOP_Intent传输对象的方法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/组件_ContentProvider/" >组件_ContentProvider</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_WebView_XML和JSON/" >SOP_WebView_XML和JSON</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_异步消息处理机制/" >SOP_异步消息处理机制</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/数据持久化_数据库_LitePal 和 SQLite/" >数据持久化_数据库_LitePal 和 SQLite</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/组件_BroadcastReceiver/" >组件_BroadcastReceiver</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/31</span><a class="archive-post-title" href= "/2018/05/31/Android_App/[Android7.1][RK3399] 添加开机播放视频功能/" >Android7.1 RK3399 添加开机播放视频功能</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/01</span><a class="archive-post-title" href= "/2018/05/01/Android_App/[Android7.1] 打开设置中的返回键/" >Android7.1 打开设置中的返回键</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Environment/MTK6737/[IoT4G] 启动流程/" >Android6.0 MTK6737 启动流程</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_Driver/Driver/[Android6.0][MTK6737] 长按 Power 没有真正关机 (MTK IPO 功能)/" >Android6.0 MTK6737 长按 Power 没有真正关机 (MTK IPO 功能)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_App/[Android6.0][MTK6737]添加长按Power重启按钮/" >Android6.0 MTK6737 添加长按Power重启按钮</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_Driver/Driver/[Android6.0][MTK6737]UVC Camera 移植/" >Android6.0 MTK6737 UVC Camera 移植</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_Driver/Driver/[Android6.0][MTK6737] 设置屏幕旋转 270 度/" >Android6.0 MTK6737 设置屏幕旋转 270 度</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_App/[Android6.0][MTK6737] 替换原生 Launcher/" >Android6.0 MTK6737 替换原生 Launcher</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_App/[Android6.0][RK3399] 修改浏览器默认主页/" >Android6.0 RK3399 修改浏览器默认主页</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_App/[Android6.0][MTK6737] App 添加系统权限/" >Android6.0 App 添加系统权限</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_App/[Android6.0][MTK6737] 系统旋转后导航栏丢失，并有黑边/" >Android6.0 MTK6737 系统旋转后导航栏丢失，并有黑边</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Environment/MTK6737/[Android6.0][MTK6737] 移植 Modem/" >Android6.0 MTK6737 移植 Modem</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_Driver/Driver/[Android6.0][MTK6737]版本控制和开发流程说明/" >Android6.0 MTK6737 版本控制和开发流程说明</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_App/[Android6.0][MTK6737] 修改默认允许位置来源第三方应用安装/" >Android6.0 修改默认允许位置来源第三方应用安装</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_App/[Android] 反编译 Android APK/" >Android 反编译 Android APK</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Environment/MTK6737/[IoT4G] MTK DCT 工具介绍/" >Android6.0 MTK6737 DCT 工具介绍</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_Sys/[Android6.0][MTK6737] 优化开机启动时间/" >Android6.0 MTK6737 优化开机启动时间</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/30</span><a class="archive-post-title" href= "/2018/03/30/Environment/MTK6737/[Android6.0][MT6737] 环境搭建和烧录/" >Android6.0 MTK6737 环境搭建和烧录中的问题</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/29</span><a class="archive-post-title" href= "/2018/03/29/Environment/MTK6737/[IoT4G] MTK开发环境搭建/" >Android6.0 MTK6737 开发环境搭建</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/03</span><a class="archive-post-title" href= "/2018/03/03/Android_Driver/Driver/[Android7.1][RK3399] 使用 ramoops 机制查看开机 Kernel Log/" >Android7.1 RK3399 使用 ramoops 机制查看开机 Kernel Log</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/31</span><a class="archive-post-title" href= "/2018/01/31/Android_Driver/Debug/[Android7.1][RK3399] WiFi 吞吐率周期性变差问题(扫描机制)/" >Android7.1 RK3399 WiFi 吞吐率周期性变差问题(扫描机制)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/31</span><a class="archive-post-title" href= "/2018/01/31/Android_Driver/Debug/[Android7.1][RK3399] 插上 TypeC 为 USB_FLOATING_CHARGER 模式/" >Android7.1 RK3399 插上 TypeC 为 USB_FLOATING_CHARGER 模式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/31</span><a class="archive-post-title" href= "/2018/01/31/Android_Driver/Debug/[Android7.1][RK3399] 添加对三路以上 Camera 同时预览的支持/" >Android7.1 RK3399 添加对三路以上 Camera 同时预览的支持</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/31</span><a class="archive-post-title" href= "/2018/01/31/Android_Driver/Debug/[Android7.1][RK3399] 添加对 Camera 动态热插拔的支持/" >Android7.1 RK3399 添加对 USB Camera 动态热插拔的支持.md</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/31</span><a class="archive-post-title" href= "/2018/01/31/Android_Driver/Debug/[Android7.1][RK3399] 只保留 USB Camera (去掉对 Mipi DVP Camera 的支持)/" >Android7.1 RK3399 只保留 USB Camera (去掉对 Mipi DVP Camera 的支持)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/31</span><a class="archive-post-title" href= "/2018/01/31/Android_Driver/Driver/[Android7.1][RK3399] Codec rt5640 移植/" >Android7.1 RK3399 Codec rt5640 移植.md</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/31</span><a class="archive-post-title" href= "/2018/01/31/Android_Driver/Driver/[Android7.1][RK3399] RK reboot 机制驱动分析/" >Android7.1 RK3399 RK reboot 机制驱动分析</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2017 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] U-boot启动流程分析（准备）/" >Android6.0 RK3399 U-boot启动流程分析（准备）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] Mipi LCD NT35521 移植调试流程/" >Android6.0 RK3399 Mipi LCD NT35521 移植调试流程</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android6.0] 启动流程(从开机到第一个程序）/" >Android6.0 启动流程(从开机到第一个程序）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] IR(红外线)移植步骤/" >Android6.0 RK3399 IR(红外线)移植步骤</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android] init.rc 文件浅析/" >Android init.rc 文件浅析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] Uboot 代码分析/" >Android6.0 RK3399 Uboot 代码分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] PCIe 接口 4G模块 EC20 调试记录/" >Android6.0 RK3399 PCIe 接口 4G模块 EC20 调试记录</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_App/[Android6.0][RK3399] 设置系统默认不会休眠/" >Android6.0 RK3399 设置系统默认不会休眠</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Environment/Firefly-RK3399/[Android6.0][RK3399] OTA差异包制作方法/" >Android6.0 RK3399 OTA差异包制作方法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] Uboot 编译规则/" >Android6.0 RK3399 Uboot 编译规则</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] SATA 设备调试笔记/" >Android6.0 RK3399 SATA 设备调试笔记</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] 修改默认按键 KEY-PAD/" >Android6.0 RK3399 修改默认按键 KEY-PAD</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] PCIe 转 SATA 调试步骤/" >Android6.0 RK3399 PCIe 转 SATA 调试步骤</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_App/[Android6.0][RK3399] 关闭双击 Power 打开 Camera 功能/" >Android6.0 RK3399 关闭双击 Power 打开 Camera 功能</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android6.0] 启动流程分析之一概述/" >Android6.0 启动流程分析之一概述</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_App/[Android6.0][RK3399] 去掉滑动锁屏(swipe lock)/" >Android6.0 RK3399 去掉滑动锁屏</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android6.0] Reference-RIL 运行框架/" >Android6.0 Reference-RIL 运行框架</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_App/[Android6.0][RK3399] 去掉顶部Google搜索栏/" >Android6.0 RK3399 去掉顶部Google搜索栏</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Environment/Firefly-RK3399/[Linux][RK3399] 基于 Firefly RK3399 Board 制作 Ubuntu Base 版本/" >Linux RK3399 基于 Firefly RK3399 Board 制作 Ubuntu Base 版本</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_App/[Android6.0][RK3399] 出厂预置可卸载 APK/" >Android6.0 RK3399 出厂预置可卸载 APK</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Linux4.4][RK3399] DRM HDMI 调试小结/" >Linux RK3399 HDMI 调试小结</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_App/[Android6.0][RK3399] 隐藏导航栏或状态栏/" >Android6.0 RK3399 隐藏导航栏或状态栏</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android] 智能指针 SP强指针WP弱指针 用法/" >Android 智能指针 SP强指针WP弱指针 用法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Debug/[Android6.0][RK3399] 更换64GeMMC后无法启动的问题/" >Android6.0 RK3399 更换64GeMMC后无法启动的问题</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android] property_get 及 property_set 系统属性/" >Android property_get 及 property_set 系统属性</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android6.0] RILC 系统结构及 LibRIL 运行机制/" >Android6.0 RILC 系统结构及 LibRIL 运行机制</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_App/[Android6.0][RK3399]去掉鼠标移动唤醒功能/" >Android6.0 RK3399 去掉鼠标移动唤醒功能</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] 实现耳机和喇叭自动切换功能/" >Android6.0 RK3399 实现耳机和喇叭自动切换功能</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] Wifi Card 驱动流程分析/" >Android6.0 RK3399 Wifi Card 驱动流程分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Environment/Firefly-RK3399/[Linux][RK3399] 基于 Firefly RK3399 Board 制作 Ubuntu Desktop 版本/" >Linux RK3399 基于 Firefly RK3399 Board 制作 Ubuntu Desktop 版本</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android6.0] 启动流程分析之二init分析/" >Android6.0 启动流程分析之二init分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] PWM Backlight 驱动分析/" >Android6.0 RK3399 PWM Backlight 驱动分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android] 文件系统分区挂载流程/" >Android 文件系统分区挂载流程</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Linux4.4][RK3399] DRM 框架及代码流程/" >Linux RK3399 DRM 框架及代码流程</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Life/InnerPath/17-12-312017年总结/" >2017年总结</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Linux/[Linux][RK3399] 移植蓝牙驱动/" >Linux RK3399 移植蓝牙驱动</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Linux/[Linux][RK3399] ISP 矫正算法的移植/" >Linux RK3399 ISP 矫正算法的移植</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Linux/[Linux][RK3399] RK Linux 平台启动过程（5个阶段）详解/" >Linux RK3399 RK Linux 平台启动过程（5个阶段）详解</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Linux/[Linux][RK3399] 以太网调试 — 利用 ping 和 pathping 工具/" >Linux RK3399 以太网调试 — 利用 ping 和 pathping 工具</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/01</span><a class="archive-post-title" href= "/2017/12/01/Android_App/[Android6.0][RK3399] 修改默认壁纸/" >Android6.0 RK3399 修改默认壁纸</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/01</span><a class="archive-post-title" href= "/2017/12/01/Android_Sys/[Android6.0] 开发环境搭建中碰到的问题/" >Android6.0 RK3399 开发环境搭建中碰到的问题</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/01</span><a class="archive-post-title" href= "/2017/12/01/Android_Driver/Driver/[Android6.0][RK3399] 双屏异显代码实现流程分析（一）/" >Android6.0 RK3399 双屏异显代码实现流程分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/01</span><a class="archive-post-title" href= "/2017/12/01/Android_Driver/Driver/[Android6.0][RK3399] 双屏异显代码实现流程分析（二）/" >Android6.0 RK3399 双屏异显代码实现流程分析(二)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/31</span><a class="archive-post-title" href= "/2017/08/31/Android_Driver/Driver/[Android6.0][RK3399] 电池系统（四）不插电池无法开机的问题/" >Android6.0 RK3399 电池系统（四）不插电池无法开机的问题</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/31</span><a class="archive-post-title" href= "/2017/08/31/Android_Driver/Driver/[Android6.0][RK3399] 电池系统（二）BQ IC 添加 DC 充电功能/" >Android6.0 RK3399 电池系统（二）BQ IC 添加 DC 充电功能</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/31</span><a class="archive-post-title" href= "/2017/08/31/Android_Driver/Driver/[Android6.0][RK3399] 电池系统（三）电量计 CW2015 驱动流程分析/" >Android6.0 RK3399 电池系统（三）电量计 CW2015 驱动流程分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/31</span><a class="archive-post-title" href= "/2017/08/31/Android_Driver/Driver/[Android6.0][RK3399] 电池系统（一）BQ25700 IC 驱动分析/" >Android6.0 RK3399 电池系统（一）BQ25700 IC 驱动分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/31</span><a class="archive-post-title" href= "/2017/08/31/Android_Driver/Driver/[Android6.0][RK3399] 电池管理系统/" >Android6.0 RK3399 电源管理系统</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/14</span><a class="archive-post-title" href= "/2017/08/14/Life/Learning/王烁30天认知训练营 Day01 什么是查理·芒格的人生开关/" >Day01 什么是查理·芒格的人生开关</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2017/08/05/Environment/[Ubuntu] 在终端中利用Wget下载百度云资源/" >Ubuntu 在终端中利用Wget/aria2下载百度云资源</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2017/08/05/Environment/[Ubuntu] Linux下访问NAS服务器/" >Linux 下访问 NAS 服务器</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2017/08/05/Environment/[Ubuntu] 服务器添加硬盘方法/" >Ubuntu 服务器添加硬盘方法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2017/08/05/Android_App/[Android6.0] App中调用init.rc中的服务，从而运行shell脚本/" >Android6.0 App中调用init.rc中的服务，从而运行shell脚本</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2017/08/05/Android_App/[Android6.0][MTK6737] 修改默认输入法为 Sogou/" >Android6.0 修改默认输入法为 Sogou</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2017/08/05/Android_Driver/Driver/[Linux4.4] 以 SPI 驱动模型为例分析 Linux 主机驱动与外设驱动分离模型/" >Linux 以 SPI 驱动模型为例分析 Linux 主机驱动与外设驱动分离模型</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/01</span><a class="archive-post-title" href= "/2017/07/01/Android_Driver/Debug/[Android6.0][RK3399][BUG] 插上 HDMI 时开机解锁锁屏后死机/" >Android6.0 RK3399 插上 HDMI 时开机解锁锁屏后死机</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/01</span><a class="archive-post-title" href= "/2017/07/01/Android_Driver/Debug/[Android6.0][RK3399] 开机前几秒串口打印异常问题/" >Android6.0 RK3399 开机前几秒串口打印异常问题</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/06</span><a class="archive-post-title" href= "/2017/06/06/VR/OpenGL/[OpenGL]创建一个窗口/" >OpenGL 创建一个窗口</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/06</span><a class="archive-post-title" href= "/2017/06/06/VR/OpenGL/[OpenGL]创建一个三角形/" >OpenGL 创建一个三角形</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/06</span><a class="archive-post-title" href= "/2017/06/06/VR/OpenGL/[OpenGL]一些基本概念和基于状态的方法/" >OpenGL 一些基本概念和基于状态的方法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/05</span><a class="archive-post-title" href= "/2017/06/05/VR/[VR] Cardboard Treasure Hunter 代码分析/" >VR Cardboard Treasure Hunter 代码分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/05</span><a class="archive-post-title" href= "/2017/06/05/VR/[VR] 应用开发入门基本知识/" >VR 应用开发入门基本知识(Oculus/Cardboard/Daydream)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/05</span><a class="archive-post-title" href= "/2017/04/05/Android_App/[Android6.0] 使用 repo 更新某个指定 git 仓库/" >Android6.0 使用 repo 更新某个指定 git 仓库</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2016 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2016/12/31/Android_Driver/Device/[Device] Mipi LCD 的基础知识/" >Mipi LCD 的基础知识</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2016/12/31/Android_Driver/Driver/[Android5.1][RK3288] Framebuffer 设备驱动/" >Android5.1 RK3288 Framebuffer 设备驱动</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2016/12/31/Android_Driver/Driver/[Android5.1][RK3288] LCD (Mipi) 调试方法及问题汇总/" >Android5.1 RK3288 LCD (Mipi) 调试方法及问题汇总</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2016/12/31/Android_Sys/[Android5.1][RK3288]build.sh脚本分析/" >Android5.1 RK3288 build.sh脚本分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2016/12/31/Android_Driver/Device/[Device] Mipi 接口 和 LVDS 接口区别/" >Mipi 接口 和 LVDS 接口区别</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2016/12/31/Android_Driver/Device/[Device] TypeC 基础知识/" >TypeC 基础知识</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2016/12/31/Android_Driver/Debug/[Android5.1][RK3288] LCD Mipi 初始化长包数据规范问题/" >Android5.1 RK3288 LCD Mipi 初始化长包数据规范问题</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2016/12/31/Android_Driver/Driver/[Android5.1][RK3288] SPI 设备驱动模型（Ad714x CapTouch 驱动分析）/" >Android5.1 RK3288 SPI 设备驱动模型（Ad714x CapTouch 驱动分析）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/24</span><a class="archive-post-title" href= "/2016/12/24/Life/InnerPath/16-12-242016年总结/" >2016年总结</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/30</span><a class="archive-post-title" href= "/2016/10/30/Life/InnerPath/16-10-30VR创投会/" >VR创投会</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/01</span><a class="archive-post-title" href= "/2016/10/01/Android_Sys/[Android] build 流程/" >Android build 流程</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/30</span><a class="archive-post-title" href= "/2016/09/30/Life/InnerPath/16-09-30大者恒大，强者愈强/" >大者恒大，强者愈强</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/25</span><a class="archive-post-title" href= "/2016/09/25/Life/InnerPath/16-09-252016Q3总结——秋日已来，硕果寥寥/" >2016Q3总结——秋日已来，硕果寥寥</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/28</span><a class="archive-post-title" href= "/2016/08/28/Life/InnerPath/16-08-28谈谈RD和FAE/" >谈谈RD和FAE</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/19</span><a class="archive-post-title" href= "/2016/08/19/Linux/[Linux] Linux 平台嵌入式开发 101/" >Linux 平台嵌入式开发 101</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/28</span><a class="archive-post-title" href= "/2016/07/28/Android_Driver/Driver/NFC/[NFC] NFC 程序设计（NDEF 格式介绍）/" >NFC 程序设计（NDEF 格式介绍）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/28</span><a class="archive-post-title" href= "/2016/07/28/Android_Driver/Driver/NFC/[NFC] NFC 客户 Support 流程/" >NFC 客户 Support 流程</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/28</span><a class="archive-post-title" href= "/2016/07/28/Android_Driver/Driver/NFC/[NFC] NFC 程序设计（基础知识）/" >NFC 程序设计（基础知识）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/28</span><a class="archive-post-title" href= "/2016/07/28/Android_Driver/Driver/NFC/[NFC] Android 平台（Linux3.10） NXP NFC 移植流程归纳/" >NFC Android 平台 NXP NFC 移植流程归纳</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/17</span><a class="archive-post-title" href= "/2016/07/17/Life/InnerPath/16-07-172016Q2总结——春花夏拾/" >2016Q2总结——春花夏拾</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/29</span><a class="archive-post-title" href= "/2016/03/29/Life/InnerPath/16-03-29未来先见/" >未来先见</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/28</span><a class="archive-post-title" href= "/2016/03/28/Life/InnerPath/16-03-282016Q1总结/" >2016Q1总结</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/15</span><a class="archive-post-title" href= "/2016/03/15/Life/InnerPath/16-03-15世殊事异/" >世殊事异，所以兴怀</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/14</span><a class="archive-post-title" href= "/2016/03/14/Android_App/[Android5.1] 添加自定义开机动画（视频）并去黑屏/" >Android5.1 添加自定义开机动画（视频）并去黑屏</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/24</span><a class="archive-post-title" href= "/2016/02/24/Life/InnerPath/16-02-24瑞芯微出差记/" >瑞芯微出差记</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/30</span><a class="archive-post-title" href= "/2016/01/30/Life/InnerPath/16-01-30十二分之一/" >十二分之一</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/15</span><a class="archive-post-title" href= "/2016/01/15/Life/InnerPath/16-01-15书评《黑客与画家》/" >书评《黑客与画家》</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/03</span><a class="archive-post-title" href= "/2016/01/03/Life/InnerPath/16-01-03写在2015的尾巴与2016的开头/" >写在2015的尾巴与2016的开头</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/01</span><a class="archive-post-title" href= "/2016/01/01/Language/[C] 函数调用的时候栈发生了什么/" >C 函数调用的时候栈发生了什么</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/01</span><a class="archive-post-title" href= "/2016/01/01/Language/[其他] 编程修养/" >编程修养</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/01</span><a class="archive-post-title" href= "/2016/01/01/Language/[UnixC] 内存 mem 操作/" >UnixC 内存 mem 操作</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/01</span><a class="archive-post-title" href= "/2016/01/01/Language/[C] 第一章 GCC 编译的背后/" >C 第一章 GCC 编译的背后</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/01</span><a class="archive-post-title" href= "/2016/01/01/Language/[Git] 如何修改之前的某次commit/" >Git 如何修改之前的某次commit</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2015 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] 下的 SPI 设备驱动模型（SPI 协议基础）/" >Linux 中的 SPI 设备驱动模型（SPI 协议基础）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] 统一设备模型/" >Linux 统一设备模型</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] 文件批量重命名 rename/" >Linux 文件批量重命名 rename</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] 服务器添加硬盘方法/" >Linux 服务器添加硬盘方法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] 内核的 proc 文件系统/" >Linux 内核的 proc 文件系统</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] 中的互斥机制（中断屏蔽、原子操作、自旋锁、信号量）/" >Linux 中的互斥机制（中断屏蔽、原子操作、自旋锁、信号量）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] 内核的 sysfs 文件系统/" >Linux 内核的 sysfs 文件系统</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] 中的阻塞与非阻塞（等待队列、轮询）/" >Linux 阻塞与非阻塞（等待队列、轮询）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] passwd 文件格式详解/" >Linux passwd 文件格式详解</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux][Tool] 程序内存检查工具 Valgrind/" >Linux 程序内存检查工具 Valgrind</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] DTS 架构下 Device 与 Driver 匹配流程/" >Linux DTS 架构下 Device 与 Driver 匹配流程</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] likely() 和 unlikely()/" >Linux likely() 和 unlikely()</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/26</span><a class="archive-post-title" href= "/2015/10/26/Life/InnerPath/15-10-26英雄如你少年如我不负这移动盛世/" >英雄如你，少年如我，不负这移动盛世</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> Invalid date </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">Invalid date</span><a class="archive-post-title" href= "/2018/11/08/Android_App/组件_Service/" >组件_Service.md</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2015 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/20</span><a class="archive-post-title" href= "/2015/09/20/Life/InnerPath/15-09-20巴迪闲侃/" >巴迪闲侃</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/31</span><a class="archive-post-title" href= "/2015/08/31/Linux/[Linux] i2c 与 spi 设备在新版内核中不采用DTS设备树形式 在驱动添加设备信息(board_info)的方法/" >Linux i2c 与 spi 设备在新版内核中不采用DTS设备树形式 在驱动添加设备信息(board_info)的方法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/22</span><a class="archive-post-title" href= "/2015/08/22/Life/InnerPath/15-08-22深圳深圳/" >深圳深圳</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2015/08/05/Environment/[RockChip] parameter.txt 文件详解/" >RockChip parameter.txt 文件详解</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2015/08/05/Environment/[Android] eng、user、userdebug区别/" >Android eng、user、userdebug区别</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/01</span><a class="archive-post-title" href= "/2015/08/01/Life/InnerPath/15-08-01基本功/" >基本功</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/27</span><a class="archive-post-title" href= "/2015/07/27/Life/InnerPath/15-07-27入职杂谈/" >入职杂谈</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/19</span><a class="archive-post-title" href= "/2015/07/19/Life/InnerPath/15-07-19六月/" >六月的尾巴</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/14</span><a class="archive-post-title" href= "/2015/05/14/Life/InnerPath/15-05-04开始的废话总是特别多/" >开始的废话总是特别多</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="RockChip"><span class="iconfont-archer">&#xe606;</span>RockChip</span>
+    
+        <span class="sidebar-tag-name" data-tags="Android"><span class="iconfont-archer">&#xe606;</span>Android</span>
+    
+        <span class="sidebar-tag-name" data-tags="MediaTek"><span class="iconfont-archer">&#xe606;</span>MediaTek</span>
+    
+        <span class="sidebar-tag-name" data-tags="android"><span class="iconfont-archer">&#xe606;</span>android</span>
+    
+        <span class="sidebar-tag-name" data-tags="Linux"><span class="iconfont-archer">&#xe606;</span>Linux</span>
+    
+        <span class="sidebar-tag-name" data-tags="C"><span class="iconfont-archer">&#xe606;</span>C</span>
+    
+        <span class="sidebar-tag-name" data-tags="git"><span class="iconfont-archer">&#xe606;</span>git</span>
+    
+        <span class="sidebar-tag-name" data-tags="InnerPath"><span class="iconfont-archer">&#xe606;</span>InnerPath</span>
+    
+        <span class="sidebar-tag-name" data-tags="VR"><span class="iconfont-archer">&#xe606;</span>VR</span>
+    
+        <span class="sidebar-tag-name" data-tags="Food4Thought"><span class="iconfont-archer">&#xe606;</span>Food4Thought</span>
+    
+        <span class="sidebar-tag-name" data-tags="NFC"><span class="iconfont-archer">&#xe606;</span>NFC</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "Younix"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+        <div class="site-search">
+  <div class="algolia-popup popup">
+    <div class="algolia-search">
+      <div class="algolia-search-input-icon">
+        <i class="fa fa-search"></i>
+      </div>
+      <div class="algolia-search-input" id="algolia-search-input"></div>
+    </div>
+
+    <div class="algolia-results">
+      <div id="algolia-stats"></div>
+      <div id="algolia-hits"></div>
+      <div id="algolia-pagination" class="algolia-pagination"></div>
+    </div>
+
+    <span class="popup-btn-close">
+      <i class="iconfont-archer">&#xe609;</i>
+    </span>
+  </div>
+</div>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.8.0/dist/instantsearch.min.js" defer></script>
+        <script src="/scripts/search.js" defer></script>
+    
+    <!-- busuanzi  -->
+    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+
