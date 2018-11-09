@@ -81,7 +81,7 @@ static inline void list_splice(struct list_head *list, struct list_head *head);
 假设当前有两个链表，表头分别是list1和list2（都是struct list_head变量），当调用list_splice(&list1,&list2)时，只要list1非空，list1链表的内容将被挂接在list2链表上，位于list2和list2.next（原list2表的第一个节点）之间。新list2链表将以原list1表的第一个节点为首节点，而尾节点不变。如图（虚箭头为next指针）：
 
 图4 链表合并list_splice(&list1,&list2)
-![链表合并list_splice](https://ws1.sinaimg.cn/large/ba061518gy1fx1lqrf07xg20fc04pmwy.gif)
+![链表合并list_splice](https://.sinaimg.cn/large/ba061518gy1fx1lqrf07xg20fc04pmwy.gif)
 当list1被挂接到list2之后，作为原表头指针的list1的next、prev仍然指向原来的节点，为了避免引起混乱，Linux提供了一个list_splice_init()函数：
 ```
 static inline void list_splice_init(struct list_head *list, struct list_head *head);
@@ -126,7 +126,7 @@ size_t最终定义为unsigned int（i386）。
 
 如果这么说还不好理解的话，不妨看看下面这张图：
 图5 offsetof()宏的原理
-![](https://ws1.sinaimg.cn/large/ba061518gy1fx1ls58gc9g20fc05agle.gif)
+![offsetof宏原理](https://ws1.sinaimg.cn/large/ba061518gy1fx1ls58gc9g20fc05agle.gif)
 对于给定一个结构，offsetof(type,member)是一个常量，list_entry()正是利用这个不变的偏移量来求得链表数据项的变量地址。
 
 ### 遍历宏 list_for_each_entry()
