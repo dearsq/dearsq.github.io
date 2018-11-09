@@ -361,48 +361,14 @@
     
     
     <article class="index-post">
-        <a class="abstract-title" href = "/2018/03/31/Android_Driver/Driver/[Android6.0][MTK6737] 设置屏幕旋转 270 度/" >
+        <a class="abstract-title" href = "/2018/03/31/Android_App/[Android6.0][MTK6737] App 添加系统权限/" >
             
-                <span>Android6.0 MTK6737 设置屏幕旋转 270 度</span>
-        </a>
-        <div class="abstract-content">
-            Hardware:MT6737DeviceOS:Android6.0Kernel: Linux4.10HostOS: Ubuntu16.04
-[TOC]
-屏幕显示LK 部分alps/vendor/mediatek/proprietary/bootable/bootloader/lk/project/br6737m_65_s_m0.mk1MTK_LCM_PHYSICAL_ROTATION = 270
-kernel 部分kernel-3.18/arch/arm64/configs/br6737m_65_s_m0_debug_defconfig1CONFIG_MTK_LCM_PHYSICAL_...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/03/31</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "Android">Android</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "MediaTek">MediaTek</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/03/31/Android_App/[Android6.0][MTK6737]添加长按Power重启按钮/" >
-            
-                <span>Android6.0 MTK6737 添加长按Power重启按钮</span>
+                <span>Android6.0 App 添加系统权限</span>
         </a>
         <div class="abstract-content">
             Hardware:MT6737DeviceOS:Android6.0Kernel: Linux3.18HostOS: Ubuntu16.04
-[TOC]
-添加字符串资源中文资源文件core/res/res/values-zh-rCN/strings.xml123456789101112base/core/res/res/values-zh-rCN/strings.xml@@ -201,6 +201,9 @@     &lt;string name=&quot;shutdown_confirm_question&quot; msgid=&quot;2906544768881136183&q...
+Android 权限规则介绍1. apk 的签名这种签名不是基于权威证书的，不会决定某个应用允不允许安装，而是一种自签名证书。重要的是，android系统有的权限是基于签名的。比如：system等级的权限有专门对应的签名，签名不对，权限也就获取不到。默认生成的APK文件是 debug 签名的。获取system权限时用到的签名见后面描述。
+2. 基于UserID的进程级别的安全机制进程有独立的地址空间，进程与进程间默认是不能互相访问的，Android...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
@@ -466,13 +432,14 @@ DCT...
     
     
     <article class="index-post">
-        <a class="abstract-title" href = "/2018/03/31/Environment/MTK6737/[Android6.0][MTK6737] 移植 Modem/" >
+        <a class="abstract-title" href = "/2018/03/31/Android_App/[Android6.0][MTK6737]添加长按Power重启按钮/" >
             
-                <span>Android6.0 MTK6737 移植 Modem</span>
+                <span>Android6.0 MTK6737 添加长按Power重启按钮</span>
         </a>
         <div class="abstract-content">
             Hardware:MT6737DeviceOS:Android6.0Kernel: Linux3.18HostOS: Ubuntu16.04
-一 移植步骤1. 先解压 modem 压缩包2. 安装 modem 编译需要的环境123456789*******************************************recommended Build Environment******************************************** [OS]                : Linux* [PERL]              : v5.10.1 ...
+[TOC]
+添加字符串资源中文资源文件core/res/res/values-zh-rCN/strings.xml123456789101112base/core/res/res/values-zh-rCN/strings.xml@@ -201,6 +201,9 @@     &lt;string name=&quot;shutdown_confirm_question&quot; msgid=&quot;2906544768881136183&q...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
@@ -498,15 +465,46 @@ DCT...
     
     
     <article class="index-post">
-        <a class="abstract-title" href = "/2018/03/31/Android_Sys/[Android6.0][MTK6737] 优化开机启动时间/" >
+        <a class="abstract-title" href = "/2018/03/31/Android_App/[Android6.0][MTK6737] 替换原生 Launcher/" >
             
-                <span>Android6.0 MTK6737 优化开机启动时间</span>
+                <span>Android6.0 MTK6737 替换原生 Launcher</span>
         </a>
         <div class="abstract-content">
-            Hardware:MTK6737DeviceOS:Android6.0Kernel: Linux3.18HostOS: Ubuntu16.04
-[TOC]
-Google 的文档:https://source.android.com/devices/tech/perf/boot-times
-一 Zygote 部分优化预加载class、resources；加载的多了，会影响开机时间；./mobilelog/APLog_2015_0101_000107/bootprof12345678910111213141516171819202122 47630.014113 : Zygote:Prelo...
+            屏蔽 Launcher3 中的 category123&lt;!-- category android:name=&quot;android.intent.category.HOME&quot; --&gt;&lt;!-- category android:name=&quot;android.intent.category.LAUNCHER&quot; --&gt;&lt;!-- category android:name=&quot;android.intent.category.DEFAULT&quot; --&gt;
+在自己的 App 中添加以上三个 category123&lt...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/03/31</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "Android">Android</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "MediaTek">MediaTek</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
+        <a class="abstract-title" href = "/2018/03/31/Android_Driver/Driver/[Android6.0][MTK6737]UVC Camera 移植/" >
+            
+                <span>Android6.0 MTK6737 UVC Camera 移植</span>
+        </a>
+        <div class="abstract-content">
+            Hardware:MT6737DeviceOS:Android6.0Kernel: Linux3.18HostOS: Ubuntu16.04
+基础知识USB video class（又称为USB video device class or UVC）就是USB device class视频产品在不需要安装任何的驱动程序下即插即用，包括摄像头、数字摄影机、模拟视频转换器、电视卡及静态视频相机。Linux内核之中，已经集成了对UVCCamre的支持。
+V4L2Video4Linux或V4L是一个视频截取及设备输出API，以及Linux的驱动程序框架，支持很多USB摄像头、电视调谐卡以及其他设备...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
@@ -567,14 +565,16 @@ diff –git a/base/packages/SettingsProvider/res/values/defaults.xml b/base/pack
     
     
     <article class="index-post">
-        <a class="abstract-title" href = "/2018/03/31/Android_App/[Android6.0][MTK6737] App 添加系统权限/" >
+        <a class="abstract-title" href = "/2018/03/31/Android_App/[Android6.0][MTK6737] 系统旋转后导航栏丢失，并有黑边/" >
             
-                <span>Android6.0 App 添加系统权限</span>
+                <span>Android6.0 MTK6737 系统旋转后导航栏丢失，并有黑边</span>
         </a>
         <div class="abstract-content">
             Hardware:MT6737DeviceOS:Android6.0Kernel: Linux3.18HostOS: Ubuntu16.04
-Android 权限规则介绍1. apk 的签名这种签名不是基于权威证书的，不会决定某个应用允不允许安装，而是一种自签名证书。重要的是，android系统有的权限是基于签名的。比如：system等级的权限有专门对应的签名，签名不对，权限也就获取不到。默认生成的APK文件是 debug 签名的。获取system权限时用到的签名见后面描述。
-2. 基于UserID的进程级别的安全机制进程有独立的地址空间，进程与进程间默认是不能互相访问的，Android...
+[TOC]
+这个是横屏后遇到的一个问题，当航Bar只看到黑条，在屏幕0/180度时点击无效，90/270度时点黑条的任何地方底部会有Glow的光晕效果和震动效果，但是键值全都是recentApp。
+修改方法如下：SystemUI 的 navigation_bar 布局文件中，横屏布局和竖屏布局调换，就可以正常显示了。
+12345678910111213141516171819202122232425diff --git a/base/package...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
@@ -600,13 +600,17 @@ Android 权限规则介绍1. apk 的签名这种签名不是基于权威证书�
     
     
     <article class="index-post">
-        <a class="abstract-title" href = "/2018/03/31/Android_App/[Android6.0][MTK6737] 替换原生 Launcher/" >
+        <a class="abstract-title" href = "/2018/03/31/Environment/MTK6737/[IoT4G] 启动流程/" >
             
-                <span>Android6.0 MTK6737 替换原生 Launcher</span>
+                <span>Android6.0 MTK6737 启动流程</span>
         </a>
         <div class="abstract-content">
-            屏蔽 Launcher3 中的 category123&lt;!-- category android:name=&quot;android.intent.category.HOME&quot; --&gt;&lt;!-- category android:name=&quot;android.intent.category.LAUNCHER&quot; --&gt;&lt;!-- category android:name=&quot;android.intent.category.DEFAULT&quot; --&gt;
-在自己的 App 中添加以上三个 category123&lt...
+            OS:Android6.0Hardware:MTK6737
+[TOC]
+一、启动流程概览1. BootRom固化在 CPU 内部。负责从外部的存储器中加载 Preloader。负责 USB Download。
+2. Preloader属于 Bootloader 的第一部分。负责 MTK Licensed负责 基础 Module 的 初始化，比如 eMMC，PLL，DRAM 等。负责 加载 LittleKernel（LK）
+3. LK属于 Bootloader 的第二部分。负责 设备的初始化。负责 加载 Linux Kernel。支持 fastboot 更新。
+4. Kernel负责 设备...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
@@ -632,19 +636,15 @@ Android 权限规则介绍1. apk 的签名这种签名不是基于权威证书�
     
     
     <article class="index-post">
-        <a class="abstract-title" href = "/2018/03/31/Android_Driver/Driver/[Android6.0][MTK6737]版本控制和开发流程说明/" >
+        <a class="abstract-title" href = "/2018/03/31/Android_Driver/Driver/[Android6.0][MTK6737] 长按 Power 没有真正关机 (MTK IPO 功能)/" >
             
-                <span>Android6.0 MTK6737 版本控制和开发流程说明</span>
+                <span>Android6.0 MTK6737 长按 Power 没有真正关机 (MTK IPO 功能)</span>
         </a>
         <div class="abstract-content">
-            [TOC]
-本地编译注册 gitlab
-桂成在服务器 10.0.0.3:9000 上搭建了 Gitlab，需要先进行注册 http://10.0.0.3:9000/users/sign_in
-桂成将开发者赋予 Developer 或者 Master 权限，并拉进 Group MTK6737_Android6.0
-
-添加 Gitlab 对本地机器的认证 via SSH_Keys
-参照如下命令生成 私钥和公钥对（YounixPC 和 YounixPC.pub）。
-12345678910111213141516171819202122$ cd ~/.ssh/$ ssh-keygen -t rs...
+            Hardware:MT6737DeviceOS:Android6.0Kernel: Linux3.18HostOS: Ubuntu16.04
+需求正常开机 45s.长按 Power 键进行关机后, 在 5s 内立即按住 Power 键进行开机虽然会正常出现开机动画, 但是会继续之前退出时的状态.
+比如正在放歌, 关机, 立即开机, 会出现开机动画, 但是在开机动画界面会继续放关机前的歌, 并回到关机前的界面.这是因为 MTK 有 IPO  快速开关机功能导致的.我们并不需要 IPO 功能, 所以将其裁剪掉.
+关掉 IPO 功能device-MTK_IPOH_SUPPORT = yes+M...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
@@ -4280,9 +4280,712 @@ Android 权限规则介绍1. apk 的签名这种签名不是基于权威证书�
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 163
+        Total : 166
         </div>
         <!-- search  -->
         
@@ -4302,7 +5005,27 @@ Android 权限规则介绍1. apk 的签名这种签名不是基于权威证书�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/08</span><a class="archive-post-title" href= "/2018/11/08/Android_Driver/Driver/[Android6.0][RK3399] Mipi LCD RM72014 移植调试流程/" >Android6.0 RK3399 Mipi LCD RM72014 移植调试流程</a>
+            <span class="archive-post-date">11/09</span><a class="archive-post-title" href= "/2018/11/09/Linux/Linux 链表操作接口/" >Linux 链表操作接口</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/09</span><a class="archive-post-title" href= "/2018/11/09/Linux/Linux device 操作接口/" >Linux device 操作接口</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/08</span><a class="archive-post-title" href= "/2018/11/08/Linux/Linux Input 子系统分析/" >Linux Input 子系统分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_Intent传输对象的方法/" >SOP_Intent传输对象的方法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_MediaPlayer/" >SOP_MediaPlayer</a>
         </li>
     
     
@@ -4312,12 +5035,17 @@ Android 权限规则介绍1. apk 的签名这种签名不是基于权威证书�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_Notification/" >SOP_Notification</a>
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/组件_BroadcastReceiver/" >组件_BroadcastReceiver</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/数据持久化_文件存储/" >数据持久化_文件存储</a>
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_动态权限/" >SOP_动态权限</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/数据持久化_数据库_LitePal 和 SQLite/" >数据持久化_数据库_LitePal 和 SQLite</a>
         </li>
     
     
@@ -4327,7 +5055,32 @@ Android 权限规则介绍1. apk 的签名这种签名不是基于权威证书�
     
     
         <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/数据持久化_文件存储/" >数据持久化_文件存储</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_Notification/" >SOP_Notification</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_WebView_XML和JSON/" >SOP_WebView_XML和JSON</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_控件_Fragment/" >SOP_控件_Fragment</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
             <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/数据持久化_SharedPreferences/" >数据持久化_SharedPreferences</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/组件_ContentProvider/" >组件_ContentProvider</a>
         </li>
     
     
@@ -4342,47 +5095,7 @@ Android 权限规则介绍1. apk 的签名这种签名不是基于权威证书�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_控件_Fragment/" >SOP_控件_Fragment</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_动态权限/" >SOP_动态权限</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_MediaPlayer/" >SOP_MediaPlayer</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_Intent传输对象的方法/" >SOP_Intent传输对象的方法</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/组件_ContentProvider/" >组件_ContentProvider</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_WebView_XML和JSON/" >SOP_WebView_XML和JSON</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
             <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_异步消息处理机制/" >SOP_异步消息处理机制</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/数据持久化_数据库_LitePal 和 SQLite/" >数据持久化_数据库_LitePal 和 SQLite</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/组件_BroadcastReceiver/" >组件_BroadcastReceiver</a>
         </li>
     
     
@@ -4397,12 +5110,57 @@ Android 权限规则介绍1. apk 的签名这种签名不是基于权威证书�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Environment/MTK6737/[IoT4G] 启动流程/" >Android6.0 MTK6737 启动流程</a>
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_Driver/Driver/[Android6.0][MTK6737]版本控制和开发流程说明/" >Android6.0 MTK6737 版本控制和开发流程说明</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_App/[Android6.0][RK3399] 修改浏览器默认主页/" >Android6.0 RK3399 修改浏览器默认主页</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_Sys/[Android6.0][MTK6737] 优化开机启动时间/" >Android6.0 MTK6737 优化开机启动时间</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_App/[Android6.0][MTK6737] 系统旋转后导航栏丢失，并有黑边/" >Android6.0 MTK6737 系统旋转后导航栏丢失，并有黑边</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_App/[Android6.0][MTK6737] App 添加系统权限/" >Android6.0 App 添加系统权限</a>
         </li>
     
     
         <li class="archive-post-item">
             <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_Driver/Driver/[Android6.0][MTK6737] 长按 Power 没有真正关机 (MTK IPO 功能)/" >Android6.0 MTK6737 长按 Power 没有真正关机 (MTK IPO 功能)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Environment/MTK6737/[Android6.0][MTK6737] 移植 Modem/" >Android6.0 MTK6737 移植 Modem</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Environment/MTK6737/[IoT4G] MTK DCT 工具介绍/" >Android6.0 MTK6737 DCT 工具介绍</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_Driver/Driver/[Android6.0][MTK6737] 设置屏幕旋转 270 度/" >Android6.0 MTK6737 设置屏幕旋转 270 度</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_App/[Android6.0][MTK6737] 修改默认允许位置来源第三方应用安装/" >Android6.0 修改默认允许位置来源第三方应用安装</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_App/[Android6.0][MTK6737] 替换原生 Launcher/" >Android6.0 MTK6737 替换原生 Launcher</a>
         </li>
     
     
@@ -4417,57 +5175,12 @@ Android 权限规则介绍1. apk 的签名这种签名不是基于权威证书�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_Driver/Driver/[Android6.0][MTK6737] 设置屏幕旋转 270 度/" >Android6.0 MTK6737 设置屏幕旋转 270 度</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_App/[Android6.0][MTK6737] 替换原生 Launcher/" >Android6.0 MTK6737 替换原生 Launcher</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_App/[Android6.0][RK3399] 修改浏览器默认主页/" >Android6.0 RK3399 修改浏览器默认主页</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_App/[Android6.0][MTK6737] App 添加系统权限/" >Android6.0 App 添加系统权限</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_App/[Android6.0][MTK6737] 系统旋转后导航栏丢失，并有黑边/" >Android6.0 MTK6737 系统旋转后导航栏丢失，并有黑边</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Environment/MTK6737/[Android6.0][MTK6737] 移植 Modem/" >Android6.0 MTK6737 移植 Modem</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_Driver/Driver/[Android6.0][MTK6737]版本控制和开发流程说明/" >Android6.0 MTK6737 版本控制和开发流程说明</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_App/[Android6.0][MTK6737] 修改默认允许位置来源第三方应用安装/" >Android6.0 修改默认允许位置来源第三方应用安装</a>
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Environment/MTK6737/[IoT4G] 启动流程/" >Android6.0 MTK6737 启动流程</a>
         </li>
     
     
         <li class="archive-post-item">
             <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_App/[Android] 反编译 Android APK/" >Android 反编译 Android APK</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Environment/MTK6737/[IoT4G] MTK DCT 工具介绍/" >Android6.0 MTK6737 DCT 工具介绍</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_Sys/[Android6.0][MTK6737] 优化开机启动时间/" >Android6.0 MTK6737 优化开机启动时间</a>
         </li>
     
     
@@ -4487,12 +5200,12 @@ Android 权限规则介绍1. apk 的签名这种签名不是基于权威证书�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">01/31</span><a class="archive-post-title" href= "/2018/01/31/Android_Driver/Debug/[Android7.1][RK3399] WiFi 吞吐率周期性变差问题(扫描机制)/" >Android7.1 RK3399 WiFi 吞吐率周期性变差问题(扫描机制)</a>
+            <span class="archive-post-date">01/31</span><a class="archive-post-title" href= "/2018/01/31/Android_Driver/Driver/[Android7.1][RK3399] Codec rt5640 移植/" >Android7.1 RK3399 Codec rt5640 移植.md</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">01/31</span><a class="archive-post-title" href= "/2018/01/31/Android_Driver/Debug/[Android7.1][RK3399] 插上 TypeC 为 USB_FLOATING_CHARGER 模式/" >Android7.1 RK3399 插上 TypeC 为 USB_FLOATING_CHARGER 模式</a>
+            <span class="archive-post-date">01/31</span><a class="archive-post-title" href= "/2018/01/31/Android_Driver/Driver/[Android7.1][RK3399] RK reboot 机制驱动分析/" >Android7.1 RK3399 RK reboot 机制驱动分析</a>
         </li>
     
     
@@ -4502,7 +5215,12 @@ Android 权限规则介绍1. apk 的签名这种签名不是基于权威证书�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">01/31</span><a class="archive-post-title" href= "/2018/01/31/Android_Driver/Debug/[Android7.1][RK3399] 添加对 Camera 动态热插拔的支持/" >Android7.1 RK3399 添加对 USB Camera 动态热插拔的支持.md</a>
+            <span class="archive-post-date">01/31</span><a class="archive-post-title" href= "/2018/01/31/Android_Driver/Debug/[Android7.1][RK3399] 插上 TypeC 为 USB_FLOATING_CHARGER 模式/" >Android7.1 RK3399 插上 TypeC 为 USB_FLOATING_CHARGER 模式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/31</span><a class="archive-post-title" href= "/2018/01/31/Android_Driver/Debug/[Android7.1][RK3399] WiFi 吞吐率周期性变差问题(扫描机制)/" >Android7.1 RK3399 WiFi 吞吐率周期性变差问题(扫描机制)</a>
         </li>
     
     
@@ -4512,12 +5230,7 @@ Android 权限规则介绍1. apk 的签名这种签名不是基于权威证书�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">01/31</span><a class="archive-post-title" href= "/2018/01/31/Android_Driver/Driver/[Android7.1][RK3399] Codec rt5640 移植/" >Android7.1 RK3399 Codec rt5640 移植.md</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">01/31</span><a class="archive-post-title" href= "/2018/01/31/Android_Driver/Driver/[Android7.1][RK3399] RK reboot 机制驱动分析/" >Android7.1 RK3399 RK reboot 机制驱动分析</a>
+            <span class="archive-post-date">01/31</span><a class="archive-post-title" href= "/2018/01/31/Android_Driver/Debug/[Android7.1][RK3399] 添加对 Camera 动态热插拔的支持/" >Android7.1 RK3399 添加对 USB Camera 动态热插拔的支持.md</a>
         </li>
     
     
@@ -4531,122 +5244,12 @@ Android 权限规则介绍1. apk 的签名这种签名不是基于权威证书�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] U-boot启动流程分析（准备）/" >Android6.0 RK3399 U-boot启动流程分析（准备）</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] Mipi LCD NT35521 移植调试流程/" >Android6.0 RK3399 Mipi LCD NT35521 移植调试流程</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android6.0] 启动流程(从开机到第一个程序）/" >Android6.0 启动流程(从开机到第一个程序）</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] IR(红外线)移植步骤/" >Android6.0 RK3399 IR(红外线)移植步骤</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android] init.rc 文件浅析/" >Android init.rc 文件浅析</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] Uboot 代码分析/" >Android6.0 RK3399 Uboot 代码分析</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] PCIe 接口 4G模块 EC20 调试记录/" >Android6.0 RK3399 PCIe 接口 4G模块 EC20 调试记录</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_App/[Android6.0][RK3399] 设置系统默认不会休眠/" >Android6.0 RK3399 设置系统默认不会休眠</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Environment/Firefly-RK3399/[Android6.0][RK3399] OTA差异包制作方法/" >Android6.0 RK3399 OTA差异包制作方法</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] Uboot 编译规则/" >Android6.0 RK3399 Uboot 编译规则</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] SATA 设备调试笔记/" >Android6.0 RK3399 SATA 设备调试笔记</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] 修改默认按键 KEY-PAD/" >Android6.0 RK3399 修改默认按键 KEY-PAD</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] PCIe 转 SATA 调试步骤/" >Android6.0 RK3399 PCIe 转 SATA 调试步骤</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_App/[Android6.0][RK3399] 关闭双击 Power 打开 Camera 功能/" >Android6.0 RK3399 关闭双击 Power 打开 Camera 功能</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android6.0] 启动流程分析之一概述/" >Android6.0 启动流程分析之一概述</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_App/[Android6.0][RK3399] 去掉滑动锁屏(swipe lock)/" >Android6.0 RK3399 去掉滑动锁屏</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android6.0] Reference-RIL 运行框架/" >Android6.0 Reference-RIL 运行框架</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_App/[Android6.0][RK3399] 去掉顶部Google搜索栏/" >Android6.0 RK3399 去掉顶部Google搜索栏</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Environment/Firefly-RK3399/[Linux][RK3399] 基于 Firefly RK3399 Board 制作 Ubuntu Base 版本/" >Linux RK3399 基于 Firefly RK3399 Board 制作 Ubuntu Base 版本</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_App/[Android6.0][RK3399] 出厂预置可卸载 APK/" >Android6.0 RK3399 出厂预置可卸载 APK</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Linux4.4][RK3399] DRM HDMI 调试小结/" >Linux RK3399 HDMI 调试小结</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_App/[Android6.0][RK3399] 隐藏导航栏或状态栏/" >Android6.0 RK3399 隐藏导航栏或状态栏</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android] 智能指针 SP强指针WP弱指针 用法/" >Android 智能指针 SP强指针WP弱指针 用法</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
             <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Debug/[Android6.0][RK3399] 更换64GeMMC后无法启动的问题/" >Android6.0 RK3399 更换64GeMMC后无法启动的问题</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] U-boot启动流程分析（准备）/" >Android6.0 RK3399 U-boot启动流程分析（准备）</a>
         </li>
     
     
@@ -4656,7 +5259,12 @@ Android 权限规则介绍1. apk 的签名这种签名不是基于权威证书�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android6.0] RILC 系统结构及 LibRIL 运行机制/" >Android6.0 RILC 系统结构及 LibRIL 运行机制</a>
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] Wifi Card 驱动流程分析/" >Android6.0 RK3399 Wifi Card 驱动流程分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] SATA 设备调试笔记/" >Android6.0 RK3399 SATA 设备调试笔记</a>
         </li>
     
     
@@ -4666,17 +5274,37 @@ Android 权限规则介绍1. apk 的签名这种签名不是基于权威证书�
     
     
         <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android] 智能指针 SP强指针WP弱指针 用法/" >Android 智能指针 SP强指针WP弱指针 用法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_App/[Android6.0][RK3399] 去掉顶部Google搜索栏/" >Android6.0 RK3399 去掉顶部Google搜索栏</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
             <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] 实现耳机和喇叭自动切换功能/" >Android6.0 RK3399 实现耳机和喇叭自动切换功能</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] Wifi Card 驱动流程分析/" >Android6.0 RK3399 Wifi Card 驱动流程分析</a>
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_App/[Android6.0][RK3399] 设置系统默认不会休眠/" >Android6.0 RK3399 设置系统默认不会休眠</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Environment/Firefly-RK3399/[Linux][RK3399] 基于 Firefly RK3399 Board 制作 Ubuntu Desktop 版本/" >Linux RK3399 基于 Firefly RK3399 Board 制作 Ubuntu Desktop 版本</a>
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android6.0] 启动流程(从开机到第一个程序）/" >Android6.0 启动流程(从开机到第一个程序）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Linux4.4][RK3399] DRM HDMI 调试小结/" >Linux RK3399 HDMI 调试小结</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] Uboot 代码分析/" >Android6.0 RK3399 Uboot 代码分析</a>
         </li>
     
     
@@ -4691,12 +5319,97 @@ Android 权限规则介绍1. apk 的签名这种签名不是基于权威证书�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android] 文件系统分区挂载流程/" >Android 文件系统分区挂载流程</a>
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] IR(红外线)移植步骤/" >Android6.0 RK3399 IR(红外线)移植步骤</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android6.0] RILC 系统结构及 LibRIL 运行机制/" >Android6.0 RILC 系统结构及 LibRIL 运行机制</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android] init.rc 文件浅析/" >Android init.rc 文件浅析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] PCIe 转 SATA 调试步骤/" >Android6.0 RK3399 PCIe 转 SATA 调试步骤</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] Uboot 编译规则/" >Android6.0 RK3399 Uboot 编译规则</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_App/[Android6.0][RK3399] 去掉滑动锁屏(swipe lock)/" >Android6.0 RK3399 去掉滑动锁屏</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] 修改默认按键 KEY-PAD/" >Android6.0 RK3399 修改默认按键 KEY-PAD</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Environment/Firefly-RK3399/[Linux][RK3399] 基于 Firefly RK3399 Board 制作 Ubuntu Desktop 版本/" >Linux RK3399 基于 Firefly RK3399 Board 制作 Ubuntu Desktop 版本</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_App/[Android6.0][RK3399] 出厂预置可卸载 APK/" >Android6.0 RK3399 出厂预置可卸载 APK</a>
         </li>
     
     
         <li class="archive-post-item">
             <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Linux4.4][RK3399] DRM 框架及代码流程/" >Linux RK3399 DRM 框架及代码流程</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_App/[Android6.0][RK3399] 隐藏导航栏或状态栏/" >Android6.0 RK3399 隐藏导航栏或状态栏</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] Mipi LCD NT35521 移植调试流程/" >Android6.0 RK3399 Mipi LCD NT35521 移植调试流程</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android] 文件系统分区挂载流程/" >Android 文件系统分区挂载流程</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] PCIe 接口 4G模块 EC20 调试记录/" >Android6.0 RK3399 PCIe 接口 4G模块 EC20 调试记录</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android6.0] 启动流程分析之一概述/" >Android6.0 启动流程分析之一概述</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android6.0] Reference-RIL 运行框架/" >Android6.0 Reference-RIL 运行框架</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Environment/Firefly-RK3399/[Linux][RK3399] 基于 Firefly RK3399 Board 制作 Ubuntu Base 版本/" >Linux RK3399 基于 Firefly RK3399 Board 制作 Ubuntu Base 版本</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Environment/Firefly-RK3399/[Android6.0][RK3399] OTA差异包制作方法/" >Android6.0 RK3399 OTA差异包制作方法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_App/[Android6.0][RK3399] 关闭双击 Power 打开 Camera 功能/" >Android6.0 RK3399 关闭双击 Power 打开 Camera 功能</a>
         </li>
     
     
@@ -4756,12 +5469,7 @@ Android 权限规则介绍1. apk 的签名这种签名不是基于权威证书�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">08/31</span><a class="archive-post-title" href= "/2017/08/31/Android_Driver/Driver/[Android6.0][RK3399] 电池系统（三）电量计 CW2015 驱动流程分析/" >Android6.0 RK3399 电池系统（三）电量计 CW2015 驱动流程分析</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">08/31</span><a class="archive-post-title" href= "/2017/08/31/Android_Driver/Driver/[Android6.0][RK3399] 电池系统（一）BQ25700 IC 驱动分析/" >Android6.0 RK3399 电池系统（一）BQ25700 IC 驱动分析</a>
+            <span class="archive-post-date">08/31</span><a class="archive-post-title" href= "/2017/08/31/Android_Driver/Driver/[Android6.0][RK3399] Mipi LCD RM72014 移植调试流程/" >Android6.0 RK3399 Mipi LCD RM72014 移植调试流程</a>
         </li>
     
     
@@ -4771,17 +5479,17 @@ Android 权限规则介绍1. apk 的签名这种签名不是基于权威证书�
     
     
         <li class="archive-post-item">
+            <span class="archive-post-date">08/31</span><a class="archive-post-title" href= "/2017/08/31/Android_Driver/Driver/[Android6.0][RK3399] 电池系统（一）BQ25700 IC 驱动分析/" >Android6.0 RK3399 电池系统（一）BQ25700 IC 驱动分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/31</span><a class="archive-post-title" href= "/2017/08/31/Android_Driver/Driver/[Android6.0][RK3399] 电池系统（三）电量计 CW2015 驱动流程分析/" >Android6.0 RK3399 电池系统（三）电量计 CW2015 驱动流程分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
             <span class="archive-post-date">08/14</span><a class="archive-post-title" href= "/2017/08/14/Life/Learning/王烁30天认知训练营 Day01 什么是查理·芒格的人生开关/" >Day01 什么是查理·芒格的人生开关</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2017/08/05/Environment/[Ubuntu] 在终端中利用Wget下载百度云资源/" >Ubuntu 在终端中利用Wget/aria2下载百度云资源</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2017/08/05/Environment/[Ubuntu] Linux下访问NAS服务器/" >Linux 下访问 NAS 服务器</a>
         </li>
     
     
@@ -4791,7 +5499,22 @@ Android 权限规则介绍1. apk 的签名这种签名不是基于权威证书�
     
     
         <li class="archive-post-item">
+            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2017/08/05/Android_Driver/Driver/[Linux4.4] 以 SPI 驱动模型为例分析 Linux 主机驱动与外设驱动分离模型/" >Linux 以 SPI 驱动模型为例分析 Linux 主机驱动与外设驱动分离模型</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
             <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2017/08/05/Android_App/[Android6.0] App中调用init.rc中的服务，从而运行shell脚本/" >Android6.0 App中调用init.rc中的服务，从而运行shell脚本</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2017/08/05/Environment/[Ubuntu] Linux下访问NAS服务器/" >Linux 下访问 NAS 服务器</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2017/08/05/Environment/[Ubuntu] 在终端中利用Wget下载百度云资源/" >Ubuntu 在终端中利用Wget/aria2下载百度云资源</a>
         </li>
     
     
@@ -4801,22 +5524,12 @@ Android 权限规则介绍1. apk 的签名这种签名不是基于权威证书�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2017/08/05/Android_Driver/Driver/[Linux4.4] 以 SPI 驱动模型为例分析 Linux 主机驱动与外设驱动分离模型/" >Linux 以 SPI 驱动模型为例分析 Linux 主机驱动与外设驱动分离模型</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">07/01</span><a class="archive-post-title" href= "/2017/07/01/Android_Driver/Debug/[Android6.0][RK3399][BUG] 插上 HDMI 时开机解锁锁屏后死机/" >Android6.0 RK3399 插上 HDMI 时开机解锁锁屏后死机</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
             <span class="archive-post-date">07/01</span><a class="archive-post-title" href= "/2017/07/01/Android_Driver/Debug/[Android6.0][RK3399] 开机前几秒串口打印异常问题/" >Android6.0 RK3399 开机前几秒串口打印异常问题</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">06/06</span><a class="archive-post-title" href= "/2017/06/06/VR/OpenGL/[OpenGL]创建一个窗口/" >OpenGL 创建一个窗口</a>
+            <span class="archive-post-date">07/01</span><a class="archive-post-title" href= "/2017/07/01/Android_Driver/Debug/[Android6.0][RK3399][BUG] 插上 HDMI 时开机解锁锁屏后死机/" >Android6.0 RK3399 插上 HDMI 时开机解锁锁屏后死机</a>
         </li>
     
     
@@ -4831,12 +5544,17 @@ Android 权限规则介绍1. apk 的签名这种签名不是基于权威证书�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">06/05</span><a class="archive-post-title" href= "/2017/06/05/VR/[VR] Cardboard Treasure Hunter 代码分析/" >VR Cardboard Treasure Hunter 代码分析</a>
+            <span class="archive-post-date">06/06</span><a class="archive-post-title" href= "/2017/06/06/VR/OpenGL/[OpenGL]创建一个窗口/" >OpenGL 创建一个窗口</a>
         </li>
     
     
         <li class="archive-post-item">
             <span class="archive-post-date">06/05</span><a class="archive-post-title" href= "/2017/06/05/VR/[VR] 应用开发入门基本知识/" >VR 应用开发入门基本知识(Oculus/Cardboard/Daydream)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/05</span><a class="archive-post-title" href= "/2017/06/05/VR/[VR] Cardboard Treasure Hunter 代码分析/" >VR Cardboard Treasure Hunter 代码分析</a>
         </li>
     
     
@@ -4855,27 +5573,12 @@ Android 权限规则介绍1. apk 的签名这种签名不是基于权威证书�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2016/12/31/Android_Driver/Device/[Device] Mipi LCD 的基础知识/" >Mipi LCD 的基础知识</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2016/12/31/Android_Driver/Driver/[Android5.1][RK3288] Framebuffer 设备驱动/" >Android5.1 RK3288 Framebuffer 设备驱动</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2016/12/31/Android_Driver/Driver/[Android5.1][RK3288] LCD (Mipi) 调试方法及问题汇总/" >Android5.1 RK3288 LCD (Mipi) 调试方法及问题汇总</a>
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2016/12/31/Android_Driver/Device/[Device] Mipi 接口 和 LVDS 接口区别/" >Mipi 接口 和 LVDS 接口区别</a>
         </li>
     
     
         <li class="archive-post-item">
             <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2016/12/31/Android_Sys/[Android5.1][RK3288]build.sh脚本分析/" >Android5.1 RK3288 build.sh脚本分析</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2016/12/31/Android_Driver/Device/[Device] Mipi 接口 和 LVDS 接口区别/" >Mipi 接口 和 LVDS 接口区别</a>
         </li>
     
     
@@ -4890,7 +5593,22 @@ Android 权限规则介绍1. apk 的签名这种签名不是基于权威证书�
     
     
         <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2016/12/31/Android_Driver/Driver/[Android5.1][RK3288] Framebuffer 设备驱动/" >Android5.1 RK3288 Framebuffer 设备驱动</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
             <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2016/12/31/Android_Driver/Driver/[Android5.1][RK3288] SPI 设备驱动模型（Ad714x CapTouch 驱动分析）/" >Android5.1 RK3288 SPI 设备驱动模型（Ad714x CapTouch 驱动分析）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2016/12/31/Android_Driver/Driver/[Android5.1][RK3288] LCD (Mipi) 调试方法及问题汇总/" >Android5.1 RK3288 LCD (Mipi) 调试方法及问题汇总</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2016/12/31/Android_Driver/Device/[Device] Mipi LCD 的基础知识/" >Mipi LCD 的基础知识</a>
         </li>
     
     
@@ -4930,6 +5648,11 @@ Android 权限规则介绍1. apk 的签名这种签名不是基于权威证书�
     
     
         <li class="archive-post-item">
+            <span class="archive-post-date">07/28</span><a class="archive-post-title" href= "/2016/07/28/Android_Driver/Driver/NFC/[NFC] Android 平台（Linux3.10） NXP NFC 移植流程归纳/" >NFC Android 平台 NXP NFC 移植流程归纳</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
             <span class="archive-post-date">07/28</span><a class="archive-post-title" href= "/2016/07/28/Android_Driver/Driver/NFC/[NFC] NFC 程序设计（NDEF 格式介绍）/" >NFC 程序设计（NDEF 格式介绍）</a>
         </li>
     
@@ -4941,11 +5664,6 @@ Android 权限规则介绍1. apk 的签名这种签名不是基于权威证书�
     
         <li class="archive-post-item">
             <span class="archive-post-date">07/28</span><a class="archive-post-title" href= "/2016/07/28/Android_Driver/Driver/NFC/[NFC] NFC 程序设计（基础知识）/" >NFC 程序设计（基础知识）</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">07/28</span><a class="archive-post-title" href= "/2016/07/28/Android_Driver/Driver/NFC/[NFC] Android 平台（Linux3.10） NXP NFC 移植流程归纳/" >NFC Android 平台 NXP NFC 移植流程归纳</a>
         </li>
     
     
@@ -5000,12 +5718,12 @@ Android 权限规则介绍1. apk 的签名这种签名不是基于权威证书�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">01/01</span><a class="archive-post-title" href= "/2016/01/01/Language/[其他] 编程修养/" >编程修养</a>
+            <span class="archive-post-date">01/01</span><a class="archive-post-title" href= "/2016/01/01/Language/[UnixC] 内存 mem 操作/" >UnixC 内存 mem 操作</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">01/01</span><a class="archive-post-title" href= "/2016/01/01/Language/[UnixC] 内存 mem 操作/" >UnixC 内存 mem 操作</a>
+            <span class="archive-post-date">01/01</span><a class="archive-post-title" href= "/2016/01/01/Language/[其他] 编程修养/" >编程修养</a>
         </li>
     
     
@@ -5029,7 +5747,7 @@ Android 权限规则介绍1. apk 的签名这种签名不是基于权威证书�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] 下的 SPI 设备驱动模型（SPI 协议基础）/" >Linux 中的 SPI 设备驱动模型（SPI 协议基础）</a>
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] 中的互斥机制（中断屏蔽、原子操作、自旋锁、信号量）/" >Linux 中的互斥机制（中断屏蔽、原子操作、自旋锁、信号量）</a>
         </li>
     
     
@@ -5039,47 +5757,7 @@ Android 权限规则介绍1. apk 的签名这种签名不是基于权威证书�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] 文件批量重命名 rename/" >Linux 文件批量重命名 rename</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] 服务器添加硬盘方法/" >Linux 服务器添加硬盘方法</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] 内核的 proc 文件系统/" >Linux 内核的 proc 文件系统</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] 中的互斥机制（中断屏蔽、原子操作、自旋锁、信号量）/" >Linux 中的互斥机制（中断屏蔽、原子操作、自旋锁、信号量）</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] 内核的 sysfs 文件系统/" >Linux 内核的 sysfs 文件系统</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
             <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] 中的阻塞与非阻塞（等待队列、轮询）/" >Linux 阻塞与非阻塞（等待队列、轮询）</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] passwd 文件格式详解/" >Linux passwd 文件格式详解</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux][Tool] 程序内存检查工具 Valgrind/" >Linux 程序内存检查工具 Valgrind</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] DTS 架构下 Device 与 Driver 匹配流程/" >Linux DTS 架构下 Device 与 Driver 匹配流程</a>
         </li>
     
     
@@ -5089,7 +5767,77 @@ Android 权限规则介绍1. apk 的签名这种签名不是基于权威证书�
     
     
         <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux][Tool] 程序内存检查工具 Valgrind/" >Linux 程序内存检查工具 Valgrind</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] 下的 SPI 设备驱动模型（SPI 协议基础）/" >Linux 中的 SPI 设备驱动模型（SPI 协议基础）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] passwd 文件格式详解/" >Linux passwd 文件格式详解</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] 服务器添加硬盘方法/" >Linux 服务器添加硬盘方法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] 文件批量重命名 rename/" >Linux 文件批量重命名 rename</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] 内核的 proc 文件系统/" >Linux 内核的 proc 文件系统</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] DTS 架构下 Device 与 Driver 匹配流程/" >Linux DTS 架构下 Device 与 Driver 匹配流程</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] 内核的 sysfs 文件系统/" >Linux 内核的 sysfs 文件系统</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
             <span class="archive-post-date">10/26</span><a class="archive-post-title" href= "/2015/10/26/Life/InnerPath/15-10-26英雄如你少年如我不负这移动盛世/" >英雄如你，少年如我，不负这移动盛世</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/20</span><a class="archive-post-title" href= "/2015/09/20/Life/InnerPath/15-09-20巴迪闲侃/" >巴迪闲侃</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/31</span><a class="archive-post-title" href= "/2015/08/31/Linux/[Linux] i2c 与 spi 设备在新版内核中不采用DTS设备树形式 在驱动添加设备信息(board_info)的方法/" >Linux i2c 与 spi 设备在新版内核中不采用DTS设备树形式 在驱动添加设备信息(board_info)的方法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/22</span><a class="archive-post-title" href= "/2015/08/22/Life/InnerPath/15-08-22深圳深圳/" >深圳深圳</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2015/08/05/Environment/[Android] eng、user、userdebug区别/" >Android eng、user、userdebug区别</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2015/08/05/Environment/[RockChip] parameter.txt 文件详解/" >RockChip parameter.txt 文件详解</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/01</span><a class="archive-post-title" href= "/2015/08/01/Life/InnerPath/15-08-01基本功/" >基本功</a>
         </li>
     
     
@@ -5114,36 +5862,6 @@ Android 权限规则介绍1. apk 的签名这种签名不是基于权威证书�
     
     <div class="archive-year"> 2015 </div>
     <ul class="year-list">
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">09/20</span><a class="archive-post-title" href= "/2015/09/20/Life/InnerPath/15-09-20巴迪闲侃/" >巴迪闲侃</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">08/31</span><a class="archive-post-title" href= "/2015/08/31/Linux/[Linux] i2c 与 spi 设备在新版内核中不采用DTS设备树形式 在驱动添加设备信息(board_info)的方法/" >Linux i2c 与 spi 设备在新版内核中不采用DTS设备树形式 在驱动添加设备信息(board_info)的方法</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">08/22</span><a class="archive-post-title" href= "/2015/08/22/Life/InnerPath/15-08-22深圳深圳/" >深圳深圳</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2015/08/05/Environment/[RockChip] parameter.txt 文件详解/" >RockChip parameter.txt 文件详解</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2015/08/05/Environment/[Android] eng、user、userdebug区别/" >Android eng、user、userdebug区别</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">08/01</span><a class="archive-post-title" href= "/2015/08/01/Life/InnerPath/15-08-01基本功/" >基本功</a>
-        </li>
     
     
         <li class="archive-post-item">
@@ -5175,9 +5893,9 @@ Android 权限规则介绍1. apk 的签名这种签名不是基于权威证书�
     
         <span class="sidebar-tag-name" data-tags="Linux"><span class="iconfont-archer">&#xe606;</span>Linux</span>
     
-        <span class="sidebar-tag-name" data-tags="C"><span class="iconfont-archer">&#xe606;</span>C</span>
-    
         <span class="sidebar-tag-name" data-tags="git"><span class="iconfont-archer">&#xe606;</span>git</span>
+    
+        <span class="sidebar-tag-name" data-tags="C"><span class="iconfont-archer">&#xe606;</span>C</span>
     
         <span class="sidebar-tag-name" data-tags="InnerPath"><span class="iconfont-archer">&#xe606;</span>InnerPath</span>
     

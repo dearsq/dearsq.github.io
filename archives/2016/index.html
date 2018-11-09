@@ -361,18 +361,12 @@
     
     
     <article class="index-post">
-        <a class="abstract-title" href = "/2016/12/31/Android_Driver/Device/[Device] Mipi 接口 和 LVDS 接口区别/" >
+        <a class="abstract-title" href = "/2016/12/31/Android_Sys/[Android5.1][RK3288]build.sh脚本分析/" >
             
-                <span>Mipi 接口 和 LVDS 接口区别</span>
+                <span>Android5.1 RK3288 build.sh脚本分析</span>
         </a>
         <div class="abstract-content">
-            http://bbs.elecfans.com/jishu_887561_1_1.html
-主要区别：
-
-LVDS接口只用于传输视频数据，MIPI DSI不仅能够传输视频数据，还能传输控制指令；
-LVDS接口主要是将RGB TTL信号按照SPWG/JEIDA格式转换成LVDS信号进行传输，MIPI DSI接口则按照特定的握手顺序和指令规则传输屏幕控制所需的视频数据和控制数据。
-
-液晶屏有RGB TTL、LVDS、MIPI DSI接口，这些接口区别于信号的类型（种类），也区别于信号内容。RGB TTL接口信号类型是TTL电平，信号的内容是RGB666或者RGB888还有行场同步和时钟；LV...
+            123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596979899100101102103104105106107108109110111112113114115116117118119#!/bin/bashsource build/envsetup.sh &gt;/dev/nul...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
@@ -398,45 +392,14 @@ LVDS接口主要是将RGB TTL信号按照SPWG/JEIDA格式转换成LVDS信号进�
     
     
     <article class="index-post">
-        <a class="abstract-title" href = "/2016/12/31/Android_Driver/Driver/[Android5.1][RK3288] Framebuffer 设备驱动/" >
+        <a class="abstract-title" href = "/2016/12/31/Android_Driver/Device/[Device] Mipi LCD 的基础知识/" >
             
-                <span>Android5.1 RK3288 Framebuffer 设备驱动</span>
+                <span>Mipi LCD 的基础知识</span>
         </a>
         <div class="abstract-content">
-            概念FrameBuffer 的意思是，帧缓冲。Frame 帧：你所看到的屏幕的图像，或者在一个窗口中的图像，就叫一帧。Buffer 缓冲：一段RAM，用来暂存图像数据，这些数据会被直接写入到显示设备。帧缓冲就相当于介于 图形操作 和 图像输出中间的一个中间人。将程序对图形数据的处理操作，反馈到显示输出上。显卡（显存中的数据）  帧缓冲（程序对其中的数据进行处理）  显示器（输出图像）帧缓冲可用于，实现原先视频卡并不支持的分辨率:显卡可能并不支持你当前某个更大分辨率的显示器，但是可以通过帧缓冲获取显卡的显存中的数据，处理之后，实现更大的分辨率的图像，然后将数据直接输出到显示器上。
-驱动分析...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2016/12/31</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "RockChip">RockChip</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "Android">Android</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2016/12/31/Android_Driver/Driver/[Android5.1][RK3288] LCD (Mipi) 调试方法及问题汇总/" >
-            
-                <span>Android5.1 RK3288 LCD (Mipi) 调试方法及问题汇总</span>
-        </a>
-        <div class="abstract-content">
-            调试流程设置 dts 中的参数 并 配置管脚仿造平台的其他 lcd-*-mipi.dtsi 编写 lcd-xxx-mipi.dtsi 后 需要在 主 dts 文件中包含这个 dtsi1#include “lcd-xxx-mipi.dtsi“
-先看屏的手册里面的关键信息有 分辨率（540×960） 接口（2条lanes）12345678910111213141516171819## MIPI Host配置disp_mipi_init: mipi_dsi_init&#123;		compatible = "rockchip,mipi_dsi_init";		/* 是否要在 dtsi 中初始化...
+            基础知识LCD（Liquid Crystal Display）即液晶显示器。根据驱动方式 分为 静态驱动、简单矩阵驱动、主动矩阵驱动。简单矩阵驱动 分为 扭转向阵列（TN） 和 超扭转时向列型（STN）。主动矩阵驱动 以 薄膜式晶体管（TFT） 为主。
+我们作为驱动工程师，关注的点在于 屏 的时序。时序图中VCLK 为 像素时钟信号（用于锁存图像数据的像素时钟）HSYNC 为 行同步信号VSYNC 为 帧同步信号VDEN 为 数据有效标志信号VD 为 图像的数据信号PCLK/DCLK 为 点时钟 dot CLK
+VSYNC 是 帧同步信号，每发出一个脉冲，意味着新的一屏图像数据开始发送。...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
@@ -508,12 +471,18 @@ Vbus 电源 和 GND 都有 4 个，这也是为何可以达到 100W 的原因。
     
     
     <article class="index-post">
-        <a class="abstract-title" href = "/2016/12/31/Android_Sys/[Android5.1][RK3288]build.sh脚本分析/" >
+        <a class="abstract-title" href = "/2016/12/31/Android_Driver/Device/[Device] Mipi 接口 和 LVDS 接口区别/" >
             
-                <span>Android5.1 RK3288 build.sh脚本分析</span>
+                <span>Mipi 接口 和 LVDS 接口区别</span>
         </a>
         <div class="abstract-content">
-            123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596979899100101102103104105106107108109110111112113114115116117118119#!/bin/bashsource build/envsetup.sh &gt;/dev/nul...
+            http://bbs.elecfans.com/jishu_887561_1_1.html
+主要区别：
+
+LVDS接口只用于传输视频数据，MIPI DSI不仅能够传输视频数据，还能传输控制指令；
+LVDS接口主要是将RGB TTL信号按照SPWG/JEIDA格式转换成LVDS信号进行传输，MIPI DSI接口则按照特定的握手顺序和指令规则传输屏幕控制所需的视频数据和控制数据。
+
+液晶屏有RGB TTL、LVDS、MIPI DSI接口，这些接口区别于信号的类型（种类），也区别于信号内容。RGB TTL接口信号类型是TTL电平，信号的内容是RGB666或者RGB888还有行场同步和时钟；LV...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
@@ -547,6 +516,38 @@ Vbus 电源 和 GND 都有 4 个，这也是为何可以达到 100W 的原因。
             之前有归纳过传统 board-info 形式下的 spi 驱动模型：Linux 内核中 SPI 设备驱动模型（Platform设备驱动方式）。
 但是这里代码的环境是 Android5.1。所以我们先来分析一下 DTS。
 DTS根据硬件工程师给出的信息，这颗 GSensor 接到 Spi0 上，我们可以看一下 DTS 中的信息：12345678910#spi0spi0: spi@70a00000&#123;	compatible = "sprd, sprd-spi";    interrupts = &lt;0 7 0x0&gt;    reg = &lt;0x70a00000 0x100...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2016/12/31</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "RockChip">RockChip</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "Android">Android</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
+        <a class="abstract-title" href = "/2016/12/31/Android_Driver/Driver/[Android5.1][RK3288] LCD (Mipi) 调试方法及问题汇总/" >
+            
+                <span>Android5.1 RK3288 LCD (Mipi) 调试方法及问题汇总</span>
+        </a>
+        <div class="abstract-content">
+            调试流程设置 dts 中的参数 并 配置管脚仿造平台的其他 lcd-*-mipi.dtsi 编写 lcd-xxx-mipi.dtsi 后 需要在 主 dts 文件中包含这个 dtsi1#include “lcd-xxx-mipi.dtsi“
+先看屏的手册里面的关键信息有 分辨率（540×960） 接口（2条lanes）12345678910111213141516171819## MIPI Host配置disp_mipi_init: mipi_dsi_init&#123;		compatible = "rockchip,mipi_dsi_init";		/* 是否要在 dtsi 中初始化...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
@@ -606,14 +607,13 @@ DTS根据硬件工程师给出的信息，这颗 GSensor 接到 Spi0 上，我�
     
     
     <article class="index-post">
-        <a class="abstract-title" href = "/2016/12/31/Android_Driver/Device/[Device] Mipi LCD 的基础知识/" >
+        <a class="abstract-title" href = "/2016/12/31/Android_Driver/Driver/[Android5.1][RK3288] Framebuffer 设备驱动/" >
             
-                <span>Mipi LCD 的基础知识</span>
+                <span>Android5.1 RK3288 Framebuffer 设备驱动</span>
         </a>
         <div class="abstract-content">
-            基础知识LCD（Liquid Crystal Display）即液晶显示器。根据驱动方式 分为 静态驱动、简单矩阵驱动、主动矩阵驱动。简单矩阵驱动 分为 扭转向阵列（TN） 和 超扭转时向列型（STN）。主动矩阵驱动 以 薄膜式晶体管（TFT） 为主。
-我们作为驱动工程师，关注的点在于 屏 的时序。时序图中VCLK 为 像素时钟信号（用于锁存图像数据的像素时钟）HSYNC 为 行同步信号VSYNC 为 帧同步信号VDEN 为 数据有效标志信号VD 为 图像的数据信号PCLK/DCLK 为 点时钟 dot CLK
-VSYNC 是 帧同步信号，每发出一个脉冲，意味着新的一屏图像数据开始发送。...
+            概念FrameBuffer 的意思是，帧缓冲。Frame 帧：你所看到的屏幕的图像，或者在一个窗口中的图像，就叫一帧。Buffer 缓冲：一段RAM，用来暂存图像数据，这些数据会被直接写入到显示设备。帧缓冲就相当于介于 图形操作 和 图像输出中间的一个中间人。将程序对图形数据的处理操作，反馈到显示输出上。显卡（显存中的数据）  帧缓冲（程序对其中的数据进行处理）  显示器（输出图像）帧缓冲可用于，实现原先视频卡并不支持的分辨率:显卡可能并不支持你当前某个更大分辨率的显示器，但是可以通过帧缓冲获取显卡的显存中的数据，处理之后，实现更大的分辨率的图像，然后将数据直接输出到显示器上。
+驱动分析...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
@@ -4285,9 +4285,712 @@ CSDN 博客从年初 1000 左右达到了 5 万阅读量...
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 163
+        Total : 166
         </div>
         <!-- search  -->
         
@@ -4307,7 +5010,27 @@ CSDN 博客从年初 1000 左右达到了 5 万阅读量...
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/08</span><a class="archive-post-title" href= "/2018/11/08/Android_Driver/Driver/[Android6.0][RK3399] Mipi LCD RM72014 移植调试流程/" >Android6.0 RK3399 Mipi LCD RM72014 移植调试流程</a>
+            <span class="archive-post-date">11/09</span><a class="archive-post-title" href= "/2018/11/09/Linux/Linux 链表操作接口/" >Linux 链表操作接口</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/09</span><a class="archive-post-title" href= "/2018/11/09/Linux/Linux device 操作接口/" >Linux device 操作接口</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/08</span><a class="archive-post-title" href= "/2018/11/08/Linux/Linux Input 子系统分析/" >Linux Input 子系统分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_Intent传输对象的方法/" >SOP_Intent传输对象的方法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_MediaPlayer/" >SOP_MediaPlayer</a>
         </li>
     
     
@@ -4317,12 +5040,17 @@ CSDN 博客从年初 1000 左右达到了 5 万阅读量...
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_Notification/" >SOP_Notification</a>
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/组件_BroadcastReceiver/" >组件_BroadcastReceiver</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/数据持久化_文件存储/" >数据持久化_文件存储</a>
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_动态权限/" >SOP_动态权限</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/数据持久化_数据库_LitePal 和 SQLite/" >数据持久化_数据库_LitePal 和 SQLite</a>
         </li>
     
     
@@ -4332,7 +5060,32 @@ CSDN 博客从年初 1000 左右达到了 5 万阅读量...
     
     
         <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/数据持久化_文件存储/" >数据持久化_文件存储</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_Notification/" >SOP_Notification</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_WebView_XML和JSON/" >SOP_WebView_XML和JSON</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_控件_Fragment/" >SOP_控件_Fragment</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
             <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/数据持久化_SharedPreferences/" >数据持久化_SharedPreferences</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/组件_ContentProvider/" >组件_ContentProvider</a>
         </li>
     
     
@@ -4347,47 +5100,7 @@ CSDN 博客从年初 1000 左右达到了 5 万阅读量...
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_控件_Fragment/" >SOP_控件_Fragment</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_动态权限/" >SOP_动态权限</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_MediaPlayer/" >SOP_MediaPlayer</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_Intent传输对象的方法/" >SOP_Intent传输对象的方法</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/组件_ContentProvider/" >组件_ContentProvider</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_WebView_XML和JSON/" >SOP_WebView_XML和JSON</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
             <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/SOP_异步消息处理机制/" >SOP_异步消息处理机制</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/数据持久化_数据库_LitePal 和 SQLite/" >数据持久化_数据库_LitePal 和 SQLite</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">08/11</span><a class="archive-post-title" href= "/2018/08/11/Android_App/组件_BroadcastReceiver/" >组件_BroadcastReceiver</a>
         </li>
     
     
@@ -4402,12 +5115,57 @@ CSDN 博客从年初 1000 左右达到了 5 万阅读量...
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Environment/MTK6737/[IoT4G] 启动流程/" >Android6.0 MTK6737 启动流程</a>
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_Driver/Driver/[Android6.0][MTK6737]版本控制和开发流程说明/" >Android6.0 MTK6737 版本控制和开发流程说明</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_App/[Android6.0][RK3399] 修改浏览器默认主页/" >Android6.0 RK3399 修改浏览器默认主页</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_Sys/[Android6.0][MTK6737] 优化开机启动时间/" >Android6.0 MTK6737 优化开机启动时间</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_App/[Android6.0][MTK6737] 系统旋转后导航栏丢失，并有黑边/" >Android6.0 MTK6737 系统旋转后导航栏丢失，并有黑边</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_App/[Android6.0][MTK6737] App 添加系统权限/" >Android6.0 App 添加系统权限</a>
         </li>
     
     
         <li class="archive-post-item">
             <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_Driver/Driver/[Android6.0][MTK6737] 长按 Power 没有真正关机 (MTK IPO 功能)/" >Android6.0 MTK6737 长按 Power 没有真正关机 (MTK IPO 功能)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Environment/MTK6737/[Android6.0][MTK6737] 移植 Modem/" >Android6.0 MTK6737 移植 Modem</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Environment/MTK6737/[IoT4G] MTK DCT 工具介绍/" >Android6.0 MTK6737 DCT 工具介绍</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_Driver/Driver/[Android6.0][MTK6737] 设置屏幕旋转 270 度/" >Android6.0 MTK6737 设置屏幕旋转 270 度</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_App/[Android6.0][MTK6737] 修改默认允许位置来源第三方应用安装/" >Android6.0 修改默认允许位置来源第三方应用安装</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_App/[Android6.0][MTK6737] 替换原生 Launcher/" >Android6.0 MTK6737 替换原生 Launcher</a>
         </li>
     
     
@@ -4422,57 +5180,12 @@ CSDN 博客从年初 1000 左右达到了 5 万阅读量...
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_Driver/Driver/[Android6.0][MTK6737] 设置屏幕旋转 270 度/" >Android6.0 MTK6737 设置屏幕旋转 270 度</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_App/[Android6.0][MTK6737] 替换原生 Launcher/" >Android6.0 MTK6737 替换原生 Launcher</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_App/[Android6.0][RK3399] 修改浏览器默认主页/" >Android6.0 RK3399 修改浏览器默认主页</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_App/[Android6.0][MTK6737] App 添加系统权限/" >Android6.0 App 添加系统权限</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_App/[Android6.0][MTK6737] 系统旋转后导航栏丢失，并有黑边/" >Android6.0 MTK6737 系统旋转后导航栏丢失，并有黑边</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Environment/MTK6737/[Android6.0][MTK6737] 移植 Modem/" >Android6.0 MTK6737 移植 Modem</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_Driver/Driver/[Android6.0][MTK6737]版本控制和开发流程说明/" >Android6.0 MTK6737 版本控制和开发流程说明</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_App/[Android6.0][MTK6737] 修改默认允许位置来源第三方应用安装/" >Android6.0 修改默认允许位置来源第三方应用安装</a>
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Environment/MTK6737/[IoT4G] 启动流程/" >Android6.0 MTK6737 启动流程</a>
         </li>
     
     
         <li class="archive-post-item">
             <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_App/[Android] 反编译 Android APK/" >Android 反编译 Android APK</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Environment/MTK6737/[IoT4G] MTK DCT 工具介绍/" >Android6.0 MTK6737 DCT 工具介绍</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/2018/03/31/Android_Sys/[Android6.0][MTK6737] 优化开机启动时间/" >Android6.0 MTK6737 优化开机启动时间</a>
         </li>
     
     
@@ -4492,12 +5205,12 @@ CSDN 博客从年初 1000 左右达到了 5 万阅读量...
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">01/31</span><a class="archive-post-title" href= "/2018/01/31/Android_Driver/Debug/[Android7.1][RK3399] WiFi 吞吐率周期性变差问题(扫描机制)/" >Android7.1 RK3399 WiFi 吞吐率周期性变差问题(扫描机制)</a>
+            <span class="archive-post-date">01/31</span><a class="archive-post-title" href= "/2018/01/31/Android_Driver/Driver/[Android7.1][RK3399] Codec rt5640 移植/" >Android7.1 RK3399 Codec rt5640 移植.md</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">01/31</span><a class="archive-post-title" href= "/2018/01/31/Android_Driver/Debug/[Android7.1][RK3399] 插上 TypeC 为 USB_FLOATING_CHARGER 模式/" >Android7.1 RK3399 插上 TypeC 为 USB_FLOATING_CHARGER 模式</a>
+            <span class="archive-post-date">01/31</span><a class="archive-post-title" href= "/2018/01/31/Android_Driver/Driver/[Android7.1][RK3399] RK reboot 机制驱动分析/" >Android7.1 RK3399 RK reboot 机制驱动分析</a>
         </li>
     
     
@@ -4507,7 +5220,12 @@ CSDN 博客从年初 1000 左右达到了 5 万阅读量...
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">01/31</span><a class="archive-post-title" href= "/2018/01/31/Android_Driver/Debug/[Android7.1][RK3399] 添加对 Camera 动态热插拔的支持/" >Android7.1 RK3399 添加对 USB Camera 动态热插拔的支持.md</a>
+            <span class="archive-post-date">01/31</span><a class="archive-post-title" href= "/2018/01/31/Android_Driver/Debug/[Android7.1][RK3399] 插上 TypeC 为 USB_FLOATING_CHARGER 模式/" >Android7.1 RK3399 插上 TypeC 为 USB_FLOATING_CHARGER 模式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/31</span><a class="archive-post-title" href= "/2018/01/31/Android_Driver/Debug/[Android7.1][RK3399] WiFi 吞吐率周期性变差问题(扫描机制)/" >Android7.1 RK3399 WiFi 吞吐率周期性变差问题(扫描机制)</a>
         </li>
     
     
@@ -4517,12 +5235,7 @@ CSDN 博客从年初 1000 左右达到了 5 万阅读量...
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">01/31</span><a class="archive-post-title" href= "/2018/01/31/Android_Driver/Driver/[Android7.1][RK3399] Codec rt5640 移植/" >Android7.1 RK3399 Codec rt5640 移植.md</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">01/31</span><a class="archive-post-title" href= "/2018/01/31/Android_Driver/Driver/[Android7.1][RK3399] RK reboot 机制驱动分析/" >Android7.1 RK3399 RK reboot 机制驱动分析</a>
+            <span class="archive-post-date">01/31</span><a class="archive-post-title" href= "/2018/01/31/Android_Driver/Debug/[Android7.1][RK3399] 添加对 Camera 动态热插拔的支持/" >Android7.1 RK3399 添加对 USB Camera 动态热插拔的支持.md</a>
         </li>
     
     
@@ -4536,122 +5249,12 @@ CSDN 博客从年初 1000 左右达到了 5 万阅读量...
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] U-boot启动流程分析（准备）/" >Android6.0 RK3399 U-boot启动流程分析（准备）</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] Mipi LCD NT35521 移植调试流程/" >Android6.0 RK3399 Mipi LCD NT35521 移植调试流程</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android6.0] 启动流程(从开机到第一个程序）/" >Android6.0 启动流程(从开机到第一个程序）</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] IR(红外线)移植步骤/" >Android6.0 RK3399 IR(红外线)移植步骤</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android] init.rc 文件浅析/" >Android init.rc 文件浅析</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] Uboot 代码分析/" >Android6.0 RK3399 Uboot 代码分析</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] PCIe 接口 4G模块 EC20 调试记录/" >Android6.0 RK3399 PCIe 接口 4G模块 EC20 调试记录</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_App/[Android6.0][RK3399] 设置系统默认不会休眠/" >Android6.0 RK3399 设置系统默认不会休眠</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Environment/Firefly-RK3399/[Android6.0][RK3399] OTA差异包制作方法/" >Android6.0 RK3399 OTA差异包制作方法</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] Uboot 编译规则/" >Android6.0 RK3399 Uboot 编译规则</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] SATA 设备调试笔记/" >Android6.0 RK3399 SATA 设备调试笔记</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] 修改默认按键 KEY-PAD/" >Android6.0 RK3399 修改默认按键 KEY-PAD</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] PCIe 转 SATA 调试步骤/" >Android6.0 RK3399 PCIe 转 SATA 调试步骤</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_App/[Android6.0][RK3399] 关闭双击 Power 打开 Camera 功能/" >Android6.0 RK3399 关闭双击 Power 打开 Camera 功能</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android6.0] 启动流程分析之一概述/" >Android6.0 启动流程分析之一概述</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_App/[Android6.0][RK3399] 去掉滑动锁屏(swipe lock)/" >Android6.0 RK3399 去掉滑动锁屏</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android6.0] Reference-RIL 运行框架/" >Android6.0 Reference-RIL 运行框架</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_App/[Android6.0][RK3399] 去掉顶部Google搜索栏/" >Android6.0 RK3399 去掉顶部Google搜索栏</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Environment/Firefly-RK3399/[Linux][RK3399] 基于 Firefly RK3399 Board 制作 Ubuntu Base 版本/" >Linux RK3399 基于 Firefly RK3399 Board 制作 Ubuntu Base 版本</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_App/[Android6.0][RK3399] 出厂预置可卸载 APK/" >Android6.0 RK3399 出厂预置可卸载 APK</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Linux4.4][RK3399] DRM HDMI 调试小结/" >Linux RK3399 HDMI 调试小结</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_App/[Android6.0][RK3399] 隐藏导航栏或状态栏/" >Android6.0 RK3399 隐藏导航栏或状态栏</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android] 智能指针 SP强指针WP弱指针 用法/" >Android 智能指针 SP强指针WP弱指针 用法</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
             <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Debug/[Android6.0][RK3399] 更换64GeMMC后无法启动的问题/" >Android6.0 RK3399 更换64GeMMC后无法启动的问题</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] U-boot启动流程分析（准备）/" >Android6.0 RK3399 U-boot启动流程分析（准备）</a>
         </li>
     
     
@@ -4661,7 +5264,12 @@ CSDN 博客从年初 1000 左右达到了 5 万阅读量...
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android6.0] RILC 系统结构及 LibRIL 运行机制/" >Android6.0 RILC 系统结构及 LibRIL 运行机制</a>
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] Wifi Card 驱动流程分析/" >Android6.0 RK3399 Wifi Card 驱动流程分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] SATA 设备调试笔记/" >Android6.0 RK3399 SATA 设备调试笔记</a>
         </li>
     
     
@@ -4671,17 +5279,37 @@ CSDN 博客从年初 1000 左右达到了 5 万阅读量...
     
     
         <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android] 智能指针 SP强指针WP弱指针 用法/" >Android 智能指针 SP强指针WP弱指针 用法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_App/[Android6.0][RK3399] 去掉顶部Google搜索栏/" >Android6.0 RK3399 去掉顶部Google搜索栏</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
             <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] 实现耳机和喇叭自动切换功能/" >Android6.0 RK3399 实现耳机和喇叭自动切换功能</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] Wifi Card 驱动流程分析/" >Android6.0 RK3399 Wifi Card 驱动流程分析</a>
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_App/[Android6.0][RK3399] 设置系统默认不会休眠/" >Android6.0 RK3399 设置系统默认不会休眠</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Environment/Firefly-RK3399/[Linux][RK3399] 基于 Firefly RK3399 Board 制作 Ubuntu Desktop 版本/" >Linux RK3399 基于 Firefly RK3399 Board 制作 Ubuntu Desktop 版本</a>
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android6.0] 启动流程(从开机到第一个程序）/" >Android6.0 启动流程(从开机到第一个程序）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Linux4.4][RK3399] DRM HDMI 调试小结/" >Linux RK3399 HDMI 调试小结</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] Uboot 代码分析/" >Android6.0 RK3399 Uboot 代码分析</a>
         </li>
     
     
@@ -4696,12 +5324,97 @@ CSDN 博客从年初 1000 左右达到了 5 万阅读量...
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android] 文件系统分区挂载流程/" >Android 文件系统分区挂载流程</a>
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] IR(红外线)移植步骤/" >Android6.0 RK3399 IR(红外线)移植步骤</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android6.0] RILC 系统结构及 LibRIL 运行机制/" >Android6.0 RILC 系统结构及 LibRIL 运行机制</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android] init.rc 文件浅析/" >Android init.rc 文件浅析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] PCIe 转 SATA 调试步骤/" >Android6.0 RK3399 PCIe 转 SATA 调试步骤</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] Uboot 编译规则/" >Android6.0 RK3399 Uboot 编译规则</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_App/[Android6.0][RK3399] 去掉滑动锁屏(swipe lock)/" >Android6.0 RK3399 去掉滑动锁屏</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] 修改默认按键 KEY-PAD/" >Android6.0 RK3399 修改默认按键 KEY-PAD</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Environment/Firefly-RK3399/[Linux][RK3399] 基于 Firefly RK3399 Board 制作 Ubuntu Desktop 版本/" >Linux RK3399 基于 Firefly RK3399 Board 制作 Ubuntu Desktop 版本</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_App/[Android6.0][RK3399] 出厂预置可卸载 APK/" >Android6.0 RK3399 出厂预置可卸载 APK</a>
         </li>
     
     
         <li class="archive-post-item">
             <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Linux4.4][RK3399] DRM 框架及代码流程/" >Linux RK3399 DRM 框架及代码流程</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_App/[Android6.0][RK3399] 隐藏导航栏或状态栏/" >Android6.0 RK3399 隐藏导航栏或状态栏</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] Mipi LCD NT35521 移植调试流程/" >Android6.0 RK3399 Mipi LCD NT35521 移植调试流程</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android] 文件系统分区挂载流程/" >Android 文件系统分区挂载流程</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Driver/Driver/[Android6.0][RK3399] PCIe 接口 4G模块 EC20 调试记录/" >Android6.0 RK3399 PCIe 接口 4G模块 EC20 调试记录</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android6.0] 启动流程分析之一概述/" >Android6.0 启动流程分析之一概述</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_Sys/[Android6.0] Reference-RIL 运行框架/" >Android6.0 Reference-RIL 运行框架</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Environment/Firefly-RK3399/[Linux][RK3399] 基于 Firefly RK3399 Board 制作 Ubuntu Base 版本/" >Linux RK3399 基于 Firefly RK3399 Board 制作 Ubuntu Base 版本</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Environment/Firefly-RK3399/[Android6.0][RK3399] OTA差异包制作方法/" >Android6.0 RK3399 OTA差异包制作方法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2017/12/31/Android_App/[Android6.0][RK3399] 关闭双击 Power 打开 Camera 功能/" >Android6.0 RK3399 关闭双击 Power 打开 Camera 功能</a>
         </li>
     
     
@@ -4761,12 +5474,7 @@ CSDN 博客从年初 1000 左右达到了 5 万阅读量...
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">08/31</span><a class="archive-post-title" href= "/2017/08/31/Android_Driver/Driver/[Android6.0][RK3399] 电池系统（三）电量计 CW2015 驱动流程分析/" >Android6.0 RK3399 电池系统（三）电量计 CW2015 驱动流程分析</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">08/31</span><a class="archive-post-title" href= "/2017/08/31/Android_Driver/Driver/[Android6.0][RK3399] 电池系统（一）BQ25700 IC 驱动分析/" >Android6.0 RK3399 电池系统（一）BQ25700 IC 驱动分析</a>
+            <span class="archive-post-date">08/31</span><a class="archive-post-title" href= "/2017/08/31/Android_Driver/Driver/[Android6.0][RK3399] Mipi LCD RM72014 移植调试流程/" >Android6.0 RK3399 Mipi LCD RM72014 移植调试流程</a>
         </li>
     
     
@@ -4776,17 +5484,17 @@ CSDN 博客从年初 1000 左右达到了 5 万阅读量...
     
     
         <li class="archive-post-item">
+            <span class="archive-post-date">08/31</span><a class="archive-post-title" href= "/2017/08/31/Android_Driver/Driver/[Android6.0][RK3399] 电池系统（一）BQ25700 IC 驱动分析/" >Android6.0 RK3399 电池系统（一）BQ25700 IC 驱动分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/31</span><a class="archive-post-title" href= "/2017/08/31/Android_Driver/Driver/[Android6.0][RK3399] 电池系统（三）电量计 CW2015 驱动流程分析/" >Android6.0 RK3399 电池系统（三）电量计 CW2015 驱动流程分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
             <span class="archive-post-date">08/14</span><a class="archive-post-title" href= "/2017/08/14/Life/Learning/王烁30天认知训练营 Day01 什么是查理·芒格的人生开关/" >Day01 什么是查理·芒格的人生开关</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2017/08/05/Environment/[Ubuntu] 在终端中利用Wget下载百度云资源/" >Ubuntu 在终端中利用Wget/aria2下载百度云资源</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2017/08/05/Environment/[Ubuntu] Linux下访问NAS服务器/" >Linux 下访问 NAS 服务器</a>
         </li>
     
     
@@ -4796,7 +5504,22 @@ CSDN 博客从年初 1000 左右达到了 5 万阅读量...
     
     
         <li class="archive-post-item">
+            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2017/08/05/Android_Driver/Driver/[Linux4.4] 以 SPI 驱动模型为例分析 Linux 主机驱动与外设驱动分离模型/" >Linux 以 SPI 驱动模型为例分析 Linux 主机驱动与外设驱动分离模型</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
             <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2017/08/05/Android_App/[Android6.0] App中调用init.rc中的服务，从而运行shell脚本/" >Android6.0 App中调用init.rc中的服务，从而运行shell脚本</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2017/08/05/Environment/[Ubuntu] Linux下访问NAS服务器/" >Linux 下访问 NAS 服务器</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2017/08/05/Environment/[Ubuntu] 在终端中利用Wget下载百度云资源/" >Ubuntu 在终端中利用Wget/aria2下载百度云资源</a>
         </li>
     
     
@@ -4806,22 +5529,12 @@ CSDN 博客从年初 1000 左右达到了 5 万阅读量...
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2017/08/05/Android_Driver/Driver/[Linux4.4] 以 SPI 驱动模型为例分析 Linux 主机驱动与外设驱动分离模型/" >Linux 以 SPI 驱动模型为例分析 Linux 主机驱动与外设驱动分离模型</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">07/01</span><a class="archive-post-title" href= "/2017/07/01/Android_Driver/Debug/[Android6.0][RK3399][BUG] 插上 HDMI 时开机解锁锁屏后死机/" >Android6.0 RK3399 插上 HDMI 时开机解锁锁屏后死机</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
             <span class="archive-post-date">07/01</span><a class="archive-post-title" href= "/2017/07/01/Android_Driver/Debug/[Android6.0][RK3399] 开机前几秒串口打印异常问题/" >Android6.0 RK3399 开机前几秒串口打印异常问题</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">06/06</span><a class="archive-post-title" href= "/2017/06/06/VR/OpenGL/[OpenGL]创建一个窗口/" >OpenGL 创建一个窗口</a>
+            <span class="archive-post-date">07/01</span><a class="archive-post-title" href= "/2017/07/01/Android_Driver/Debug/[Android6.0][RK3399][BUG] 插上 HDMI 时开机解锁锁屏后死机/" >Android6.0 RK3399 插上 HDMI 时开机解锁锁屏后死机</a>
         </li>
     
     
@@ -4836,12 +5549,17 @@ CSDN 博客从年初 1000 左右达到了 5 万阅读量...
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">06/05</span><a class="archive-post-title" href= "/2017/06/05/VR/[VR] Cardboard Treasure Hunter 代码分析/" >VR Cardboard Treasure Hunter 代码分析</a>
+            <span class="archive-post-date">06/06</span><a class="archive-post-title" href= "/2017/06/06/VR/OpenGL/[OpenGL]创建一个窗口/" >OpenGL 创建一个窗口</a>
         </li>
     
     
         <li class="archive-post-item">
             <span class="archive-post-date">06/05</span><a class="archive-post-title" href= "/2017/06/05/VR/[VR] 应用开发入门基本知识/" >VR 应用开发入门基本知识(Oculus/Cardboard/Daydream)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/05</span><a class="archive-post-title" href= "/2017/06/05/VR/[VR] Cardboard Treasure Hunter 代码分析/" >VR Cardboard Treasure Hunter 代码分析</a>
         </li>
     
     
@@ -4860,27 +5578,12 @@ CSDN 博客从年初 1000 左右达到了 5 万阅读量...
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2016/12/31/Android_Driver/Device/[Device] Mipi LCD 的基础知识/" >Mipi LCD 的基础知识</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2016/12/31/Android_Driver/Driver/[Android5.1][RK3288] Framebuffer 设备驱动/" >Android5.1 RK3288 Framebuffer 设备驱动</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2016/12/31/Android_Driver/Driver/[Android5.1][RK3288] LCD (Mipi) 调试方法及问题汇总/" >Android5.1 RK3288 LCD (Mipi) 调试方法及问题汇总</a>
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2016/12/31/Android_Driver/Device/[Device] Mipi 接口 和 LVDS 接口区别/" >Mipi 接口 和 LVDS 接口区别</a>
         </li>
     
     
         <li class="archive-post-item">
             <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2016/12/31/Android_Sys/[Android5.1][RK3288]build.sh脚本分析/" >Android5.1 RK3288 build.sh脚本分析</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2016/12/31/Android_Driver/Device/[Device] Mipi 接口 和 LVDS 接口区别/" >Mipi 接口 和 LVDS 接口区别</a>
         </li>
     
     
@@ -4895,7 +5598,22 @@ CSDN 博客从年初 1000 左右达到了 5 万阅读量...
     
     
         <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2016/12/31/Android_Driver/Driver/[Android5.1][RK3288] Framebuffer 设备驱动/" >Android5.1 RK3288 Framebuffer 设备驱动</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
             <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2016/12/31/Android_Driver/Driver/[Android5.1][RK3288] SPI 设备驱动模型（Ad714x CapTouch 驱动分析）/" >Android5.1 RK3288 SPI 设备驱动模型（Ad714x CapTouch 驱动分析）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2016/12/31/Android_Driver/Driver/[Android5.1][RK3288] LCD (Mipi) 调试方法及问题汇总/" >Android5.1 RK3288 LCD (Mipi) 调试方法及问题汇总</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2016/12/31/Android_Driver/Device/[Device] Mipi LCD 的基础知识/" >Mipi LCD 的基础知识</a>
         </li>
     
     
@@ -4935,6 +5653,11 @@ CSDN 博客从年初 1000 左右达到了 5 万阅读量...
     
     
         <li class="archive-post-item">
+            <span class="archive-post-date">07/28</span><a class="archive-post-title" href= "/2016/07/28/Android_Driver/Driver/NFC/[NFC] Android 平台（Linux3.10） NXP NFC 移植流程归纳/" >NFC Android 平台 NXP NFC 移植流程归纳</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
             <span class="archive-post-date">07/28</span><a class="archive-post-title" href= "/2016/07/28/Android_Driver/Driver/NFC/[NFC] NFC 程序设计（NDEF 格式介绍）/" >NFC 程序设计（NDEF 格式介绍）</a>
         </li>
     
@@ -4946,11 +5669,6 @@ CSDN 博客从年初 1000 左右达到了 5 万阅读量...
     
         <li class="archive-post-item">
             <span class="archive-post-date">07/28</span><a class="archive-post-title" href= "/2016/07/28/Android_Driver/Driver/NFC/[NFC] NFC 程序设计（基础知识）/" >NFC 程序设计（基础知识）</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">07/28</span><a class="archive-post-title" href= "/2016/07/28/Android_Driver/Driver/NFC/[NFC] Android 平台（Linux3.10） NXP NFC 移植流程归纳/" >NFC Android 平台 NXP NFC 移植流程归纳</a>
         </li>
     
     
@@ -5005,12 +5723,12 @@ CSDN 博客从年初 1000 左右达到了 5 万阅读量...
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">01/01</span><a class="archive-post-title" href= "/2016/01/01/Language/[其他] 编程修养/" >编程修养</a>
+            <span class="archive-post-date">01/01</span><a class="archive-post-title" href= "/2016/01/01/Language/[UnixC] 内存 mem 操作/" >UnixC 内存 mem 操作</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">01/01</span><a class="archive-post-title" href= "/2016/01/01/Language/[UnixC] 内存 mem 操作/" >UnixC 内存 mem 操作</a>
+            <span class="archive-post-date">01/01</span><a class="archive-post-title" href= "/2016/01/01/Language/[其他] 编程修养/" >编程修养</a>
         </li>
     
     
@@ -5034,7 +5752,7 @@ CSDN 博客从年初 1000 左右达到了 5 万阅读量...
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] 下的 SPI 设备驱动模型（SPI 协议基础）/" >Linux 中的 SPI 设备驱动模型（SPI 协议基础）</a>
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] 中的互斥机制（中断屏蔽、原子操作、自旋锁、信号量）/" >Linux 中的互斥机制（中断屏蔽、原子操作、自旋锁、信号量）</a>
         </li>
     
     
@@ -5044,47 +5762,7 @@ CSDN 博客从年初 1000 左右达到了 5 万阅读量...
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] 文件批量重命名 rename/" >Linux 文件批量重命名 rename</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] 服务器添加硬盘方法/" >Linux 服务器添加硬盘方法</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] 内核的 proc 文件系统/" >Linux 内核的 proc 文件系统</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] 中的互斥机制（中断屏蔽、原子操作、自旋锁、信号量）/" >Linux 中的互斥机制（中断屏蔽、原子操作、自旋锁、信号量）</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] 内核的 sysfs 文件系统/" >Linux 内核的 sysfs 文件系统</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
             <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] 中的阻塞与非阻塞（等待队列、轮询）/" >Linux 阻塞与非阻塞（等待队列、轮询）</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] passwd 文件格式详解/" >Linux passwd 文件格式详解</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux][Tool] 程序内存检查工具 Valgrind/" >Linux 程序内存检查工具 Valgrind</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] DTS 架构下 Device 与 Driver 匹配流程/" >Linux DTS 架构下 Device 与 Driver 匹配流程</a>
         </li>
     
     
@@ -5094,7 +5772,77 @@ CSDN 博客从年初 1000 左右达到了 5 万阅读量...
     
     
         <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux][Tool] 程序内存检查工具 Valgrind/" >Linux 程序内存检查工具 Valgrind</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] 下的 SPI 设备驱动模型（SPI 协议基础）/" >Linux 中的 SPI 设备驱动模型（SPI 协议基础）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] passwd 文件格式详解/" >Linux passwd 文件格式详解</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] 服务器添加硬盘方法/" >Linux 服务器添加硬盘方法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] 文件批量重命名 rename/" >Linux 文件批量重命名 rename</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] 内核的 proc 文件系统/" >Linux 内核的 proc 文件系统</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] DTS 架构下 Device 与 Driver 匹配流程/" >Linux DTS 架构下 Device 与 Driver 匹配流程</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2015/12/31/Linux/[Linux] 内核的 sysfs 文件系统/" >Linux 内核的 sysfs 文件系统</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
             <span class="archive-post-date">10/26</span><a class="archive-post-title" href= "/2015/10/26/Life/InnerPath/15-10-26英雄如你少年如我不负这移动盛世/" >英雄如你，少年如我，不负这移动盛世</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/20</span><a class="archive-post-title" href= "/2015/09/20/Life/InnerPath/15-09-20巴迪闲侃/" >巴迪闲侃</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/31</span><a class="archive-post-title" href= "/2015/08/31/Linux/[Linux] i2c 与 spi 设备在新版内核中不采用DTS设备树形式 在驱动添加设备信息(board_info)的方法/" >Linux i2c 与 spi 设备在新版内核中不采用DTS设备树形式 在驱动添加设备信息(board_info)的方法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/22</span><a class="archive-post-title" href= "/2015/08/22/Life/InnerPath/15-08-22深圳深圳/" >深圳深圳</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2015/08/05/Environment/[Android] eng、user、userdebug区别/" >Android eng、user、userdebug区别</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2015/08/05/Environment/[RockChip] parameter.txt 文件详解/" >RockChip parameter.txt 文件详解</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/01</span><a class="archive-post-title" href= "/2015/08/01/Life/InnerPath/15-08-01基本功/" >基本功</a>
         </li>
     
     
@@ -5119,36 +5867,6 @@ CSDN 博客从年初 1000 左右达到了 5 万阅读量...
     
     <div class="archive-year"> 2015 </div>
     <ul class="year-list">
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">09/20</span><a class="archive-post-title" href= "/2015/09/20/Life/InnerPath/15-09-20巴迪闲侃/" >巴迪闲侃</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">08/31</span><a class="archive-post-title" href= "/2015/08/31/Linux/[Linux] i2c 与 spi 设备在新版内核中不采用DTS设备树形式 在驱动添加设备信息(board_info)的方法/" >Linux i2c 与 spi 设备在新版内核中不采用DTS设备树形式 在驱动添加设备信息(board_info)的方法</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">08/22</span><a class="archive-post-title" href= "/2015/08/22/Life/InnerPath/15-08-22深圳深圳/" >深圳深圳</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2015/08/05/Environment/[RockChip] parameter.txt 文件详解/" >RockChip parameter.txt 文件详解</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2015/08/05/Environment/[Android] eng、user、userdebug区别/" >Android eng、user、userdebug区别</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">08/01</span><a class="archive-post-title" href= "/2015/08/01/Life/InnerPath/15-08-01基本功/" >基本功</a>
-        </li>
     
     
         <li class="archive-post-item">
@@ -5180,9 +5898,9 @@ CSDN 博客从年初 1000 左右达到了 5 万阅读量...
     
         <span class="sidebar-tag-name" data-tags="Linux"><span class="iconfont-archer">&#xe606;</span>Linux</span>
     
-        <span class="sidebar-tag-name" data-tags="C"><span class="iconfont-archer">&#xe606;</span>C</span>
-    
         <span class="sidebar-tag-name" data-tags="git"><span class="iconfont-archer">&#xe606;</span>git</span>
+    
+        <span class="sidebar-tag-name" data-tags="C"><span class="iconfont-archer">&#xe606;</span>C</span>
     
         <span class="sidebar-tag-name" data-tags="InnerPath"><span class="iconfont-archer">&#xe606;</span>InnerPath</span>
     
